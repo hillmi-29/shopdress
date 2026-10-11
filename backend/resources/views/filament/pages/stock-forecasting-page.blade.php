@@ -58,10 +58,6 @@
                     </p>
                 </div>
                 <div class="flex items-center gap-3 self-start md:self-auto shrink-0">
-                    <button wire:click="recomputeAi" type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-primary-container hover:bg-primary-hover text-white text-xs font-semibold shadow-xs transition active:scale-95 cursor-pointer">
-                        <span class="material-symbols-outlined text-sm">refresh</span>
-                        <span>Re-compute AI</span>
-                    </button>
                     <div class="px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-gray-100 dark:border-gray-800 shadow-xs flex items-center gap-3">
                         <span class="material-symbols-outlined text-primary text-2xl">warehouse</span>
                         <div>
