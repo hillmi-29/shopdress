@@ -4,7 +4,6 @@ namespace App\Filament\Pages;
 
 use App\Models\Category;
 use App\Services\StockForecastingService;
-use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 
@@ -28,6 +27,8 @@ class StockForecastingPage extends Page
 
     public ?string $selectedRisk = null;
 
+    public ?string $search = '';
+
     public array $metrics = [];
 
     public function mount(StockForecastingService $forecastingService): void
@@ -46,22 +47,37 @@ class StockForecastingPage extends Page
         $risk = ($this->selectedRisk === 'ALL' || empty($this->selectedRisk)) ? null : $this->selectedRisk;
         $category = ($this->selectedCategory === 'ALL' || empty($this->selectedCategory)) ? null : $this->selectedCategory;
 
-        return $service->getForecastAnalysis($category, $risk);
+        $data = $service->getForecastAnalysis($category, $risk);
+
+        if (! empty($this->search)) {
+            $searchQuery = strtolower(trim($this->search));
+            $data = $data->filter(function ($item) use ($searchQuery) {
+                return str_contains(strtolower($item['product_name']), $searchQuery) ||
+                       str_contains(strtolower($item['sku']), $searchQuery) ||
+                       str_contains(strtolower($item['color']), $searchQuery) ||
+                       str_contains(strtolower($item['size']), $searchQuery);
+            });
+        }
+
+        return $data->values();
     }
 
-    public function updateFilter(): void
+    public function resetFilters(): void
     {
-        // Re-renders the reactive view
+        $this->selectedCategory = null;
+        $this->selectedRisk = null;
+        $this->search = '';
     }
 
     public function generatePoTemplate(array $item): string
     {
         $text = "Halo Konveksi,\nKami ingin memesan restock produksi ShopDress:\n";
-        $text .= "• Produk: {$item['product_name']}\n";
-        $text .= "• Varian: {$item['color']} / Size {$item['size']} (SKU: {$item['sku']})\n";
-        $text .= "• Jumlah Pesanan Restock: {$item['recommended_restock']} pcs\n";
-        $text .= "• Sisa Stok Toko: {$item['current_stock']} pcs (Status: {$item['risk_label']})\n";
-        $text .= "Mohon konfirmasi ketersediaan bahan dan estimasi pengerjaan. Terima kasih!";
+        $text .= "- Produk: {$item['product_name']}\n";
+        $text .= "- Varian: {$item['color']} / Size {$item['size']} (SKU: {$item['sku']})\n";
+        $text .= "- Jumlah Pesanan Restock: {$item['recommended_restock']} pcs\n";
+        $text .= "- Sisa Stok Saat Ini: {$item['current_stock']} pcs\n";
+        $text .= "- Tingkat Kebutuhan: {$item['risk_label']}\n";
+        $text .= "Mohon konfirmasi ketersediaan bahan dan perkiraan jadwal pengerjaan. Terima kasih.";
 
         return "https://wa.me/?text=" . urlencode($text);
     }

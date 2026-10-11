@@ -1,234 +1,295 @@
 <x-filament-panels::page>
     <div class="space-y-6">
-        <!-- Banner Intro ML -->
-        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 p-6 text-white shadow-lg shadow-orange-500/10">
-            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+
+        <!-- Executive Header Banner (No Emoji, Clean Typography) -->
+        <div class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div class="space-y-1">
-                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-xs font-semibold uppercase tracking-wider backdrop-blur-md">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                        Machine Learning Engine Active
+                    <div class="flex items-center gap-2">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-orange-50 dark:bg-orange-950/50 text-orange-700 dark:text-orange-400 text-xs font-semibold border border-orange-200 dark:border-orange-800/60">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+                            Sistem Analisis Prediktif
+                        </span>
+                        <span class="text-xs text-gray-400 dark:text-gray-500">Pembaruan Real-time</span>
                     </div>
-                    <h2 class="text-2xl font-extrabold tracking-tight">AI Inventory Demand Forecasting</h2>
-                    <p class="text-orange-100 text-sm max-w-2xl">
-                        Model memprediksi kecepatan penjualan harian (<em>Sales Velocity Rate</em>), menghitung sisa hari ketahanan stok (<em>Days to Stockout</em>), dan merekomendasikan jumlah produksi ke konveksi secara akurat.
+                    <h2 class="text-xl font-bold tracking-tight text-gray-950 dark:text-white">
+                        Prediksi Permintaan & Analisis Ketahanan Stok
+                    </h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 max-w-3xl leading-relaxed">
+                        Modul ini memanfaatkan algoritma <em>Weighted Moving Average</em> untuk mengalkulasi laju penjualan harian, memproyeksikan hari ketahanan stok sebelum habis (<em>Days to Stockout</em>), dan menghitung kuantitas restock optimal untuk konveksi.
                     </p>
                 </div>
+
                 <div class="flex items-center gap-3">
-                    <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white text-orange-600 font-bold text-sm shadow-md">
-                        <span class="relative flex h-2.5 w-2.5">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-                        </span>
-                        Auto-Forecast Updated
-                    </span>
+                    <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs text-gray-600 dark:text-gray-300">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        Status Model: Aktif & Sinkron
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 4 KPI Cards -->
+        <!-- 4 Metric KPI Cards (Clean, Professional, No Emojis) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Card 1: Critical -->
-            <div class="p-5 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50/50 dark:bg-red-950/20 flex flex-col justify-between">
+            <div class="rounded-xl border border-red-200 dark:border-red-900/60 bg-white dark:bg-gray-900 p-5 shadow-sm relative overflow-hidden">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">Perlu Restock Kritis</span>
-                    <span class="p-2 rounded-lg bg-red-100 dark:bg-red-900/50 text-red-600">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                    </span>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-red-600 dark:text-red-400">Restock Kritis</span>
+                    <div class="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-950/60 flex items-center justify-center text-red-600">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    </div>
                 </div>
-                <div class="mt-3">
-                    <div class="text-3xl font-black text-red-700 dark:text-red-300">{{ $this->metrics['critical_count'] ?? 0 }} <span class="text-sm font-normal text-red-600">Varian</span></div>
-                    <p class="text-xs text-red-600/80 mt-1">Stok habis atau tersisa &le; 3 hari</p>
+                <div class="mt-4">
+                    <div class="text-3xl font-extrabold text-gray-950 dark:text-white">
+                        {{ $this->metrics['critical_count'] ?? 0 }}
+                        <span class="text-sm font-normal text-gray-500">Varian</span>
+                    </div>
+                    <p class="text-xs text-red-600 dark:text-red-400 mt-1.5 flex items-center gap-1">
+                        <span>Habis atau tersisa &le; 3 hari</span>
+                    </p>
                 </div>
             </div>
 
             <!-- Card 2: Warning -->
-            <div class="p-5 rounded-xl border border-amber-200 dark:border-amber-900/50 bg-amber-50/50 dark:bg-amber-950/20 flex flex-col justify-between">
+            <div class="rounded-xl border border-amber-200 dark:border-amber-900/60 bg-white dark:bg-gray-900 p-5 shadow-sm relative overflow-hidden">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Peringatan Waspada</span>
-                    <span class="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/50 text-amber-600">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    </span>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">Peringatan Waspada</span>
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/60 flex items-center justify-center text-amber-600">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
                 </div>
-                <div class="mt-3">
-                    <div class="text-3xl font-black text-amber-700 dark:text-amber-300">{{ $this->metrics['warning_count'] ?? 0 }} <span class="text-sm font-normal text-amber-600">Varian</span></div>
-                    <p class="text-xs text-amber-600/80 mt-1">Stok diperkirakan habis dlm 4-7 hari</p>
+                <div class="mt-4">
+                    <div class="text-3xl font-extrabold text-gray-950 dark:text-white">
+                        {{ $this->metrics['warning_count'] ?? 0 }}
+                        <span class="text-sm font-normal text-gray-500">Varian</span>
+                    </div>
+                    <p class="text-xs text-amber-600 dark:text-amber-400 mt-1.5">
+                        Habis dalam 4 sampai 7 hari
+                    </p>
                 </div>
             </div>
 
             <!-- Card 3: Slow Moving -->
-            <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 flex flex-col justify-between">
+            <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-gray-900 p-5 shadow-sm relative overflow-hidden">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Slow Moving Stock</span>
-                    <span class="p-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                    </span>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Stok Mengendap</span>
+                    <div class="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-500">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                    </div>
                 </div>
-                <div class="mt-3">
-                    <div class="text-3xl font-black text-slate-800 dark:text-slate-200">{{ $this->metrics['slow_moving_count'] ?? 0 }} <span class="text-sm font-normal text-slate-500">Varian</span></div>
-                    <p class="text-xs text-slate-500 mt-1">Stok mengendap (disarankan promo/diskon)</p>
+                <div class="mt-4">
+                    <div class="text-3xl font-extrabold text-gray-950 dark:text-white">
+                        {{ $this->metrics['slow_moving_count'] ?? 0 }}
+                        <span class="text-sm font-normal text-gray-500">Varian</span>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1.5">
+                        Rekomendasi diskon atau bundling
+                    </p>
                 </div>
             </div>
 
             <!-- Card 4: Recommended Restock Quantity -->
-            <div class="p-5 rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50/50 dark:bg-emerald-950/20 flex flex-col justify-between">
+            <div class="rounded-xl border border-emerald-200 dark:border-emerald-900/60 bg-white dark:bg-gray-900 p-5 shadow-sm relative overflow-hidden">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Rekomendasi Restock</span>
-                    <span class="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    </span>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Saran Total Restock</span>
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 flex items-center justify-center text-emerald-600">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                    </div>
                 </div>
-                <div class="mt-3">
-                    <div class="text-3xl font-black text-emerald-700 dark:text-emerald-300">{{ number_format($this->metrics['total_restock_units'] ?? 0, 0, ',', '.') }} <span class="text-sm font-normal text-emerald-600">Pcs Baju</span></div>
-                    <p class="text-xs text-emerald-600/80 mt-1">Total order produksi yang disarankan</p>
+                <div class="mt-4">
+                    <div class="text-3xl font-extrabold text-gray-950 dark:text-white">
+                        {{ number_format($this->metrics['total_restock_units'] ?? 0, 0, ',', '.') }}
+                        <span class="text-sm font-normal text-gray-500">Pcs</span>
+                    </div>
+                    <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-1.5">
+                        Target kebutuhan produksi 10 hari
+                    </p>
                 </div>
             </div>
         </div>
 
-        <!-- Filter Toolbar -->
-        <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm flex flex-wrap items-center justify-between gap-4">
-            <div class="flex flex-wrap items-center gap-3">
-                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Filter Prediksi:</span>
-                
-                <!-- Filter Kategori -->
-                <select wire:model.live="selectedCategory" class="text-sm rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-800 text-gray-900 dark:text-white py-1.5 px-3 focus:ring-orange-500 focus:border-orange-500">
+        <!-- Filter & Search Controls Bar -->
+        <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-3 flex-1">
+                <!-- Search Input -->
+                <div class="relative w-full sm:w-64">
+                    <input 
+                        type="text" 
+                        wire:model.live.debounce.300ms="search" 
+                        placeholder="Cari produk, warna, SKU..." 
+                        class="w-full text-xs rounded-lg border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/80 text-gray-900 dark:text-white pl-8 pr-3 py-2 focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
+                    >
+                    <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-gray-400">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </div>
+                </div>
+
+                <!-- Category Filter -->
+                <select wire:model.live="selectedCategory" class="text-xs rounded-lg border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/80 text-gray-900 dark:text-white py-2 px-3 focus:ring-1 focus:ring-orange-500 focus:border-orange-500">
                     <option value="ALL">Semua Kategori</option>
                     @foreach($this->categories as $cat)
                         <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
                     @endforeach
                 </select>
 
-                <!-- Filter Status Risiko -->
-                <select wire:model.live="selectedRisk" class="text-sm rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-800 text-gray-900 dark:text-white py-1.5 px-3 focus:ring-orange-500 focus:border-orange-500">
+                <!-- Risk Filter -->
+                <select wire:model.live="selectedRisk" class="text-xs rounded-lg border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/80 text-gray-900 dark:text-white py-2 px-3 focus:ring-1 focus:ring-orange-500 focus:border-orange-500">
                     <option value="ALL">Semua Tingkat Risiko</option>
-                    <option value="CRITICAL">🚨 Kritis (Habis &le; 3 Hari)</option>
-                    <option value="WARNING">⚠️ Waspada (Habis 4-7 Hari)</option>
-                    <option value="SAFE">🟢 Aman (> 7 Hari)</option>
-                    <option value="SLOW_MOVING">💤 Slow Moving (Stok Mengendap)</option>
+                    <option value="CRITICAL">Tingkat Kritis (&le; 3 Hari)</option>
+                    <option value="WARNING">Tingkat Waspada (4 - 7 Hari)</option>
+                    <option value="SAFE">Tingkat Aman (&gt; 7 Hari)</option>
+                    <option value="SLOW_MOVING">Stok Mengendap (Slow Moving)</option>
                 </select>
+
+                @if(!empty($selectedCategory) || !empty($selectedRisk) || !empty($search))
+                    <button wire:click="resetFilters" class="text-xs text-orange-600 hover:text-orange-700 dark:text-orange-400 font-medium underline cursor-pointer">
+                        Reset Filter
+                    </button>
+                @endif
             </div>
 
-            <div class="text-xs text-gray-500 dark:text-gray-400">
-                Menampilkan <strong>{{ count($this->forecastData) }}</strong> varian baju dianalisis
+            <div class="text-xs text-gray-400">
+                Total Varian: <span class="font-bold text-gray-700 dark:text-gray-300">{{ count($this->forecastData) }}</span>
             </div>
         </div>
 
-        <!-- Table Prediksi Stok & Restock -->
+        <!-- Clean Professional Table -->
         <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-                    <thead class="bg-gray-50 dark:bg-gray-800/60 text-xs uppercase font-semibold text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-800">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-gray-50/80 dark:bg-gray-800/50 text-[11px] uppercase font-semibold text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-800 tracking-wider">
                         <tr>
-                            <th class="py-3 px-4">Produk & Varian</th>
-                            <th class="py-3 px-4">SKU / Ukuran / Warna</th>
-                            <th class="py-3 px-4 text-center">Stok Saat Ini</th>
-                            <th class="py-3 px-4 text-center">Kecepatan Demand (ML)</th>
-                            <th class="py-3 px-4 text-center">Estimasi Habis</th>
+                            <th class="py-3 px-4">Produk</th>
+                            <th class="py-3 px-4">Varian & SKU</th>
+                            <th class="py-3 px-4 text-center">Stok Fisik</th>
+                            <th class="py-3 px-4 text-center">Laju Penjualan</th>
+                            <th class="py-3 px-4 text-center">Ketahanan Stok</th>
                             <th class="py-3 px-4 text-center">Tingkat Risiko</th>
                             <th class="py-3 px-4 text-center">Saran Restock</th>
-                            <th class="py-3 px-4 text-right">Aksi Cepat</th>
+                            <th class="py-3 px-4 text-right">Tindakan</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                    <tbody class="divide-y divide-gray-100 dark:divide-gray-800 text-gray-600 dark:text-gray-300">
                         @forelse($this->forecastData as $item)
-                            <tr class="hover:bg-gray-50/70 dark:hover:bg-gray-800/40 transition">
+                            <tr class="hover:bg-gray-50/60 dark:hover:bg-gray-800/40 transition">
                                 <!-- Kolom Produk -->
-                                <td class="py-3.5 px-4">
+                                <td class="py-3 px-4">
                                     <div class="flex items-center gap-3">
                                         @if($item['image_url'])
-                                            <img src="{{ $item['image_url'] }}" alt="{{ $item['product_name'] }}" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700">
+                                            <img src="{{ $item['image_url'] }}" alt="{{ $item['product_name'] }}" class="w-9 h-9 rounded-lg object-cover border border-gray-200 dark:border-gray-700 shrink-0">
                                         @else
-                                            <div class="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400 text-xs">No Img</div>
+                                            <div class="w-9 h-9 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400 shrink-0">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                            </div>
                                         @endif
                                         <div>
-                                            <div class="font-bold text-gray-900 dark:text-white leading-snug">{{ $item['product_name'] }}</div>
-                                            <div class="text-xs text-gray-500">{{ $item['category_name'] }}</div>
+                                            <div class="font-bold text-gray-900 dark:text-white">{{ $item['product_name'] }}</div>
+                                            <span class="inline-block text-[10px] text-gray-400 uppercase tracking-wider">{{ $item['category_name'] }}</span>
                                         </div>
                                     </div>
                                 </td>
 
                                 <!-- Kolom Varian -->
-                                <td class="py-3.5 px-4">
-                                    <div class="flex items-center gap-1.5 flex-wrap">
-                                        <span class="inline-block px-2 py-0.5 rounded font-mono text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-700">{{ $item['size'] }}</span>
-                                        <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{ $item['color'] }}</span>
+                                <td class="py-3 px-4">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="px-1.5 py-0.5 rounded font-mono text-[10px] font-bold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700">{{ $item['size'] }}</span>
+                                        <span class="text-xs font-medium text-gray-800 dark:text-gray-200">{{ $item['color'] }}</span>
                                     </div>
-                                    <div class="text-[11px] font-mono text-gray-400 mt-0.5">{{ $item['sku'] }}</div>
+                                    <div class="text-[10px] font-mono text-gray-400 mt-0.5">{{ $item['sku'] }}</div>
                                 </td>
 
-                                <!-- Kolom Stok Saat Ini -->
-                                <td class="py-3.5 px-4 text-center">
-                                    <span class="font-bold text-base {{ $item['current_stock'] <= 5 ? 'text-red-600 dark:text-red-400' : 'text-gray-800 dark:text-gray-100' }}">
+                                <!-- Kolom Stok Fisik -->
+                                <td class="py-3 px-4 text-center">
+                                    <span class="font-bold text-sm {{ $item['current_stock'] <= 5 ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white' }}">
                                         {{ $item['current_stock'] }}
                                     </span>
-                                    <span class="text-xs text-gray-400">pcs</span>
+                                    <span class="text-[11px] text-gray-400">pcs</span>
                                 </td>
 
-                                <!-- Kolom Daily Demand -->
-                                <td class="py-3.5 px-4 text-center">
-                                    <div class="font-semibold text-gray-900 dark:text-white">~{{ $item['daily_demand'] }} <span class="text-xs text-gray-400">pcs/hari</span></div>
-                                    <div class="text-[11px] text-gray-400">Terjual 30h: {{ $item['sales_30d'] }} pcs</div>
+                                <!-- Kolom Laju Penjualan -->
+                                <td class="py-3 px-4 text-center">
+                                    <div class="flex items-center justify-center gap-1 font-semibold text-gray-900 dark:text-white">
+                                        <span>~{{ $item['daily_demand'] }}</span>
+                                        <span class="text-[10px] font-normal text-gray-400">pcs/hari</span>
+
+                                        @if($item['trend'] === 'rising')
+                                            <svg class="w-3 h-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                                        @elseif($item['trend'] === 'falling')
+                                            <svg class="w-3 h-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg>
+                                        @endif
+                                    </div>
+                                    <div class="text-[10px] text-gray-400">30 Hari: {{ $item['sales_30d'] }} pcs</div>
                                 </td>
 
-                                <!-- Kolom Estimasi Habis -->
-                                <td class="py-3.5 px-4 text-center">
+                                <!-- Kolom Ketahanan Stok -->
+                                <td class="py-3 px-4 text-center">
                                     @if($item['current_stock'] <= 0)
-                                        <span class="font-bold text-xs text-red-600 bg-red-100 dark:bg-red-900/40 px-2 py-1 rounded-md">Habis Total</span>
+                                        <span class="inline-block px-2 py-0.5 rounded text-[11px] font-bold text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-900">Habis</span>
                                     @elseif($item['days_until_stockout'] > 90)
-                                        <span class="text-xs text-gray-500">&gt; 3 bulan</span>
+                                        <span class="text-gray-400 text-xs">&gt; 90 Hari</span>
                                     @else
-                                        <span class="font-bold text-sm {{ $item['days_until_stockout'] <= 3 ? 'text-red-600' : ($item['days_until_stockout'] <= 7 ? 'text-amber-600' : 'text-green-600') }}">
+                                        <span class="font-bold text-xs {{ $item['days_until_stockout'] <= 3 ? 'text-red-600 dark:text-red-400' : ($item['days_until_stockout'] <= 7 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400') }}">
                                             {{ $item['days_until_stockout'] }} Hari
                                         </span>
                                     @endif
                                 </td>
 
                                 <!-- Kolom Tingkat Risiko -->
-                                <td class="py-3.5 px-4 text-center">
+                                <td class="py-3 px-4 text-center">
                                     @if($item['risk'] === 'CRITICAL')
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
-                                            🚨 Kritis
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-900/60">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-red-600"></span>
+                                            Kritis
                                         </span>
                                     @elseif($item['risk'] === 'WARNING')
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-                                            ⚠️ Waspada
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-900/60">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                            Waspada
                                         </span>
                                     @elseif($item['risk'] === 'SLOW_MOVING')
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                                            💤 Slow Moving
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                                            Slow Moving
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                                            🟢 Aman
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900/60">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                            Aman
                                         </span>
                                     @endif
                                 </td>
 
                                 <!-- Kolom Saran Restock -->
-                                <td class="py-3.5 px-4 text-center">
+                                <td class="py-3 px-4 text-center">
                                     @if($item['recommended_restock'] > 0)
-                                        <span class="font-extrabold text-sm text-[#FF5D00] bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800/50 px-2.5 py-1 rounded-lg">
-                                            + {{ $item['recommended_restock'] }} pcs
+                                        <span class="inline-block px-2.5 py-1 rounded-md text-xs font-bold text-orange-700 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800/60">
+                                            +{{ $item['recommended_restock'] }} pcs
                                         </span>
                                     @else
-                                        <span class="text-xs text-gray-400">Cukup</span>
+                                        <span class="text-gray-400 text-[11px]">-</span>
                                     @endif
                                 </td>
 
-                                <!-- Kolom Aksi -->
-                                <td class="py-3.5 px-4 text-right">
+                                <!-- Kolom Tindakan -->
+                                <td class="py-3 px-4 text-right">
                                     @if($item['recommended_restock'] > 0)
-                                        <a href="{{ $this->generatePoTemplate($item) }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-sm transition">
-                                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                                        <a href="{{ $this->generatePoTemplate($item) }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold text-white bg-emerald-600 hover:bg-emerald-500 shadow-sm transition">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                                             PO Konveksi
                                         </a>
                                     @else
-                                        <span class="text-xs text-gray-400 italic">-</span>
+                                        <span class="text-gray-400 text-xs">Tercukupi</span>
                                     @endif
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center py-8 text-gray-400">Tidak ada varian baju yang sesuai dengan filter yang dipilih.</td>
+                                <td colspan="8" class="text-center py-10 text-gray-400">
+                                    <div class="flex flex-col items-center justify-center gap-1">
+                                        <svg class="w-8 h-8 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                        <p class="text-xs">Tidak ditemukan varian yang sesuai dengan filter pencarian.</p>
+                                    </div>
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>
