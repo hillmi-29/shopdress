@@ -70,8 +70,8 @@
             <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-orange-500/5 rounded-full blur-2xl pointer-events-none"></div>
         </div>
 
-        <!-- TOP ROW: Two Visual Analytics Cards -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- TOP ROW: Two Visual Analytics Cards (Side-by-Side from md: breakpoint) -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
             <!-- 1. Donut Chart Widget: Distribusi Risiko Ketahanan Stok -->
             @php
                 $dist = $this->riskDistribution;
@@ -85,7 +85,7 @@
                 $warnCirc = round((339.29 * $warnPct) / 100, 2);
                 $critCirc = round((339.29 * $critPct) / 100, 2);
             @endphp
-            <div class="lg:col-span-5 bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-xs flex flex-col justify-between">
+            <div class="md:col-span-5 bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-xs flex flex-col justify-between h-full">
                 <div>
                     <div class="flex items-start justify-between">
                         <div>
@@ -99,9 +99,9 @@
                     </p>
                 </div>
 
-                <div class="my-6 flex flex-col sm:flex-row items-center justify-center gap-6">
+                <div class="my-5 flex flex-row items-center justify-between gap-4">
                     <!-- Inline Donut SVG Chart -->
-                    <div class="relative w-44 h-44 flex items-center justify-center shrink-0">
+                    <div class="relative w-36 h-36 xl:w-40 xl:h-40 flex items-center justify-center shrink-0">
                         <svg class="w-full h-full -rotate-90" viewBox="0 0 140 140">
                             <!-- Background Track -->
                             <circle cx="70" cy="70" fill="transparent" r="54" stroke="#F1F5F9" stroke-width="16"></circle>
@@ -117,48 +117,48 @@
                             @endif
                         </svg>
                         <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
-                            <span class="text-[10px] font-caption text-neutral-muted uppercase tracking-tight">KONDISI DOMINAN</span>
-                            <span class="font-headline-sm text-neutral-heading text-2xl font-bold my-0.5 leading-none">
+                            <span class="text-[9px] font-caption text-neutral-muted uppercase tracking-tight">KONDISI DOMINAN</span>
+                            <span class="font-headline-sm text-neutral-heading text-xl font-bold my-0.5 leading-none">
                                 {{ $safePct }}%
                             </span>
-                            <span class="text-xs font-semibold text-accent-emerald leading-tight">
+                            <span class="text-[11px] font-semibold text-accent-emerald leading-tight">
                                 Stok Aman
                             </span>
                         </div>
                     </div>
 
                     <!-- 4 Legend Cards Stacked -->
-                    <div class="w-full sm:w-auto flex-1 space-y-2">
+                    <div class="flex-1 space-y-2 min-w-0">
                         <div class="flex items-center justify-between p-2 px-3 rounded-xl bg-status-critical-subtle cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('CRITICAL')">
-                            <div class="flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full bg-status-critical shrink-0"></span>
-                                <span class="text-xs font-medium text-neutral-heading">Kritis (&lt; 7 Hari)</span>
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                <span class="w-2 h-2 rounded-full bg-status-critical shrink-0"></span>
+                                <span class="text-[11px] font-medium text-neutral-heading truncate">Kritis (&lt; 7 Hari)</span>
                             </div>
-                            <span class="text-xs font-bold text-status-critical">{{ $critPct }}%</span>
+                            <span class="text-xs font-bold text-status-critical shrink-0 ml-1">{{ $critPct }}%</span>
                         </div>
 
                         <div class="flex items-center justify-between p-2 px-3 rounded-xl bg-status-warning-subtle cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('WARNING')">
-                            <div class="flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full bg-status-warning shrink-0"></span>
-                                <span class="text-xs font-medium text-neutral-heading">Waspada (7–14 Hari)</span>
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                <span class="w-2 h-2 rounded-full bg-status-warning shrink-0"></span>
+                                <span class="text-[11px] font-medium text-neutral-heading truncate">Waspada (7–14 Hari)</span>
                             </div>
-                            <span class="text-xs font-bold text-status-warning">{{ $warnPct }}%</span>
+                            <span class="text-xs font-bold text-status-warning shrink-0 ml-1">{{ $warnPct }}%</span>
                         </div>
 
                         <div class="flex items-center justify-between p-2 px-3 rounded-xl bg-accent-emerald-subtle cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('SAFE')">
-                            <div class="flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full bg-accent-emerald shrink-0"></span>
-                                <span class="text-xs font-medium text-neutral-heading">Aman (15–45 Hari)</span>
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                <span class="w-2 h-2 rounded-full bg-accent-emerald shrink-0"></span>
+                                <span class="text-[11px] font-medium text-neutral-heading truncate">Aman (15–45 Hari)</span>
                             </div>
-                            <span class="text-xs font-bold text-accent-emerald">{{ $safePct }}%</span>
+                            <span class="text-xs font-bold text-accent-emerald shrink-0 ml-1">{{ $safePct }}%</span>
                         </div>
 
                         <div class="flex items-center justify-between p-2 px-3 rounded-xl bg-surface-soft cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('SLOW_MOVING')">
-                            <div class="flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full bg-neutral-muted shrink-0"></span>
-                                <span class="text-xs font-medium text-neutral-heading">Stok Mengendap (&gt;60)</span>
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                <span class="w-2 h-2 rounded-full bg-neutral-muted shrink-0"></span>
+                                <span class="text-[11px] font-medium text-neutral-heading truncate">Stok Mengendap (&gt;60)</span>
                             </div>
-                            <span class="text-xs font-bold text-neutral-muted">{{ $slowPct }}%</span>
+                            <span class="text-xs font-bold text-neutral-muted shrink-0 ml-1">{{ $slowPct }}%</span>
                         </div>
                     </div>
                 </div>
@@ -170,7 +170,7 @@
             </div>
 
             <!-- 2. Bar Chart Widget: Stok Fisik Tersedia vs Saran Order Restock per Kategori -->
-            <div class="lg:col-span-7 bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-xs flex flex-col justify-between">
+            <div class="md:col-span-7 bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-xs flex flex-col justify-between h-full">
                 <div>
                     <div>
                         <span class="text-[11px] font-caption uppercase tracking-wider text-neutral-muted">CATEGORY INVENTORY VELOCITY</span>
@@ -193,7 +193,7 @@
                 </div>
 
                 <!-- Category Horizontal Bar Chart Visualization -->
-                <div class="my-5 space-y-3.5">
+                <div class="my-5 space-y-3">
                     @foreach($this->categoryStats as $cat)
                         <div class="space-y-1">
                             <div class="flex justify-between items-center text-xs">
@@ -203,7 +203,7 @@
                                     &bull; Saran: <strong class="text-primary font-bold">{{ $cat['restock'] }} pcs</strong>
                                 </span>
                             </div>
-                            <div class="h-4.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex items-center p-0.5">
+                            <div class="h-4 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex items-center p-0.5">
                                 <div class="h-full bg-[#0d1c2f] dark:bg-slate-200 rounded-full transition-all duration-300" style="width: {{ $cat['bar_width'] }}%;"></div>
                                 @if($cat['restock_width'] > 0)
                                     <div class="h-full bg-primary-container rounded-full ml-1 transition-all duration-300" style="width: {{ $cat['restock_width'] }}%;"></div>
