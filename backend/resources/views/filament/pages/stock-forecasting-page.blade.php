@@ -41,42 +41,7 @@
         .dark .border-neutral-border-subtle { border-color: #374151; }
     </style>
 
-    <div class="space-y-6 -mt-3">
-        <!-- Sub-header Operational Status Strip -->
-        <div class="p-5 rounded-2xl bg-surface-container-lowest shadow-xs border border-gray-100 dark:border-gray-800 flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="flex items-center justify-center w-11 h-11 rounded-xl bg-primary-subtle text-primary shrink-0">
-                    <span class="material-symbols-outlined text-2xl">insights</span>
-                </div>
-                <div>
-                    <nav class="flex items-center gap-2 text-caption font-caption text-neutral-muted">
-                        <span>Admin Console</span>
-                        <span class="material-symbols-outlined text-xs">chevron_right</span>
-                        <span>Inventory Intelligence</span>
-                        <span class="material-symbols-outlined text-xs">chevron_right</span>
-                        <span class="text-neutral-heading font-medium">Demand Forecast</span>
-                    </nav>
-                    <h1 class="font-headline-sm text-neutral-heading mt-0.5 tracking-tight">AI Demand Forecasting & Restock Alert</h1>
-                </div>
-            </div>
-
-            <!-- Algorithm Run Metadata & Quick Controls -->
-            <div class="flex items-center gap-3">
-                <div class="hidden sm:flex flex-col text-right">
-                    <span class="text-caption font-caption text-neutral-muted">Model State: <strong class="text-accent-emerald font-semibold">Active &bull; Synced</strong></span>
-                    <span class="text-caption font-caption text-neutral-muted">Weighted Moving Average (Alpha: 0.35)</span>
-                </div>
-                <button wire:click="resetFilters" type="button" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-soft hover:bg-gray-100 dark:hover:bg-gray-800 text-neutral-heading text-label-md font-label-md transition active:scale-95 cursor-pointer">
-                    <span class="material-symbols-outlined text-sm text-primary">tune</span>
-                    <span>Reset Filter</span>
-                </button>
-                <button wire:click="recomputeAi" type="button" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-container hover:bg-primary-hover text-white text-label-md font-label-md shadow-xs transition active:scale-95 cursor-pointer">
-                    <span class="material-symbols-outlined text-sm">refresh</span>
-                    <span>Re-compute AI</span>
-                </button>
-            </div>
-        </div>
-
+    <div class="space-y-6">
         <!-- Context Banner -->
         <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-surface-container-lowest via-surface-soft to-surface-container-lowest p-6 border border-gray-100 dark:border-gray-800 shadow-xs">
             <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -92,8 +57,12 @@
                         Memproyeksikan laju pengurangan unit per SKU berdasarkan bobot penjualan 14 hari terakhir, lead time konveksi 7 hari kerja, dan margin biaya penyimpanan optimal.
                     </p>
                 </div>
-                <div class="flex items-center gap-2 self-start md:self-auto shrink-0">
-                    <div class="px-4 py-3 rounded-xl bg-surface-container-lowest border border-gray-100 dark:border-gray-800 shadow-xs flex items-center gap-3">
+                <div class="flex items-center gap-3 self-start md:self-auto shrink-0">
+                    <button wire:click="recomputeAi" type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-primary-container hover:bg-primary-hover text-white text-xs font-semibold shadow-xs transition active:scale-95 cursor-pointer">
+                        <span class="material-symbols-outlined text-sm">refresh</span>
+                        <span>Re-compute AI</span>
+                    </button>
+                    <div class="px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-gray-100 dark:border-gray-800 shadow-xs flex items-center gap-3">
                         <span class="material-symbols-outlined text-primary text-2xl">warehouse</span>
                         <div>
                             <p class="text-caption font-caption text-neutral-muted">Total SKU Aktif</p>
