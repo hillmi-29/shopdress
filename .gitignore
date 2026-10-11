@@ -1,0 +1,21 @@
+# Large files & Reference dumps (GitHub has a 100MB file limit)
+*.zip
+*.sql
+matriexled/
+matriexled.zip
+matrixle_wp182.sql
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Laravel backend specific
+backend/.env
+backend/.env.backup
+backend/.env.production
+backend/vendor/
+backend/node_modules/
+backend/public/storage
+backend/storage/*.key
+backend/database/*.sqlite
+backend/database/*.sqlite-journal
