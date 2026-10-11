@@ -29,81 +29,45 @@
             </div>
         </div>
 
-        <!-- 4 Metric KPI Cards (Clean, Professional, No Emojis) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- Card 1: Critical -->
-            <div class="rounded-xl border border-red-200 dark:border-red-900/60 bg-white dark:bg-gray-900 p-5 shadow-sm relative overflow-hidden">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-red-600 dark:text-red-400">Restock Kritis</span>
-                    <div class="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-950/60 flex items-center justify-center text-red-600">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                    </div>
+        <!-- 4 Compact Key Indicators -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="flex items-center gap-3 p-3.5 rounded-xl border border-red-200 dark:border-red-900/60 bg-red-50/50 dark:bg-red-950/20">
+                <div class="w-9 h-9 rounded-lg bg-red-100 dark:bg-red-900/50 flex items-center justify-center text-red-600 shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                 </div>
-                <div class="mt-4">
-                    <div class="text-3xl font-extrabold text-gray-950 dark:text-white">
-                        {{ $this->metrics['critical_count'] ?? 0 }}
-                        <span class="text-sm font-normal text-gray-500">Varian</span>
-                    </div>
-                    <p class="text-xs text-red-600 dark:text-red-400 mt-1.5 flex items-center gap-1">
-                        <span>Habis atau tersisa &le; 3 hari</span>
-                    </p>
+                <div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">Restock Kritis</div>
+                    <div class="text-lg font-black text-red-700 dark:text-red-300 leading-tight">{{ $this->metrics['critical_count'] ?? 0 }} <span class="text-xs font-normal text-gray-500">Varian</span></div>
                 </div>
             </div>
 
-            <!-- Card 2: Warning -->
-            <div class="rounded-xl border border-amber-200 dark:border-amber-900/60 bg-white dark:bg-gray-900 p-5 shadow-sm relative overflow-hidden">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">Peringatan Waspada</span>
-                    <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/60 flex items-center justify-center text-amber-600">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    </div>
+            <div class="flex items-center gap-3 p-3.5 rounded-xl border border-amber-200 dark:border-amber-900/60 bg-amber-50/50 dark:bg-amber-950/20">
+                <div class="w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center text-amber-600 shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
-                <div class="mt-4">
-                    <div class="text-3xl font-extrabold text-gray-950 dark:text-white">
-                        {{ $this->metrics['warning_count'] ?? 0 }}
-                        <span class="text-sm font-normal text-gray-500">Varian</span>
-                    </div>
-                    <p class="text-xs text-amber-600 dark:text-amber-400 mt-1.5">
-                        Habis dalam 4 sampai 7 hari
-                    </p>
+                <div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">Peringatan Waspada</div>
+                    <div class="text-lg font-black text-amber-700 dark:text-amber-300 leading-tight">{{ $this->metrics['warning_count'] ?? 0 }} <span class="text-xs font-normal text-gray-500">Varian</span></div>
                 </div>
             </div>
 
-            <!-- Card 3: Slow Moving -->
-            <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-gray-900 p-5 shadow-sm relative overflow-hidden">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Stok Mengendap</span>
-                    <div class="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-500">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                    </div>
+            <div class="flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30">
+                <div class="w-9 h-9 rounded-lg bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-600 shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                 </div>
-                <div class="mt-4">
-                    <div class="text-3xl font-extrabold text-gray-950 dark:text-white">
-                        {{ $this->metrics['slow_moving_count'] ?? 0 }}
-                        <span class="text-sm font-normal text-gray-500">Varian</span>
-                    </div>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1.5">
-                        Rekomendasi diskon atau bundling
-                    </p>
+                <div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">Stok Mengendap</div>
+                    <div class="text-lg font-black text-slate-800 dark:text-slate-200 leading-tight">{{ $this->metrics['slow_moving_count'] ?? 0 }} <span class="text-xs font-normal text-gray-500">Varian</span></div>
                 </div>
             </div>
 
-            <!-- Card 4: Recommended Restock Quantity -->
-            <div class="rounded-xl border border-emerald-200 dark:border-emerald-900/60 bg-white dark:bg-gray-900 p-5 shadow-sm relative overflow-hidden">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Saran Total Restock</span>
-                    <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 flex items-center justify-center text-emerald-600">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                    </div>
+            <div class="flex items-center gap-3 p-3.5 rounded-xl border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/20">
+                <div class="w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center text-emerald-600 shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                 </div>
-                <div class="mt-4">
-                    <div class="text-3xl font-extrabold text-gray-950 dark:text-white">
-                        {{ number_format($this->metrics['total_restock_units'] ?? 0, 0, ',', '.') }}
-                        <span class="text-sm font-normal text-gray-500">Pcs</span>
-                    </div>
-                    <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-1.5">
-                        Target kebutuhan produksi 10 hari
-                    </p>
+                <div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">Saran Total Restock</div>
+                    <div class="text-lg font-black text-emerald-700 dark:text-emerald-300 leading-tight">{{ number_format($this->metrics['total_restock_units'] ?? 0, 0, ',', '.') }} <span class="text-xs font-normal text-gray-500">Pcs</span></div>
                 </div>
             </div>
         </div>

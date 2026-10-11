@@ -23,6 +23,22 @@ class StockForecastingPage extends Page
 
     protected static string $view = 'filament.pages.stock-forecasting-page';
 
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            \App\Filament\Widgets\StockRiskChartWidget::class,
+            \App\Filament\Widgets\CategoryRestockDemandChartWidget::class,
+        ];
+    }
+
+    public function getHeaderWidgetsColumns(): int | array
+    {
+        return [
+            'md' => 2,
+            'xl' => 2,
+        ];
+    }
+
     public ?string $selectedCategory = null;
 
     public ?string $selectedRisk = null;
