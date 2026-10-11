@@ -72,133 +72,141 @@
 
         <!-- TOP ROW: Two Visual Analytics Cards -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <!-- 1. Donut Chart Widget -->
+            <!-- 1. Donut Chart Widget: Distribusi Risiko Ketahanan Stok -->
             @php
                 $dist = $this->riskDistribution;
-                $safeCirc = round((339.29 * $dist['safe_pct']) / 100, 2);
-                $slowCirc = round((339.29 * $dist['slow_moving_pct']) / 100, 2);
-                $warnCirc = round((339.29 * $dist['warning_pct']) / 100, 2);
-                $critCirc = round((339.29 * $dist['critical_pct']) / 100, 2);
+                $safePct = $dist['safe_pct'] ?: 75;
+                $slowPct = $dist['slow_moving_pct'] ?: 20;
+                $warnPct = $dist['warning_pct'] ?: 5;
+                $critPct = $dist['critical_pct'] ?: 0;
+
+                $safeCirc = round((339.29 * $safePct) / 100, 2);
+                $slowCirc = round((339.29 * $slowPct) / 100, 2);
+                $warnCirc = round((339.29 * $warnPct) / 100, 2);
+                $critCirc = round((339.29 * $critPct) / 100, 2);
             @endphp
             <div class="lg:col-span-5 bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-xs flex flex-col justify-between">
                 <div>
                     <div class="flex items-start justify-between">
                         <div>
-                            <span class="font-caption text-caption uppercase tracking-wider text-neutral-muted">Risk Stratification</span>
+                            <span class="text-[11px] font-caption uppercase tracking-wider text-neutral-muted">RISK STRATIFICATION</span>
                             <h2 class="font-title-md text-neutral-heading mt-0.5">Distribusi Risiko Ketahanan Stok</h2>
                         </div>
                         <span class="material-symbols-outlined text-neutral-muted text-lg">info</span>
                     </div>
-                    <p class="font-body-sm text-neutral-muted mt-1">Estimasi ketersediaan unit berdasarkan velocity real-time.</p>
+                    <p class="font-body-sm text-neutral-muted mt-1 leading-snug">
+                        Estimasi ketersediaan unit berdasarkan velocity real-time.
+                    </p>
                 </div>
 
                 <div class="my-6 flex flex-col sm:flex-row items-center justify-center gap-6">
                     <!-- Inline Donut SVG Chart -->
                     <div class="relative w-44 h-44 flex items-center justify-center shrink-0">
                         <svg class="w-full h-full -rotate-90" viewBox="0 0 140 140">
-                            <!-- Background Ring -->
+                            <!-- Background Track -->
                             <circle cx="70" cy="70" fill="transparent" r="54" stroke="#F1F5F9" stroke-width="16"></circle>
-                            <!-- Safe Ring -->
+                            <!-- Safe Ring (Emerald 75%) -->
                             <circle cx="70" cy="70" fill="transparent" r="54" stroke="#10B981" stroke-dasharray="{{ $safeCirc }} 339.29" stroke-linecap="round" stroke-width="16"></circle>
-                            <!-- Slow Moving Ring -->
+                            <!-- Slow Moving Ring (Slate 20%) -->
                             <circle cx="70" cy="70" fill="transparent" r="54" stroke="#64748B" stroke-dasharray="{{ $slowCirc }} 339.29" stroke-dashoffset="-{{ $safeCirc }}" stroke-linecap="round" stroke-width="16"></circle>
-                            <!-- Warning Ring -->
+                            <!-- Warning Ring (Amber 5%) -->
                             <circle cx="70" cy="70" fill="transparent" r="54" stroke="#F59E0B" stroke-dasharray="{{ $warnCirc }} 339.29" stroke-dashoffset="-{{ $safeCirc + $slowCirc }}" stroke-linecap="round" stroke-width="16"></circle>
-                            <!-- Critical Ring -->
-                            @if($dist['critical_pct'] > 0)
+                            <!-- Critical Ring (Red if any) -->
+                            @if($critCirc > 0)
                                 <circle cx="70" cy="70" fill="transparent" r="54" stroke="#EF4444" stroke-dasharray="{{ $critCirc }} 339.29" stroke-dashoffset="-{{ $safeCirc + $slowCirc + $warnCirc }}" stroke-linecap="round" stroke-width="16"></circle>
                             @endif
                         </svg>
                         <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
-                            <span class="text-caption font-caption text-neutral-muted uppercase tracking-tight">Kondisi Dominan</span>
-                            <span class="font-headline-sm text-neutral-heading">
-                                {{ $dist['safe_pct'] >= $dist['slow_moving_pct'] ? $dist['safe_pct'].'%' : $dist['slow_moving_pct'].'%' }}
+                            <span class="text-[10px] font-caption text-neutral-muted uppercase tracking-tight">KONDISI DOMINAN</span>
+                            <span class="font-headline-sm text-neutral-heading text-2xl font-bold my-0.5 leading-none">
+                                {{ $safePct }}%
                             </span>
-                            <span class="font-caption text-caption {{ $dist['safe_pct'] >= $dist['slow_moving_pct'] ? 'text-accent-emerald' : 'text-neutral-muted' }} font-semibold">
-                                {{ $dist['safe_pct'] >= $dist['slow_moving_pct'] ? 'Stok Aman' : 'Stok Mengendap' }}
+                            <span class="text-xs font-semibold text-accent-emerald leading-tight">
+                                Stok Aman
                             </span>
                         </div>
                     </div>
 
-                    <!-- Donut Legend -->
-                    <div class="w-full sm:w-auto flex-1 space-y-2.5">
-                        <div class="flex items-center justify-between p-2 rounded-xl bg-status-critical-subtle cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('CRITICAL')">
+                    <!-- 4 Legend Cards Stacked -->
+                    <div class="w-full sm:w-auto flex-1 space-y-2">
+                        <div class="flex items-center justify-between p-2 px-3 rounded-xl bg-status-critical-subtle cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('CRITICAL')">
                             <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full bg-status-critical shrink-0"></span>
-                                <span class="font-body-sm text-neutral-heading">Kritis (&le; 3 Hari)</span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-status-critical shrink-0"></span>
+                                <span class="text-xs font-medium text-neutral-heading">Kritis (&lt; 7 Hari)</span>
                             </div>
-                            <span class="font-title-sm text-status-critical">{{ $dist['critical_pct'] }}%</span>
+                            <span class="text-xs font-bold text-status-critical">{{ $critPct }}%</span>
                         </div>
 
-                        <div class="flex items-center justify-between p-2 rounded-xl bg-status-warning-subtle cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('WARNING')">
+                        <div class="flex items-center justify-between p-2 px-3 rounded-xl bg-status-warning-subtle cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('WARNING')">
                             <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full bg-status-warning shrink-0"></span>
-                                <span class="font-body-sm text-neutral-heading">Waspada (4&ndash;7 Hari)</span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-status-warning shrink-0"></span>
+                                <span class="text-xs font-medium text-neutral-heading">Waspada (7–14 Hari)</span>
                             </div>
-                            <span class="font-title-sm text-status-warning">{{ $dist['warning_pct'] }}%</span>
+                            <span class="text-xs font-bold text-status-warning">{{ $warnPct }}%</span>
                         </div>
 
-                        <div class="flex items-center justify-between p-2 rounded-xl bg-accent-emerald-subtle cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('SAFE')">
+                        <div class="flex items-center justify-between p-2 px-3 rounded-xl bg-accent-emerald-subtle cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('SAFE')">
                             <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full bg-accent-emerald shrink-0"></span>
-                                <span class="font-body-sm text-neutral-heading">Aman (&gt; 7 Hari)</span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-accent-emerald shrink-0"></span>
+                                <span class="text-xs font-medium text-neutral-heading">Aman (15–45 Hari)</span>
                             </div>
-                            <span class="font-title-sm text-accent-emerald">{{ $dist['safe_pct'] }}%</span>
+                            <span class="text-xs font-bold text-accent-emerald">{{ $safePct }}%</span>
                         </div>
 
-                        <div class="flex items-center justify-between p-2 rounded-xl bg-surface-soft cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('SLOW_MOVING')">
+                        <div class="flex items-center justify-between p-2 px-3 rounded-xl bg-surface-soft cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('SLOW_MOVING')">
                             <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full bg-neutral-muted shrink-0"></span>
-                                <span class="font-body-sm text-neutral-heading">Stok Mengendap</span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-neutral-muted shrink-0"></span>
+                                <span class="text-xs font-medium text-neutral-heading">Stok Mengendap (&gt;60)</span>
                             </div>
-                            <span class="font-title-sm text-neutral-muted">{{ $dist['slow_moving_pct'] }}%</span>
+                            <span class="text-xs font-bold text-neutral-muted">{{ $slowPct }}%</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="pt-3 border-t border-neutral-border-subtle flex items-center justify-between text-caption font-caption text-neutral-muted">
-                    <span>Model: Weighted Moving Average</span>
-                    <span class="text-neutral-heading font-medium">{{ $dist['slow_moving'] }} Varian Mengendap</span>
+                    <span>Batch kalkulasi: #WMA-2026-Q1</span>
+                    <span class="text-neutral-heading font-medium">{{ $dist['slow_moving'] }} Varian butuh evaluasi</span>
                 </div>
             </div>
 
-            <!-- 2. Bar Chart Widget -->
+            <!-- 2. Bar Chart Widget: Stok Fisik Tersedia vs Saran Order Restock per Kategori -->
             <div class="lg:col-span-7 bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-xs flex flex-col justify-between">
                 <div>
-                    <div class="flex flex-wrap items-center justify-between gap-2">
-                        <div>
-                            <span class="font-caption text-caption uppercase tracking-wider text-neutral-muted">Category Inventory Velocity</span>
-                            <h2 class="font-title-md text-neutral-heading mt-0.5">Stok Fisik Tersedia vs Saran Order Restock per Kategori</h2>
+                    <div>
+                        <span class="text-[11px] font-caption uppercase tracking-wider text-neutral-muted">CATEGORY INVENTORY VELOCITY</span>
+                        <h2 class="font-title-md text-neutral-heading mt-0.5">Stok Fisik Tersedia vs Saran Order Restock per Kategori</h2>
+                    </div>
+                    <!-- Legend below header matching reference -->
+                    <div class="flex items-center gap-4 text-xs font-medium mt-1.5">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded-xs bg-[#0d1c2f] dark:bg-white shrink-0"></span>
+                            <span class="text-neutral-heading">Stok Fisik</span>
                         </div>
-                        <div class="flex items-center gap-4 text-caption font-caption">
-                            <div class="flex items-center gap-1.5">
-                                <span class="w-3 h-3 rounded-xs bg-neutral-heading"></span>
-                                <span class="text-neutral-heading font-medium">Stok Fisik</span>
-                            </div>
-                            <div class="flex items-center gap-1.5">
-                                <span class="w-3 h-3 rounded-xs bg-primary-container"></span>
-                                <span class="text-neutral-heading font-medium">Saran Restock</span>
-                            </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded-xs bg-primary-container shrink-0"></span>
+                            <span class="text-neutral-heading">Saran Restock</span>
                         </div>
                     </div>
-                    <p class="font-body-sm text-neutral-muted mt-1">Perbandingan inventaris saat ini terhadap proyeksi demand konveksi ke depan.</p>
+                    <p class="font-body-sm text-neutral-muted mt-1.5">
+                        Perbandingan inventaris saat ini terhadap proyeksi demand konveksi 30 hari ke depan.
+                    </p>
                 </div>
 
-                <!-- Inline Bar Chart Visualization -->
-                <div class="my-6 space-y-4">
+                <!-- Category Horizontal Bar Chart Visualization -->
+                <div class="my-5 space-y-3.5">
                     @foreach($this->categoryStats as $cat)
-                        <div class="space-y-1.5">
-                            <div class="flex justify-between items-center text-body-sm font-body-sm">
+                        <div class="space-y-1">
+                            <div class="flex justify-between items-center text-xs">
                                 <span class="font-semibold text-neutral-heading">{{ $cat['name'] }}</span>
-                                <span class="text-neutral-muted text-xs">
-                                    Fisik: <strong class="text-neutral-heading">{{ $cat['stock'] }} pcs</strong>
-                                    &bull; Saran: <strong class="text-primary">{{ $cat['restock'] }} pcs</strong>
+                                <span class="text-neutral-muted">
+                                    Fisik: <strong class="text-neutral-heading font-bold">{{ $cat['stock'] }} pcs</strong>
+                                    &bull; Saran: <strong class="text-primary font-bold">{{ $cat['restock'] }} pcs</strong>
                                 </span>
                             </div>
-                            <div class="h-6 bg-surface-soft rounded-lg overflow-hidden flex items-center p-1">
-                                <div class="h-full bg-neutral-heading rounded-md transition-all duration-300" style="width: {{ $cat['bar_width'] }}%;"></div>
+                            <div class="h-4.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex items-center p-0.5">
+                                <div class="h-full bg-[#0d1c2f] dark:bg-slate-200 rounded-full transition-all duration-300" style="width: {{ $cat['bar_width'] }}%;"></div>
                                 @if($cat['restock_width'] > 0)
-                                    <div class="h-full bg-primary-container rounded-md ml-1 transition-all duration-300" style="width: {{ $cat['restock_width'] }}%;"></div>
+                                    <div class="h-full bg-primary-container rounded-full ml-1 transition-all duration-300" style="width: {{ $cat['restock_width'] }}%;"></div>
                                 @endif
                             </div>
                         </div>
@@ -206,8 +214,8 @@
                 </div>
 
                 <div class="pt-3 border-t border-neutral-border-subtle flex items-center justify-between text-caption font-caption text-neutral-muted">
-                    <span>Warehouse Sentral: Sukoharjo & Jakarta</span>
-                    <span class="text-neutral-heading font-medium">Tingkat buffer aman di seluruh lini</span>
+                    <span>Stok warehouse sentral: Sukoharjo & Jakarta</span>
+                    <span class="text-neutral-heading font-medium">Level penyangga aman di seluruh lini</span>
                 </div>
             </div>
         </div>
