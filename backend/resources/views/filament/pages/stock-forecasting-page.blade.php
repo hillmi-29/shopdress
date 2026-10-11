@@ -364,16 +364,17 @@
                 </div>
 
                 <!-- Bottom: Cohesive & Beautiful Filter Toolbar -->
-                <div class="mt-4 pt-4 border-t border-neutral-border-subtle flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-                    <!-- Left: Search Box & Category Dropdown -->
-                    <div class="flex flex-wrap items-center gap-2.5">
-                        <!-- Search Box with pinned SVG icon -->
-                        <div class="relative w-full sm:w-64">
+                <div class="mt-4 pt-4 border-t border-neutral-border-subtle flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <!-- Left: Search Box & Category Dropdown in one line -->
+                    <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
+                        <!-- Search Box with pinned SVG icon & forced padding -->
+                        <div class="relative w-64 shrink-0">
                             <input 
                                 type="text" 
                                 wire:model.live.debounce.300ms="search" 
                                 placeholder="Cari varian, warna, SKU..." 
-                                class="w-full text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-surface-soft text-neutral-heading pl-9 pr-3 py-2 focus:ring-2 focus:ring-primary-container focus:border-primary-container transition"
+                                style="padding-left: 2.5rem !important; height: 38px !important;"
+                                class="w-full text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-surface-soft text-neutral-heading pr-3 focus:ring-2 focus:ring-primary-container focus:border-primary-container transition"
                             />
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-muted">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -382,28 +383,24 @@
                             </div>
                         </div>
 
-                        <!-- Category Selector Dropdown -->
-                        <div class="relative">
+                        <!-- Category Selector Dropdown (Clean, single chevron, same height) -->
+                        <div class="w-48 shrink-0">
                             <select 
                                 wire:model.live="selectedCategory" 
-                                class="text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-surface-soft text-neutral-heading py-2 pl-3 pr-8 focus:ring-2 focus:ring-primary-container focus:border-primary-container transition appearance-none">
+                                style="height: 38px !important;"
+                                class="w-full text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-surface-soft text-neutral-heading px-3 focus:ring-2 focus:ring-primary-container focus:border-primary-container transition">
                                 <option value="ALL">Semua Kategori</option>
                                 @foreach($this->categories as $c)
                                     <option value="{{ $c->slug }}">{{ $c->name }}</option>
                                 @endforeach
                             </select>
-                            <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none text-neutral-muted">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                </svg>
-                            </div>
                         </div>
 
                         @if(!empty($this->selectedRisk) || !empty($this->selectedCategory) || !empty($this->search))
                             <button 
                                 type="button" 
                                 wire:click="resetFilters" 
-                                class="text-xs text-primary hover:underline font-medium px-2 py-1 transition cursor-pointer">
+                                class="text-xs text-primary hover:underline font-medium px-2 py-1 transition cursor-pointer whitespace-nowrap">
                                 Reset Filter
                             </button>
                         @endif
