@@ -25,18 +25,7 @@ class StockForecastingPage extends Page
 
     protected function getHeaderWidgets(): array
     {
-        return [
-            \App\Filament\Widgets\StockRiskChartWidget::class,
-            \App\Filament\Widgets\CategoryRestockDemandChartWidget::class,
-        ];
-    }
-
-    public function getHeaderWidgetsColumns(): int | array
-    {
-        return [
-            'md' => 2,
-            'xl' => 2,
-        ];
+        return [];
     }
 
     public ?string $selectedCategory = null;
@@ -76,6 +65,78 @@ class StockForecastingPage extends Page
         }
 
         return $data->values();
+    }
+
+    public function getRiskDistributionProperty(): array
+    {
+        $service = app(StockForecastingService::class);
+        $forecasts = $service->getForecastAnalysis();
+        $total = $forecasts->count();
+
+        $critical = $forecasts->where('risk', 'CRITICAL')->count();
+        $warning = $forecasts->where('risk', 'WARNING')->count();
+        $slowMoving = $forecasts->where('risk', 'SLOW_MOVING')->count();
+        $safe = $forecasts->where('risk', 'SAFE')->count();
+
+        $safePct = $total > 0 ? round(($safe / $total) * 100) : 0;
+        $slowMovingPct = $total > 0 ? round(($slowMoving / $total) * 100) : 0;
+        $warningPct = $total > 0 ? round(($warning / $total) * 100) : 0;
+        $criticalPct = $total > 0 ? round(($critical / $total) * 100) : 0;
+
+        return [
+            'total' => $total,
+            'critical' => $critical,
+            'critical_pct' => $criticalPct,
+            'warning' => $warning,
+            'warning_pct' => $warningPct,
+            'slow_moving' => $slowMoving,
+            'slow_moving_pct' => $slowMovingPct,
+            'safe' => $safe,
+            'safe_pct' => $safePct,
+        ];
+    }
+
+    public function getCategoryStatsProperty(): Collection
+    {
+        $service = app(StockForecastingService::class);
+        $forecasts = $service->getForecastAnalysis();
+        $categories = Category::all();
+        $maxStock = 1;
+
+        $stats = $categories->map(function ($cat) use ($forecasts) {
+            $catForecasts = $forecasts->where('category_name', $cat->name);
+            $stock = (int) $catForecasts->sum('current_stock');
+            $restock = (int) $catForecasts->sum('recommended_restock');
+
+            return [
+                'name' => $cat->name,
+                'stock' => $stock,
+                'restock' => $restock,
+            ];
+        });
+
+        $highest = $stats->max('stock') ?: 1;
+
+        return $stats->map(function ($item) use ($highest) {
+            $item['bar_width'] = min(100, max(5, round(($item['stock'] / $highest) * 85)));
+            $item['restock_width'] = $item['restock'] > 0 ? min(30, max(5, round(($item['restock'] / $highest) * 85))) : 0;
+            return $item;
+        });
+    }
+
+    public function setRiskFilter(?string $risk): void
+    {
+        $this->selectedRisk = $risk;
+    }
+
+    public function recomputeAi(): void
+    {
+        $service = app(StockForecastingService::class);
+        $this->metrics = $service->getSummaryMetrics();
+        $this->dispatch('notify', [
+            'status' => 'success',
+            'message' => 'Kalkulasi WMA & EOQ berhasil diperbarui.',
+        ]);
     }
 
     public function resetFilters(): void

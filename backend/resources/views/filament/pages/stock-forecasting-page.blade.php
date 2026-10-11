@@ -1,187 +1,585 @@
 <x-filament-panels::page>
-    <div class="space-y-5">
-        <!-- 4 Metric KPI Cards Matching User Reference -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- Card 1: Restock Kritis -->
-            <div class="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 shadow-sm flex items-center gap-3.5 transition hover:shadow-md">
-                <div class="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-950/60 flex items-center justify-center text-red-500 shrink-0">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
+    <style>
+        .font-headline-sm { font-family: 'Space Grotesk', sans-serif; font-size: 20px; line-height: 28px; font-weight: 600; }
+        .font-headline-lg { font-family: 'Space Grotesk', sans-serif; font-size: 30px; line-height: 38px; font-weight: 700; }
+        .font-title-md { font-family: 'Inter', sans-serif; font-size: 18px; line-height: 26px; font-weight: 600; }
+        .font-title-sm { font-family: 'Inter', sans-serif; font-size: 15px; line-height: 22px; font-weight: 600; }
+        .font-body-sm { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 20px; }
+        .font-label-md { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 18px; font-weight: 500; }
+        .font-caption { font-family: 'Inter', sans-serif; font-size: 11px; line-height: 16px; font-weight: 500; }
+
+        .bg-surface-container-lowest { background-color: #ffffff; }
+        .dark .bg-surface-container-lowest { background-color: #111827; }
+        .bg-surface-soft { background-color: #F8FAFC; }
+        .dark .bg-surface-soft { background-color: #1f2937; }
+        .text-neutral-heading { color: #0F172A; }
+        .dark .text-neutral-heading { color: #f9fafb; }
+        .text-neutral-muted { color: #64748B; }
+        .dark .text-neutral-muted { color: #9ca3af; }
+        
+        .bg-primary-container { background-color: #ff5d00; }
+        .bg-primary-hover { background-color: #E05200; }
+        .text-primary { color: #ff5d00; }
+        .bg-primary-subtle { background-color: #FFF4ED; }
+        .dark .bg-primary-subtle { background-color: rgba(255, 93, 0, 0.15); }
+        .text-accent-emerald { color: #10B981; }
+        .bg-accent-emerald { background-color: #10B981; }
+        .bg-accent-emerald-subtle { background-color: #ECFDF5; }
+        .dark .bg-accent-emerald-subtle { background-color: rgba(16, 185, 129, 0.15); }
+        .text-status-warning { color: #F59E0B; }
+        .bg-status-warning-subtle { background-color: #FFFBEB; }
+        .dark .bg-status-warning-subtle { background-color: rgba(245, 158, 11, 0.15); }
+        .text-status-critical { color: #EF4444; }
+        .bg-status-critical-subtle { background-color: #FEF2F2; }
+        .dark .bg-status-critical-subtle { background-color: rgba(239, 68, 68, 0.15); }
+        .border-neutral-border-subtle { border-color: #F1F5F9; }
+        .dark .border-neutral-border-subtle { border-color: #374151; }
+    </style>
+
+    <div class="space-y-6 -mt-3">
+        <!-- Sub-header Operational Status Strip -->
+        <div class="p-5 rounded-2xl bg-surface-container-lowest shadow-xs border border-gray-100 dark:border-gray-800 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="flex items-center justify-center w-11 h-11 rounded-xl bg-primary-subtle text-primary shrink-0">
+                    <span class="material-symbols-outlined text-2xl">insights</span>
                 </div>
-                <div class="min-w-0">
-                    <div class="text-xs font-medium text-gray-500 dark:text-gray-400">Restock Kritis</div>
-                    <div class="text-2xl font-bold text-gray-950 dark:text-white leading-tight mt-0.5">
-                        {{ $this->metrics['critical_count'] ?? 0 }} <span class="text-lg font-semibold text-gray-900 dark:text-gray-200">Varian</span>
-                    </div>
+                <div>
+                    <nav class="flex items-center gap-2 text-caption font-caption text-neutral-muted">
+                        <span>Admin Console</span>
+                        <span class="material-symbols-outlined text-xs">chevron_right</span>
+                        <span>Inventory Intelligence</span>
+                        <span class="material-symbols-outlined text-xs">chevron_right</span>
+                        <span class="text-neutral-heading font-medium">Demand Forecast</span>
+                    </nav>
+                    <h1 class="font-headline-sm text-neutral-heading mt-0.5 tracking-tight">AI Demand Forecasting & Restock Alert</h1>
                 </div>
             </div>
 
-            <!-- Card 2: Peringatan Waspada -->
-            <div class="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 shadow-sm flex items-center gap-3.5 transition hover:shadow-md">
-                <div class="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 flex items-center justify-center text-amber-500 shrink-0">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <!-- Algorithm Run Metadata & Quick Controls -->
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex flex-col text-right">
+                    <span class="text-caption font-caption text-neutral-muted">Model State: <strong class="text-accent-emerald font-semibold">Active &bull; Synced</strong></span>
+                    <span class="text-caption font-caption text-neutral-muted">Weighted Moving Average (Alpha: 0.35)</span>
                 </div>
-                <div class="min-w-0">
-                    <div class="text-xs font-medium text-gray-500 dark:text-gray-400">Peringatan Waspada</div>
-                    <div class="text-2xl font-bold text-gray-950 dark:text-white leading-tight mt-0.5">
-                        {{ $this->metrics['warning_count'] ?? 0 }} <span class="text-lg font-semibold text-gray-900 dark:text-gray-200">Varian</span>
+                <button wire:click="resetFilters" type="button" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-soft hover:bg-gray-100 dark:hover:bg-gray-800 text-neutral-heading text-label-md font-label-md transition active:scale-95 cursor-pointer">
+                    <span class="material-symbols-outlined text-sm text-primary">tune</span>
+                    <span>Reset Filter</span>
+                </button>
+                <button wire:click="recomputeAi" type="button" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-container hover:bg-primary-hover text-white text-label-md font-label-md shadow-xs transition active:scale-95 cursor-pointer">
+                    <span class="material-symbols-outlined text-sm">refresh</span>
+                    <span>Re-compute AI</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Context Banner -->
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-surface-container-lowest via-surface-soft to-surface-container-lowest p-6 border border-gray-100 dark:border-gray-800 shadow-xs">
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1.5 max-w-3xl">
+                    <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-primary-subtle text-primary text-caption font-caption">
+                        <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                        <span>Algoritma Dual-Engine Aktif</span>
+                    </div>
+                    <p class="font-headline-sm text-neutral-heading leading-tight">
+                        Analitik prediktif stok cerdas menggunakan Weighted Moving Average (WMA) & Economic Order Quantity (EOQ)
+                    </p>
+                    <p class="font-body-sm text-neutral-muted">
+                        Memproyeksikan laju pengurangan unit per SKU berdasarkan bobot penjualan 14 hari terakhir, lead time konveksi 7 hari kerja, dan margin biaya penyimpanan optimal.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2 self-start md:self-auto shrink-0">
+                    <div class="px-4 py-3 rounded-xl bg-surface-container-lowest border border-gray-100 dark:border-gray-800 shadow-xs flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-2xl">warehouse</span>
+                        <div>
+                            <p class="text-caption font-caption text-neutral-muted">Total SKU Aktif</p>
+                            <p class="text-title-sm font-title-sm text-neutral-heading">{{ count($this->forecastData) }} Varian Busana</p>
+                        </div>
                     </div>
                 </div>
             </div>
+            <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-orange-500/5 rounded-full blur-2xl pointer-events-none"></div>
+        </div>
 
-            <!-- Card 3: Stok Mengendap -->
-            <div class="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 shadow-sm flex items-center gap-3.5 transition hover:shadow-md">
-                <div class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 shrink-0">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                </div>
-                <div class="min-w-0">
-                    <div class="text-xs font-medium text-gray-500 dark:text-gray-400">Stok Mengendap</div>
-                    <div class="text-2xl font-bold text-gray-950 dark:text-white leading-tight mt-0.5">
-                        {{ $this->metrics['slow_moving_count'] ?? 0 }} <span class="text-lg font-semibold text-gray-900 dark:text-gray-200">Varian</span>
+        <!-- TOP ROW: Two Visual Analytics Cards -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- 1. Donut Chart Widget -->
+            @php
+                $dist = $this->riskDistribution;
+                $safeCirc = round((339.29 * $dist['safe_pct']) / 100, 2);
+                $slowCirc = round((339.29 * $dist['slow_moving_pct']) / 100, 2);
+                $warnCirc = round((339.29 * $dist['warning_pct']) / 100, 2);
+                $critCirc = round((339.29 * $dist['critical_pct']) / 100, 2);
+            @endphp
+            <div class="lg:col-span-5 bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-xs flex flex-col justify-between">
+                <div>
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <span class="font-caption text-caption uppercase tracking-wider text-neutral-muted">Risk Stratification</span>
+                            <h2 class="font-title-md text-neutral-heading mt-0.5">Distribusi Risiko Ketahanan Stok</h2>
+                        </div>
+                        <span class="material-symbols-outlined text-neutral-muted text-lg">info</span>
                     </div>
+                    <p class="font-body-sm text-neutral-muted mt-1">Estimasi ketersediaan unit berdasarkan velocity real-time.</p>
+                </div>
+
+                <div class="my-6 flex flex-col sm:flex-row items-center justify-center gap-6">
+                    <!-- Inline Donut SVG Chart -->
+                    <div class="relative w-44 h-44 flex items-center justify-center shrink-0">
+                        <svg class="w-full h-full -rotate-90" viewBox="0 0 140 140">
+                            <!-- Background Ring -->
+                            <circle cx="70" cy="70" fill="transparent" r="54" stroke="#F1F5F9" stroke-width="16"></circle>
+                            <!-- Safe Ring -->
+                            <circle cx="70" cy="70" fill="transparent" r="54" stroke="#10B981" stroke-dasharray="{{ $safeCirc }} 339.29" stroke-linecap="round" stroke-width="16"></circle>
+                            <!-- Slow Moving Ring -->
+                            <circle cx="70" cy="70" fill="transparent" r="54" stroke="#64748B" stroke-dasharray="{{ $slowCirc }} 339.29" stroke-dashoffset="-{{ $safeCirc }}" stroke-linecap="round" stroke-width="16"></circle>
+                            <!-- Warning Ring -->
+                            <circle cx="70" cy="70" fill="transparent" r="54" stroke="#F59E0B" stroke-dasharray="{{ $warnCirc }} 339.29" stroke-dashoffset="-{{ $safeCirc + $slowCirc }}" stroke-linecap="round" stroke-width="16"></circle>
+                            <!-- Critical Ring -->
+                            @if($dist['critical_pct'] > 0)
+                                <circle cx="70" cy="70" fill="transparent" r="54" stroke="#EF4444" stroke-dasharray="{{ $critCirc }} 339.29" stroke-dashoffset="-{{ $safeCirc + $slowCirc + $warnCirc }}" stroke-linecap="round" stroke-width="16"></circle>
+                            @endif
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
+                            <span class="text-caption font-caption text-neutral-muted uppercase tracking-tight">Kondisi Dominan</span>
+                            <span class="font-headline-sm text-neutral-heading">
+                                {{ $dist['safe_pct'] >= $dist['slow_moving_pct'] ? $dist['safe_pct'].'%' : $dist['slow_moving_pct'].'%' }}
+                            </span>
+                            <span class="font-caption text-caption {{ $dist['safe_pct'] >= $dist['slow_moving_pct'] ? 'text-accent-emerald' : 'text-neutral-muted' }} font-semibold">
+                                {{ $dist['safe_pct'] >= $dist['slow_moving_pct'] ? 'Stok Aman' : 'Stok Mengendap' }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Donut Legend -->
+                    <div class="w-full sm:w-auto flex-1 space-y-2.5">
+                        <div class="flex items-center justify-between p-2 rounded-xl bg-status-critical-subtle cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('CRITICAL')">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-status-critical shrink-0"></span>
+                                <span class="font-body-sm text-neutral-heading">Kritis (&le; 3 Hari)</span>
+                            </div>
+                            <span class="font-title-sm text-status-critical">{{ $dist['critical_pct'] }}%</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-2 rounded-xl bg-status-warning-subtle cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('WARNING')">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-status-warning shrink-0"></span>
+                                <span class="font-body-sm text-neutral-heading">Waspada (4&ndash;7 Hari)</span>
+                            </div>
+                            <span class="font-title-sm text-status-warning">{{ $dist['warning_pct'] }}%</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-2 rounded-xl bg-accent-emerald-subtle cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('SAFE')">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-accent-emerald shrink-0"></span>
+                                <span class="font-body-sm text-neutral-heading">Aman (&gt; 7 Hari)</span>
+                            </div>
+                            <span class="font-title-sm text-accent-emerald">{{ $dist['safe_pct'] }}%</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-2 rounded-xl bg-surface-soft cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('SLOW_MOVING')">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-neutral-muted shrink-0"></span>
+                                <span class="font-body-sm text-neutral-heading">Stok Mengendap</span>
+                            </div>
+                            <span class="font-title-sm text-neutral-muted">{{ $dist['slow_moving_pct'] }}%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-neutral-border-subtle flex items-center justify-between text-caption font-caption text-neutral-muted">
+                    <span>Model: Weighted Moving Average</span>
+                    <span class="text-neutral-heading font-medium">{{ $dist['slow_moving'] }} Varian Mengendap</span>
                 </div>
             </div>
 
-            <!-- Card 4: Saran Total Restock -->
-            <div class="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 shadow-sm flex items-center gap-3.5 transition hover:shadow-md">
-                <div class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 shrink-0">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                </div>
-                <div class="min-w-0">
-                    <div class="text-xs font-medium text-gray-500 dark:text-gray-400">Saran Total Restock</div>
-                    <div class="text-2xl font-bold text-gray-950 dark:text-white leading-tight mt-0.5">
-                        {{ number_format($this->metrics['total_restock_units'] ?? 0, 0, ',', '.') }} <span class="text-lg font-semibold text-gray-900 dark:text-gray-200">Pcs</span>
+            <!-- 2. Bar Chart Widget -->
+            <div class="lg:col-span-7 bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-xs flex flex-col justify-between">
+                <div>
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                            <span class="font-caption text-caption uppercase tracking-wider text-neutral-muted">Category Inventory Velocity</span>
+                            <h2 class="font-title-md text-neutral-heading mt-0.5">Stok Fisik Tersedia vs Saran Order Restock per Kategori</h2>
+                        </div>
+                        <div class="flex items-center gap-4 text-caption font-caption">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3 h-3 rounded-xs bg-neutral-heading"></span>
+                                <span class="text-neutral-heading font-medium">Stok Fisik</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3 h-3 rounded-xs bg-primary-container"></span>
+                                <span class="text-neutral-heading font-medium">Saran Restock</span>
+                            </div>
+                        </div>
                     </div>
+                    <p class="font-body-sm text-neutral-muted mt-1">Perbandingan inventaris saat ini terhadap proyeksi demand konveksi ke depan.</p>
+                </div>
+
+                <!-- Inline Bar Chart Visualization -->
+                <div class="my-6 space-y-4">
+                    @foreach($this->categoryStats as $cat)
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between items-center text-body-sm font-body-sm">
+                                <span class="font-semibold text-neutral-heading">{{ $cat['name'] }}</span>
+                                <span class="text-neutral-muted text-xs">
+                                    Fisik: <strong class="text-neutral-heading">{{ $cat['stock'] }} pcs</strong>
+                                    &bull; Saran: <strong class="text-primary">{{ $cat['restock'] }} pcs</strong>
+                                </span>
+                            </div>
+                            <div class="h-6 bg-surface-soft rounded-lg overflow-hidden flex items-center p-1">
+                                <div class="h-full bg-neutral-heading rounded-md transition-all duration-300" style="width: {{ $cat['bar_width'] }}%;"></div>
+                                @if($cat['restock_width'] > 0)
+                                    <div class="h-full bg-primary-container rounded-md ml-1 transition-all duration-300" style="width: {{ $cat['restock_width'] }}%;"></div>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <div class="pt-3 border-t border-neutral-border-subtle flex items-center justify-between text-caption font-caption text-neutral-muted">
+                    <span>Warehouse Sentral: Sukoharjo & Jakarta</span>
+                    <span class="text-neutral-heading font-medium">Tingkat buffer aman di seluruh lini</span>
                 </div>
             </div>
         </div>
 
-        <!-- Clean Professional Table Matching User Reference -->
-        <div class="overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <!-- MIDDLE ROW: 4 KPI Metric Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+            <!-- 1. Restock Kritis -->
+            <div class="bg-surface-container-lowest rounded-2xl p-5 border border-gray-100 dark:border-gray-800 shadow-xs relative overflow-hidden transition-all duration-200 hover:-translate-y-0.5">
+                <div class="flex items-center justify-between">
+                    <span class="text-caption font-caption uppercase tracking-wider text-neutral-muted">Prioritas Kritis</span>
+                    <div class="w-10 h-10 rounded-xl bg-status-critical-subtle text-status-critical flex items-center justify-center">
+                        <span class="material-symbols-outlined text-xl">warning</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="font-headline-lg text-neutral-heading leading-tight">
+                        {{ $this->metrics['critical_count'] ?? 0 }} <span class="font-headline-sm text-neutral-muted font-normal text-base">Varian</span>
+                    </p>
+                    <div class="mt-2 flex items-center gap-1.5 text-caption font-caption {{ ($this->metrics['critical_count'] ?? 0) === 0 ? 'text-accent-emerald font-semibold' : 'text-status-critical font-semibold' }}">
+                        <span class="material-symbols-outlined text-sm">
+                            {{ ($this->metrics['critical_count'] ?? 0) === 0 ? 'check_circle' : 'error' }}
+                        </span>
+                        <span>{{ ($this->metrics['critical_count'] ?? 0) === 0 ? 'Tidak ada SKU kekurangan stok' : 'Butuh restock darurat!' }}</span>
+                    </div>
+                </div>
+                <div class="mt-3 pt-3 border-t border-neutral-border-subtle flex items-center justify-between text-caption font-caption text-neutral-muted">
+                    <span>Label: Restock Kritis</span>
+                    <span class="text-status-critical font-medium">Ambien: &le; 3 Hari</span>
+                </div>
+            </div>
+
+            <!-- 2. Peringatan Waspada -->
+            <div class="bg-surface-container-lowest rounded-2xl p-5 border border-gray-100 dark:border-gray-800 shadow-xs relative overflow-hidden transition-all duration-200 hover:-translate-y-0.5">
+                <div class="flex items-center justify-between">
+                    <span class="text-caption font-caption uppercase tracking-wider text-neutral-muted">Stok Waspada</span>
+                    <div class="w-10 h-10 rounded-xl bg-status-warning-subtle text-status-warning flex items-center justify-center">
+                        <span class="material-symbols-outlined text-xl">schedule</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="font-headline-lg text-neutral-heading leading-tight">
+                        {{ $this->metrics['warning_count'] ?? 0 }} <span class="font-headline-sm text-neutral-muted font-normal text-base">Varian</span>
+                    </p>
+                    <div class="mt-2 flex items-center gap-1.5 text-caption font-caption text-accent-emerald font-semibold">
+                        <span class="material-symbols-outlined text-sm">check_circle</span>
+                        <span>Semua varian di atas batas aman</span>
+                    </div>
+                </div>
+                <div class="mt-3 pt-3 border-t border-neutral-border-subtle flex items-center justify-between text-caption font-caption text-neutral-muted">
+                    <span>Label: Peringatan Waspada</span>
+                    <span class="text-status-warning font-medium">Ambien: 4&ndash;7 Hari</span>
+                </div>
+            </div>
+
+            <!-- 3. Stok Mengendap -->
+            <div class="bg-surface-container-lowest rounded-2xl p-5 border border-gray-100 dark:border-gray-800 shadow-xs relative overflow-hidden transition-all duration-200 hover:-translate-y-0.5">
+                <div class="flex items-center justify-between">
+                    <span class="text-caption font-caption uppercase tracking-wider text-neutral-muted">Slow Moving</span>
+                    <div class="w-10 h-10 rounded-xl bg-surface-soft text-neutral-muted flex items-center justify-center">
+                        <span class="material-symbols-outlined text-xl">inventory</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="font-headline-lg text-neutral-heading leading-tight">
+                        {{ $this->metrics['slow_moving_count'] ?? 0 }} <span class="font-headline-sm text-neutral-muted font-normal text-base">Varian</span>
+                    </p>
+                    <div class="mt-2 flex items-center gap-1.5 text-caption font-caption text-neutral-muted">
+                        <span class="material-symbols-outlined text-sm text-status-warning">bolt</span>
+                        <span>Rekomendasi promo bundling / diskon</span>
+                    </div>
+                </div>
+                <div class="mt-3 pt-3 border-t border-neutral-border-subtle flex items-center justify-between text-caption font-caption text-neutral-muted">
+                    <span>Label: Stok Mengendap</span>
+                    <span class="text-neutral-heading font-medium">Ketahanan &gt; 60 Hari</span>
+                </div>
+            </div>
+
+            <!-- 4. Saran Total Restock -->
+            <div class="bg-surface-container-lowest rounded-2xl p-5 border border-gray-100 dark:border-gray-800 shadow-xs relative overflow-hidden transition-all duration-200 hover:-translate-y-0.5">
+                <div class="flex items-center justify-between">
+                    <span class="text-caption font-caption uppercase tracking-wider text-neutral-muted">Order Requisition</span>
+                    <div class="w-10 h-10 rounded-xl bg-surface-soft text-neutral-muted flex items-center justify-center">
+                        <span class="material-symbols-outlined text-xl">package_2</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="font-headline-lg text-neutral-heading leading-tight">
+                        {{ number_format($this->metrics['total_restock_units'] ?? 0, 0, ',', '.') }} <span class="font-headline-sm text-neutral-muted font-normal text-base">Pcs</span>
+                    </p>
+                    <div class="mt-2 flex items-center gap-1.5 text-caption font-caption text-accent-emerald font-semibold">
+                        <span class="material-symbols-outlined text-sm">verified</span>
+                        <span>Kapasitas konveksi optimal</span>
+                    </div>
+                </div>
+                <div class="mt-3 pt-3 border-t border-neutral-border-subtle flex items-center justify-between text-caption font-caption text-neutral-muted">
+                    <span>Label: Saran Total Restock</span>
+                    <span class="text-neutral-heading font-medium">Kalkulasi EOQ Batch Aktif</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM ROW: Variant Analysis Table -->
+        <div class="bg-surface-container-lowest rounded-2xl border border-gray-100 dark:border-gray-800 shadow-xs overflow-hidden">
+            <!-- Table Header Bar -->
+            <div class="p-6 bg-surface-container-lowest border-b border-neutral-border-subtle flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h3 class="font-title-md text-neutral-heading">Tabel Analisis Varian Inventaris</h3>
+                        <span class="px-2 py-0.5 text-caption font-caption rounded-full bg-surface-soft text-neutral-heading font-semibold">
+                            {{ count($this->forecastData) }} SKU Terpilih
+                        </span>
+                    </div>
+                    <p class="font-body-sm text-neutral-muted mt-1">
+                        Data real-time stok fisik, kecepatan transaksi (Weighted Moving Average), estimasi ketahanan hari, dan kalkulasi order EOQ.
+                    </p>
+                </div>
+
+                <!-- Filter and Search Inside Table Header -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            wire:model.live.debounce.300ms="search" 
+                            placeholder="Filter varian / SKU..." 
+                            class="h-9 w-56 pl-9 pr-3 rounded-xl bg-surface-soft text-body-sm font-body-sm text-neutral-heading placeholder:text-neutral-muted focus:outline-none focus:ring-2 focus:ring-primary-container border-0"
+                        />
+                        <span class="material-symbols-outlined absolute left-2.5 top-2 text-neutral-muted text-base">search</span>
+                    </div>
+
+                    <!-- Quick Risk Tabs -->
+                    <div class="flex items-center rounded-xl bg-surface-soft p-1">
+                        <button 
+                            type="button" 
+                            wire:click="setRiskFilter(null)" 
+                            class="px-3 py-1 rounded-lg text-caption font-caption transition {{ empty($this->selectedRisk) ? 'bg-surface-container-lowest text-neutral-heading font-semibold shadow-xs' : 'text-neutral-muted hover:text-neutral-heading' }}">
+                            Semua
+                        </button>
+                        <button 
+                            type="button" 
+                            wire:click="setRiskFilter('SLOW_MOVING')" 
+                            class="px-3 py-1 rounded-lg text-caption font-caption transition {{ $this->selectedRisk === 'SLOW_MOVING' ? 'bg-surface-container-lowest text-neutral-heading font-semibold shadow-xs' : 'text-neutral-muted hover:text-neutral-heading' }}">
+                            Slow Moving ({{ $this->riskDistribution['slow_moving'] }})
+                        </button>
+                        <button 
+                            type="button" 
+                            wire:click="setRiskFilter('SAFE')" 
+                            class="px-3 py-1 rounded-lg text-caption font-caption transition {{ $this->selectedRisk === 'SAFE' ? 'bg-surface-container-lowest text-neutral-heading font-semibold shadow-xs' : 'text-neutral-muted hover:text-neutral-heading' }}">
+                            Aman ({{ $this->riskDistribution['safe'] }})
+                        </button>
+                    </div>
+
+                    <!-- Category Selector Dropdown -->
+                    <select wire:model.live="selectedCategory" class="h-9 px-3 rounded-xl bg-surface-soft text-caption font-caption text-neutral-heading border-0 focus:ring-2 focus:ring-primary-container">
+                        <option value="ALL">Semua Kategori</option>
+                        @foreach($this->categories as $c)
+                            <option value="{{ $c->slug }}">{{ $c->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <!-- High Clarity Data Table -->
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs">
-                    <thead class="bg-white dark:bg-gray-900 text-[11px] font-semibold text-gray-900 dark:text-gray-200 border-b border-gray-100 dark:border-gray-800">
-                        <tr>
-                            <th class="py-3 px-4">Produk</th>
-                            <th class="py-3 px-4">Varian & SKU</th>
-                            <th class="py-3 px-4">Stok Fisik</th>
-                            <th class="py-3 px-4">Laju Penjualan</th>
-                            <th class="py-3 px-4 text-center">Ketahanan Stok</th>
-                            <th class="py-3 px-4 text-center">Tingkat Risiko</th>
-                            <th class="py-3 px-4 text-center">Saran Restock</th>
-                            <th class="py-3 px-4 text-center">Tindakan</th>
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="bg-surface-soft text-caption font-caption text-neutral-muted uppercase tracking-wider border-b border-neutral-border-subtle">
+                            <th class="py-3.5 px-6 font-semibold" scope="col">Produk</th>
+                            <th class="py-3.5 px-4 font-semibold" scope="col">Varian & SKU</th>
+                            <th class="py-3.5 px-4 font-semibold text-right" scope="col">Stok Fisik</th>
+                            <th class="py-3.5 px-4 font-semibold text-right" scope="col">Laju Penjualan (Velocity/WMA)</th>
+                            <th class="py-3.5 px-4 font-semibold text-right" scope="col">Ketahanan Stok</th>
+                            <th class="py-3.5 px-4 font-semibold text-center" scope="col">Tingkat Risiko</th>
+                            <th class="py-3.5 px-4 font-semibold text-right" scope="col">Saran Restock (EOQ)</th>
+                            <th class="py-3.5 px-6 font-semibold text-center" scope="col">Tindakan</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100 dark:divide-gray-800 text-gray-700 dark:text-gray-300">
+                    <tbody class="divide-y divide-neutral-border-subtle text-body-sm font-body-sm">
                         @forelse($this->forecastData as $item)
-                            <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition">
+                            <tr class="hover:bg-surface-soft/60 transition-colors">
                                 <!-- Kolom Produk -->
-                                <td class="py-3.5 px-4">
+                                <td class="py-4 px-6">
                                     <div class="flex items-center gap-3">
                                         @if($item['image_url'])
-                                            <img src="{{ $item['image_url'] }}" alt="{{ $item['product_name'] }}" class="w-10 h-10 rounded-lg object-cover border border-gray-100 dark:border-gray-800 shrink-0">
+                                            <img src="{{ $item['image_url'] }}" alt="{{ $item['product_name'] }}" class="w-11 h-14 object-cover rounded-lg shrink-0 shadow-xs border border-gray-100 dark:border-gray-800">
                                         @else
-                                            <div class="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400 shrink-0">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                            <div class="w-11 h-14 bg-surface-soft rounded-lg shrink-0 flex items-center justify-center text-neutral-muted border border-gray-100 dark:border-gray-800">
+                                                <span class="material-symbols-outlined text-xl">apparel</span>
                                             </div>
                                         @endif
                                         <div>
-                                            <div class="font-bold text-gray-950 dark:text-white leading-tight text-xs">{{ $item['product_name'] }}</div>
-                                            <div class="text-[11px] text-gray-500 mt-0.5">{{ $item['category_name'] }}</div>
+                                            <span class="font-title-sm text-neutral-heading block leading-snug">{{ $item['product_name'] }}</span>
+                                            <span class="text-caption font-caption text-neutral-muted">Kategori: {{ $item['category_name'] }}</span>
                                         </div>
                                     </div>
                                 </td>
 
                                 <!-- Kolom Varian & SKU -->
-                                <td class="py-3.5 px-4">
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="inline-flex items-center justify-center w-5 h-5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">{{ $item['size'] }}</span>
-                                        <span class="text-xs font-medium text-gray-900 dark:text-white">{{ $item['color'] }}</span>
+                                <td class="py-4 px-4">
+                                    <div class="space-y-0.5">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="w-2.5 h-2.5 rounded-full bg-slate-800 inline-block"></span>
+                                            <span class="font-semibold text-neutral-heading">{{ $item['color'] }} / Size {{ $item['size'] }}</span>
+                                        </div>
+                                        <span class="font-mono text-caption font-caption text-neutral-muted block">{{ $item['sku'] }}</span>
                                     </div>
-                                    <div class="text-[10px] text-gray-400 mt-0.5 font-normal">{{ $item['sku'] }}</div>
                                 </td>
 
                                 <!-- Kolom Stok Fisik -->
-                                <td class="py-3.5 px-4">
-                                    <span class="font-bold text-xs text-gray-950 dark:text-white">
-                                        {{ $item['current_stock'] }}
-                                    </span>
-                                    <span class="text-xs text-gray-500">pcs</span>
+                                <td class="py-4 px-4 text-right">
+                                    <span class="font-headline-sm text-neutral-heading font-bold">{{ $item['current_stock'] }}</span>
+                                    <span class="text-caption font-caption text-neutral-muted block">Pcs di Rak</span>
                                 </td>
 
                                 <!-- Kolom Laju Penjualan -->
-                                <td class="py-3.5 px-4">
-                                    <div class="text-xs text-gray-800 dark:text-gray-200">
-                                        ~{{ $item['daily_demand'] }} pcs/hari
-                                    </div>
-                                    <div class="text-[11px] text-gray-400 mt-0.5">30 Hari: {{ $item['sales_30d'] }} pcs</div>
+                                <td class="py-4 px-4 text-right">
+                                    <span class="font-semibold text-neutral-heading">~{{ $item['daily_demand'] }} Pcs/Hari</span>
+                                    <span class="text-caption font-caption text-accent-emerald flex items-center justify-end gap-0.5">
+                                        <span class="material-symbols-outlined text-xs">trending_up</span> 30 Hari: {{ $item['sales_30d'] }} pcs
+                                    </span>
                                 </td>
 
                                 <!-- Kolom Ketahanan Stok -->
-                                <td class="py-3.5 px-4 text-center">
-                                    @if($item['current_stock'] <= 0)
-                                        <span class="font-bold text-xs text-red-600">Habis</span>
-                                    @elseif($item['days_until_stockout'] > 90)
-                                        <span class="text-gray-700 dark:text-gray-300 text-xs">&gt; 90 Hari</span>
-                                    @else
-                                        <span class="font-bold text-xs {{ $item['days_until_stockout'] <= 3 ? 'text-red-600' : ($item['days_until_stockout'] <= 7 ? 'text-amber-600' : 'text-emerald-600') }}">
-                                            {{ $item['days_until_stockout'] }} Hari
-                                        </span>
-                                    @endif
+                                <td class="py-4 px-4 text-right">
+                                    <span class="font-semibold text-neutral-heading">
+                                        {{ $item['days_until_stockout'] > 90 ? '> 90 Hari' : $item['days_until_stockout'] . ' Hari' }}
+                                    </span>
+                                    <span class="text-caption font-caption text-neutral-muted block">
+                                        {{ $item['current_stock'] <= 0 ? 'Habis' : 'Est. Terkendali' }}
+                                    </span>
                                 </td>
 
                                 <!-- Kolom Tingkat Risiko -->
-                                <td class="py-3.5 px-4 text-center">
+                                <td class="py-4 px-4 text-center">
                                     @if($item['risk'] === 'CRITICAL')
-                                        <span class="inline-block px-3 py-1 rounded-full text-[11px] font-semibold bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-status-critical-subtle text-status-critical text-caption font-caption font-semibold">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-status-critical"></span>
                                             Kritis
                                         </span>
                                     @elseif($item['risk'] === 'WARNING')
-                                        <span class="inline-block px-3 py-1 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-status-warning-subtle text-status-warning text-caption font-caption font-semibold">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-status-warning"></span>
                                             Waspada
                                         </span>
                                     @elseif($item['risk'] === 'SLOW_MOVING')
-                                        <span class="inline-block px-3 py-1 rounded-full text-[11px] font-semibold bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                                            Slow Moving
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-soft text-neutral-muted text-caption font-caption font-semibold">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-neutral-muted"></span>
+                                            Stok Mengendap
                                         </span>
                                     @else
-                                        <span class="inline-block px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-emerald-subtle text-accent-emerald text-caption font-caption font-semibold">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-accent-emerald"></span>
                                             Aman
                                         </span>
                                     @endif
                                 </td>
 
                                 <!-- Kolom Saran Restock -->
-                                <td class="py-3.5 px-4 text-center">
-                                    @if($item['recommended_restock'] > 0)
-                                        <span class="font-bold text-xs text-orange-600 dark:text-orange-400">
-                                            +{{ $item['recommended_restock'] }} pcs
-                                        </span>
-                                    @else
-                                        <span class="text-gray-500 text-xs font-medium">-</span>
-                                    @endif
+                                <td class="py-4 px-4 text-right">
+                                    <span class="font-headline-sm text-neutral-heading font-bold">
+                                        {{ $item['recommended_restock'] }}
+                                    </span>
+                                    <span class="text-caption font-caption text-neutral-muted block">
+                                        {{ $item['recommended_restock'] > 0 ? 'Pcs disarankan' : 'Tercukupi' }}
+                                    </span>
                                 </td>
 
                                 <!-- Kolom Tindakan -->
-                                <td class="py-3.5 px-4 text-center">
-                                    @if($item['recommended_restock'] > 0)
-                                        <a href="{{ $this->generatePoTemplate($item) }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] font-medium text-white bg-emerald-600 hover:bg-emerald-500 shadow-xs transition">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                                            PO Konveksi
-                                        </a>
-                                    @else
-                                        <span class="text-gray-700 dark:text-gray-300 text-xs font-normal">Tercukupi</span>
-                                    @endif
+                                <td class="py-4 px-6 text-center">
+                                    <a 
+                                        href="{{ $this->generatePoTemplate($item) }}" 
+                                        target="_blank" 
+                                        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-accent-emerald hover:bg-emerald-600 text-white text-caption font-caption font-semibold shadow-xs transition active:scale-95 cursor-pointer">
+                                        <span class="material-symbols-outlined text-sm">chat</span>
+                                        <span>Buat PO WhatsApp Konveksi</span>
+                                    </a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center py-8 text-gray-400">
-                                    Tidak ada data varian yang ditemukan.
+                                <td colspan="8" class="text-center py-12 text-neutral-muted">
+                                    Tidak ada varian yang sesuai dengan filter atau kata kunci pencarian.
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Table Ledger Summary Footer -->
+            <div class="p-4 px-6 bg-surface-soft flex flex-col sm:flex-row items-center justify-between gap-3 text-body-sm font-body-sm text-neutral-muted border-t border-neutral-border-subtle">
+                <div class="flex items-center gap-2">
+                    <span>Menampilkan <strong>{{ count($this->forecastData) }}</strong> SKU aktif</span>
+                    <span class="text-neutral-muted">&bull;</span>
+                    <span class="text-caption font-caption">Formula: EOQ = &radic;((2 &times; D &times; S) / H)</span>
+                </div>
+                <div class="text-caption font-caption text-neutral-muted">
+                    Lead time default: <strong>7 hari kerja</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Insights Footer Callouts -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2 pb-6">
+            <div class="p-5 rounded-2xl bg-surface-container-lowest border border-gray-100 dark:border-gray-800 shadow-xs flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl bg-accent-emerald-subtle text-accent-emerald flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined">health_and_safety</span>
+                </div>
+                <div>
+                    <h4 class="font-title-sm text-neutral-heading">Zero Stockout Protection</h4>
+                    <p class="font-body-sm text-neutral-muted mt-1">
+                        Monitoring ketahanan real-time memastikan varian favorit tidak kehabisan stok saat transaksi melonjak.
+                    </p>
+                </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-surface-container-lowest border border-gray-100 dark:border-gray-800 shadow-xs flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl bg-primary-subtle text-primary flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined">campaign</span>
+                </div>
+                <div>
+                    <h4 class="font-title-sm text-neutral-heading">Optimasi Varian Slow Moving</h4>
+                    <p class="font-body-sm text-neutral-muted mt-1">
+                        Varian dengan ketahanan tinggi disarankan masuk ke dalam promo flash sale atau program bundling mingguan.
+                    </p>
+                </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-surface-container-lowest border border-gray-100 dark:border-gray-800 shadow-xs flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl bg-surface-soft text-neutral-heading flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined">precision_manufacturing</span>
+                </div>
+                <div>
+                    <h4 class="font-title-sm text-neutral-heading">Automasi WhatsApp Konveksi</h4>
+                    <p class="font-body-sm text-neutral-muted mt-1">
+                        Format PO terstandarisasi dengan data SKU, spek warna, ukuran, dan batch order siap dikirim sekali klik.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
