@@ -347,60 +347,89 @@
         <!-- BOTTOM ROW: Variant Analysis Table -->
         <div class="bg-surface-container-lowest rounded-2xl border border-gray-100 dark:border-gray-800 shadow-xs overflow-hidden">
             <!-- Table Header Bar -->
-            <div class="p-6 bg-surface-container-lowest border-b border-neutral-border-subtle flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <h3 class="font-title-md text-neutral-heading">Tabel Analisis Varian Inventaris</h3>
-                        <span class="px-2 py-0.5 text-caption font-caption rounded-full bg-surface-soft text-neutral-heading font-semibold">
-                            {{ count($this->forecastData) }} SKU Terpilih
-                        </span>
+            <div class="p-6 bg-surface-container-lowest border-b border-neutral-border-subtle">
+                <!-- Top: Title & Description -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <div class="flex items-center gap-2.5">
+                            <h3 class="font-title-md text-neutral-heading">Tabel Analisis Varian Inventaris</h3>
+                            <span class="px-2.5 py-0.5 text-caption font-caption rounded-full bg-surface-soft text-neutral-heading font-semibold border border-gray-200/50 dark:border-gray-700/50">
+                                {{ count($this->forecastData) }} SKU Terpilih
+                            </span>
+                        </div>
+                        <p class="font-body-sm text-neutral-muted mt-1">
+                            Data real-time stok fisik, kecepatan transaksi (Weighted Moving Average), estimasi ketahanan hari, dan kalkulasi order EOQ.
+                        </p>
                     </div>
-                    <p class="font-body-sm text-neutral-muted mt-1">
-                        Data real-time stok fisik, kecepatan transaksi (Weighted Moving Average), estimasi ketahanan hari, dan kalkulasi order EOQ.
-                    </p>
                 </div>
 
-                <!-- Filter and Search Inside Table Header -->
-                <div class="flex flex-wrap items-center gap-3">
-                    <div class="relative">
-                        <input 
-                            type="text" 
-                            wire:model.live.debounce.300ms="search" 
-                            placeholder="Filter varian / SKU..." 
-                            class="h-9 w-56 pl-9 pr-3 rounded-xl bg-surface-soft text-body-sm font-body-sm text-neutral-heading placeholder:text-neutral-muted focus:outline-none focus:ring-2 focus:ring-primary-container border-0"
-                        />
-                        <span class="material-symbols-outlined absolute left-2.5 top-2 text-neutral-muted text-base">search</span>
+                <!-- Bottom: Cohesive & Beautiful Filter Toolbar -->
+                <div class="mt-4 pt-4 border-t border-neutral-border-subtle flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                    <!-- Left: Search Box & Category Dropdown -->
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <!-- Search Box with pinned SVG icon -->
+                        <div class="relative w-full sm:w-64">
+                            <input 
+                                type="text" 
+                                wire:model.live.debounce.300ms="search" 
+                                placeholder="Cari varian, warna, SKU..." 
+                                class="w-full text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-surface-soft text-neutral-heading pl-9 pr-3 py-2 focus:ring-2 focus:ring-primary-container focus:border-primary-container transition"
+                            />
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-muted">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Category Selector Dropdown -->
+                        <div class="relative">
+                            <select 
+                                wire:model.live="selectedCategory" 
+                                class="text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-surface-soft text-neutral-heading py-2 pl-3 pr-8 focus:ring-2 focus:ring-primary-container focus:border-primary-container transition appearance-none">
+                                <option value="ALL">Semua Kategori</option>
+                                @foreach($this->categories as $c)
+                                    <option value="{{ $c->slug }}">{{ $c->name }}</option>
+                                @endforeach
+                            </select>
+                            <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none text-neutral-muted">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        @if(!empty($this->selectedRisk) || !empty($this->selectedCategory) || !empty($this->search))
+                            <button 
+                                type="button" 
+                                wire:click="resetFilters" 
+                                class="text-xs text-primary hover:underline font-medium px-2 py-1 transition cursor-pointer">
+                                Reset Filter
+                            </button>
+                        @endif
                     </div>
 
-                    <!-- Quick Risk Tabs -->
-                    <div class="flex items-center rounded-xl bg-surface-soft p-1">
+                    <!-- Right: Quick Risk Tabs Segmented Control -->
+                    <div class="flex items-center rounded-xl bg-surface-soft p-1 border border-gray-200/50 dark:border-gray-700/50 shrink-0 self-start lg:self-auto">
                         <button 
                             type="button" 
                             wire:click="setRiskFilter(null)" 
-                            class="px-3 py-1 rounded-lg text-caption font-caption transition {{ empty($this->selectedRisk) ? 'bg-surface-container-lowest text-neutral-heading font-semibold shadow-xs' : 'text-neutral-muted hover:text-neutral-heading' }}">
+                            class="px-3 py-1 rounded-lg text-xs transition cursor-pointer {{ empty($this->selectedRisk) ? 'bg-surface-container-lowest text-neutral-heading font-semibold shadow-xs' : 'text-neutral-muted hover:text-neutral-heading' }}">
                             Semua
                         </button>
                         <button 
                             type="button" 
                             wire:click="setRiskFilter('SLOW_MOVING')" 
-                            class="px-3 py-1 rounded-lg text-caption font-caption transition {{ $this->selectedRisk === 'SLOW_MOVING' ? 'bg-surface-container-lowest text-neutral-heading font-semibold shadow-xs' : 'text-neutral-muted hover:text-neutral-heading' }}">
+                            class="px-3 py-1 rounded-lg text-xs transition cursor-pointer {{ $this->selectedRisk === 'SLOW_MOVING' ? 'bg-surface-container-lowest text-neutral-heading font-semibold shadow-xs' : 'text-neutral-muted hover:text-neutral-heading' }}">
                             Slow Moving ({{ $this->riskDistribution['slow_moving'] }})
                         </button>
                         <button 
                             type="button" 
                             wire:click="setRiskFilter('SAFE')" 
-                            class="px-3 py-1 rounded-lg text-caption font-caption transition {{ $this->selectedRisk === 'SAFE' ? 'bg-surface-container-lowest text-neutral-heading font-semibold shadow-xs' : 'text-neutral-muted hover:text-neutral-heading' }}">
+                            class="px-3 py-1 rounded-lg text-xs transition cursor-pointer {{ $this->selectedRisk === 'SAFE' ? 'bg-surface-container-lowest text-neutral-heading font-semibold shadow-xs' : 'text-neutral-muted hover:text-neutral-heading' }}">
                             Aman ({{ $this->riskDistribution['safe'] }})
                         </button>
                     </div>
-
-                    <!-- Category Selector Dropdown -->
-                    <select wire:model.live="selectedCategory" class="h-9 px-3 rounded-xl bg-surface-soft text-caption font-caption text-neutral-heading border-0 focus:ring-2 focus:ring-primary-container">
-                        <option value="ALL">Semua Kategori</option>
-                        @foreach($this->categories as $c)
-                            <option value="{{ $c->slug }}">{{ $c->name }}</option>
-                        @endforeach
-                    </select>
                 </div>
             </div>
 
