@@ -26,6 +26,8 @@ shopdress/
 │   │   ├── OrderStatus.php         # PENDING, PAID, PROCESSING, SHIPPED, COMPLETED, CANCELLED
 │   │   └── PaymentStatus.php       # UNPAID, EXPIRED, SETTLED, FAILED
 │   ├── Filament/                   # Admin Panel (Filament)
+│   │   ├── Pages/
+│   │   │   └── StockForecastingPage.php # AI Predictive Stock & Restock Forecasting
 │   │   ├── Resources/
 │   │   │   ├── CategoryResource.php
 │   │   │   ├── ProductResource.php
@@ -64,6 +66,7 @@ shopdress/
 │   └── Services/
 │       ├── CartService.php
 │       ├── InventoryService.php
+│       ├── StockForecastingService.php # Algoritma WMA + EOQ Peramalan Stok
 │       └── MidtransService.php
 ├── config/
 │   └── midtrans.php
@@ -251,3 +254,14 @@ shopdress/
 - Optimasi tampilan responsive mobile & tablet.
 - Handling error notification (Flash Message / Toast Notification).
 - Final Code Review & Persiapan Deployment.
+
+### Minggu 11: AI Predictive Stock & Smart Restock Forecasting System
+- Implementasi algoritma peramalan stok terpadu:
+  - **Weighted Moving Average (WMA):** Bobot 70% tren penjualan 7 hari terakhir + 30% baseline penjualan 30 hari terakhir.
+  - **Economic Order Quantity (EOQ):** Perhitungan saran jumlah pesanan optimal berdasarkan lead time konveksi dan margin holding cost.
+- Pembuatan Custom Page Filament: `StockForecastingPage` (`/admin/stock-forecasting`).
+- Visualisasi Analytics Interaktif:
+  - **Distribusi Risiko Ketahanan Stok:** Donut Chart visual stratifikasi risiko unit (*Kritis < 7 hari, Waspada 7–14 hari, Aman 15–45 hari, Stok Mengendap > 60 hari*).
+  - **Stok Fisik Tersedia vs Saran Order Restock per Kategori:** Visualisasi bar chart progress horizontal dengan filter kategori real-time.
+  - **KPI Metric Summary Cards:** Indikator restock darurat, level stok aman, proyeksi biaya restock, dan utilisasi modal.
+  - **Interactive Action Matrix Table:** Tabel audit SKU lengkap dengan rekomendasi aksi restock, days-of-inventory left, target buffer, dan filter cepat per status risiko.
