@@ -19,3 +19,6 @@ backend/public/storage
 backend/storage/*.key
 backend/database/*.sqlite
 backend/database/*.sqlite-journal
+
+# Document files
+*.docx
