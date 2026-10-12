@@ -26,7 +26,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->login(\App\Filament\Pages\Auth\CustomLogin::class)
             ->brandName('ShopDress Admin')
             ->brandLogo(fn () => view('filament.brand-logo'))
             ->brandLogoHeight('2.4rem')
