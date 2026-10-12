@@ -70,8 +70,8 @@
             <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-orange-500/5 rounded-full blur-2xl pointer-events-none"></div>
         </div>
 
-        <!-- TOP ROW: Two Visual Analytics Cards (Side-by-Side from md: breakpoint) -->
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
+        <!-- TOP ROW: Two Visual Analytics Cards (Side-by-Side) -->
+        <div style="display:flex; gap:1.5rem; align-items:stretch; flex-wrap:nowrap;">
             <!-- 1. Donut Chart Widget: Distribusi Risiko Ketahanan Stok -->
             @php
                 $dist = $this->riskDistribution;
@@ -85,7 +85,7 @@
                 $warnCirc = round((339.29 * $warnPct) / 100, 2);
                 $critCirc = round((339.29 * $critPct) / 100, 2);
             @endphp
-            <div class="md:col-span-5 bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-xs flex flex-col justify-between h-full">
+            <div style="flex:0 0 50%; min-width:0;" class="bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-xs flex flex-col justify-between">
                 <div>
                     <div class="flex items-start justify-between">
                         <div>
@@ -170,7 +170,7 @@
             </div>
 
             <!-- 2. Bar Chart Widget: Stok Fisik Tersedia vs Saran Order Restock per Kategori -->
-            <div class="md:col-span-7 bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-xs flex flex-col justify-between h-full">
+            <div style="flex:1 1 0%; min-width:0;" class="bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-xs flex flex-col justify-between">
                 <div>
                     <div>
                         <span class="text-[11px] font-caption uppercase tracking-wider text-neutral-muted">CATEGORY INVENTORY VELOCITY</span>
@@ -179,7 +179,7 @@
                     <!-- Legend below header matching reference -->
                     <div class="flex items-center gap-4 text-xs font-medium mt-1.5">
                         <div class="flex items-center gap-1.5">
-                            <span class="w-3 h-3 rounded-xs bg-[#0d1c2f] dark:bg-white shrink-0"></span>
+                            <span class="w-3 h-3 rounded-xs shrink-0" style="background:#10B981"></span>
                             <span class="text-neutral-heading">Stok Fisik</span>
                         </div>
                         <div class="flex items-center gap-1.5">
@@ -204,7 +204,7 @@
                                 </span>
                             </div>
                             <div class="h-4 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex items-center p-0.5">
-                                <div class="h-full bg-[#0d1c2f] dark:bg-slate-200 rounded-full transition-all duration-300" style="width: {{ $cat['bar_width'] }}%;"></div>
+                                <div class="h-full rounded-full transition-all duration-300" style="width: {{ $cat['bar_width'] }}%; background:#10B981;"></div>
                                 @if($cat['restock_width'] > 0)
                                     <div class="h-full bg-primary-container rounded-full ml-1 transition-all duration-300" style="width: {{ $cat['restock_width'] }}%;"></div>
                                 @endif
