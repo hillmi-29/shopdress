@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+
+<html lang="id" style=""><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "error-container": "#ffdad6", "outline": "#7b7486", "on-surface-variant": "#4a4455", "primary-container": "#6d28d9", "surface-container-low": "#f2f3ff", "text-muted": "#64748B", "on-tertiary-fixed-variant": "#005236", "primary-50": "#F5F3FF", "primary-100": "#EDE9FE", "surface-container-highest": "#dae2fd", "badge-neutral-bg": "#F1F5F9", "on-tertiary-fixed": "#002113", "surface-container-lowest": "#ffffff", "surface-container-high": "#e2e7ff", "badge-neutral-border": "#CBD5E1", "border-strong": "#CBD5E1", "on-primary-container": "#dac5ff", "badge-warning-text": "#92400E", "inverse-on-surface": "#eef0ff", "surface": "#faf8ff", "primary-fixed-dim": "#d3bbff", "on-secondary-fixed-variant": "#3a485b", "on-primary": "#ffffff", "surface-variant": "#dae2fd", "on-secondary-fixed": "#0d1c2e", "tertiary-fixed-dim": "#4edea3", "on-error": "#ffffff", "badge-neutral-text": "#334155", "badge-success-bg": "#ECFDF5", "secondary-fixed": "#d5e3fc", "canvas-bg": "#F8FAFC", "badge-warning-bg": "#FFFBEB", "inverse-primary": "#d3bbff", "primary-500": "#7C3AED", "tertiary-fixed": "#6ffbbe", "border-subtle": "#E2E8F0", "on-secondary": "#ffffff", "on-secondary-container": "#57657a", "primary": "#5300b7", "badge-success-text": "#065F46", "tertiary": "#004b31", "on-primary-fixed": "#250059", "surface-bright": "#faf8ff", "secondary-container": "#d5e3fc", "primary-fixed": "#ebddff", "error": "#ba1a1a", "background": "#faf8ff", "primary-700": "#5B21B6", "primary-200": "#DDD6FE", "surface-tint": "#7331df", "on-error-container": "#93000a", "surface-white": "#FFFFFF", "badge-danger-border": "#FECACA", "inverse-surface": "#283044", "on-tertiary": "#ffffff", "badge-info-text": "#1E40AF", "surface-container": "#eaedff", "on-surface": "#131b2e", "on-background": "#131b2e", "badge-info-bg": "#EFF6FF", "secondary-fixed-dim": "#b9c7df", "badge-danger-bg": "#FEF2F2", "badge-info-border": "#BFDBFE", "on-primary-fixed-variant": "#5b00c5", "outline-variant": "#ccc3d7", "badge-warning-border": "#FDE68A", "secondary": "#515f74", "badge-danger-text": "#991B1B", "surface-dim": "#d2d9f4", "tertiary-container": "#006544", "badge-success-border": "#A7F3D0", "primary-950": "#2E1065", "primary-600": "#6D28D9", "on-tertiary-container": "#58e7ab" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-md": "1rem", "space-sm": "0.5rem", "margin": "2rem", "space-xl": "2rem", "gutter": "1.5rem", "space-xs": "0.25rem", "space-lg": "1.5rem" }, "fontFamily": { "body-sm": ["Inter"], "metric-stat": ["Inter"], "table-header": ["Inter"], "page-title": ["Inter"], "caption": ["Inter"], "body-bold": ["Inter"], "badge-label": ["Inter"], "body-medium": ["Inter"], "section-title": ["Inter"], "currency-figure": ["Inter"], "body-default": ["Inter"] }, "fontSize": { "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }], "metric-stat": ["30px", { "lineHeight": "36px", "letterSpacing": "-0.025em", "fontWeight": "700" }], "table-header": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }], "page-title": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "caption": ["12px", { "lineHeight": "16px", "fontWeight": "500" }], "body-bold": ["14px", { "lineHeight": "20px", "fontWeight": "600" }], "badge-label": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "600" }], "body-medium": ["14px", { "lineHeight": "20px", "fontWeight": "500" }], "section-title": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "currency-figure": ["14px", { "lineHeight": "20px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-default": ["14px", { "lineHeight": "20px", "fontWeight": "400" }] } } } };</script></head><body class="bg-canvas-bg font-body-default text-body-default text-on-surface antialiased min-h-screen"><aside class="fixed left-0 top-0 h-full w-[260px] bg-surface-white border-r border-border-subtle z-50 flex flex-col"><div class="h-16 px-space-lg flex items-center gap-space-sm border-b border-border-subtle shrink-0"><div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-surface-white shadow-[0_1px_2px_0_rgba(0,0,0,0.05)]"><span class="material-symbols-outlined text-[20px]">styler</span></div><div class="flex flex-col"><span class="font-page-title text-[17px] leading-5 font-bold tracking-tight text-on-surface">ShopDress</span><span class="font-caption text-caption text-text-muted">Admin Panel</span></div></div><nav class="flex-1 overflow-y-auto px-space-sm py-space-md space-y-space-md" data-active-classes="bg-primary-50 text-primary-container font-semibold rounded-lg"><div class="space-y-1"><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg font-body-medium text-body-medium text-secondary hover:bg-canvas-bg hover:text-on-surface transition-colors" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="">Dashboard</span></a></div><div><div class="px-space-sm pb-1.5 font-table-header text-[11px] font-bold text-text-muted uppercase tracking-wider">Katalog</div><div class="space-y-1"><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg font-body-medium text-body-medium text-secondary hover:bg-canvas-bg hover:text-on-surface transition-colors" data-path="kategori" href="#"><span class="material-symbols-outlined text-[20px]">category</span><span class="">Kategori</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg font-body-medium text-body-medium bg-primary-50 text-primary-container font-semibold transition-colors" data-path="produk" href="#"><span class="material-symbols-outlined text-[20px] text-primary-container">checkroom</span><span class="">Produk</span></a></div></div><div><div class="px-space-sm pb-1.5 font-table-header text-[11px] font-bold text-text-muted uppercase tracking-wider">Penjualan</div><div class="space-y-1"><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg font-body-medium text-body-medium text-secondary hover:bg-canvas-bg hover:text-on-surface transition-colors" data-path="pesanan" href="#"><span class="material-symbols-outlined text-[20px]">shopping_bag</span><span class="">Pesanan</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg font-body-medium text-body-medium text-secondary hover:bg-canvas-bg hover:text-on-surface transition-colors" data-path="kupon" href="#"><span class="material-symbols-outlined text-[20px]">confirmation_number</span><span class="">Kupon</span></a></div></div><div><div class="px-space-sm pb-1.5 font-table-header text-[11px] font-bold text-text-muted uppercase tracking-wider">Pelanggan</div><div class="space-y-1"><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg font-body-medium text-body-medium text-secondary hover:bg-canvas-bg hover:text-on-surface transition-colors" data-path="pengguna" href="#"><span class="material-symbols-outlined text-[20px]">group</span><span class="">Pengguna</span></a></div></div><div><div class="px-space-sm pb-1.5 font-table-header text-[11px] font-bold text-text-muted uppercase tracking-wider">Analitik</div><div class="space-y-1"><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg font-body-medium text-body-medium text-secondary hover:bg-canvas-bg hover:text-on-surface transition-colors" data-path="peramalan-stok" href="#"><span class="material-symbols-outlined text-[20px]">trending_up</span><span class="">Peramalan Stok</span></a></div></div></nav><div class="p-space-sm border-t border-border-subtle shrink-0"><div class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg bg-canvas-bg text-secondary"><span class="material-symbols-outlined text-[18px] text-text-muted">storefront</span><span class="font-caption text-caption truncate">v3.0 Production Ready</span></div></div></aside><div class="pl-[260px]"><header class="fixed top-0 left-[260px] right-0 h-16 bg-surface-white border-b border-border-subtle z-40 flex items-center justify-between px-space-lg"><div class="w-96"><div class="relative flex items-center"><span class="material-symbols-outlined absolute left-3 text-[18px] text-text-muted pointer-events-none">search</span><input class="w-full h-[38px] pl-9 pr-14 bg-surface-white border border-border-strong rounded-lg font-body-default text-body-default text-on-surface placeholder:text-text-muted focus:outline-none focus:border-primary-600 focus:ring-1 focus:ring-primary-600 transition-colors" placeholder="Cari di admin panel..." type="text"/><div class="absolute right-2 px-1.5 py-0.5 border border-border-subtle bg-badge-neutral-bg rounded text-[11px] font-table-header text-text-muted">Ctrl+K</div></div></div><div class="flex items-center gap-space-md"><button class="relative p-2 rounded-lg text-secondary hover:bg-canvas-bg hover:text-on-surface transition-colors" title="Notifikasi" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface-white"></span></button><div class="h-6 w-px bg-border-subtle"></div><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden md:flex flex-col text-left"><span class="font-body-bold text-[13px] leading-4 text-on-surface">Administrator</span><span class="font-caption text-[11px] text-text-muted">admin@shopdress.id</span></div><div class="relative flex items-center gap-1"><a class="p-1 text-secondary hover:text-on-surface rounded transition-colors" data-path="profil" href="#" title="Profil"><span class="material-symbols-outlined text-[18px]">manage_accounts</span></a><a class="p-1 text-secondary hover:text-error transition-colors" data-path="keluar" href="#" title="Keluar"><span class="material-symbols-outlined text-[18px]">logout</span></a></div></div></div></header><main class="w-full pt-16 bg-canvas-bg min-h-screen px-space-lg py-space-lg"><div class="flex flex-col w-full space-y-6">
+<!-- Filament Breadcrumbs & Action Bar -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+<div class="space-y-1">
+<nav aria-label="Breadcrumbs" class="flex items-center gap-1.5 font-caption text-caption text-text-muted">
+<a class="hover:text-primary-container transition-colors flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-[16px]">home</span>
+<span>Home</span>
+</a>
+<span class="text-text-muted/60">/</span>
+<span class="hover:text-primary-container transition-colors">Katalog</span>
+<span class="text-text-muted/60">/</span>
+<span class="font-semibold text-on-surface">Kategori</span>
+</nav>
+<div class="flex items-center gap-3">
+<h1 class="font-page-title text-page-title text-on-surface font-bold tracking-tight">Kategori</h1>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-badge-label text-badge-label bg-primary-50 text-primary-600">
+          5 Kategori
+        </span>
+</div>
+</div>
+<!-- Header Actions -->
+<div class="flex items-center gap-2.5 self-start sm:self-auto">
+<button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface-white text-secondary font-body-medium text-body-medium shadow-sm hover:bg-canvas-bg hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+<span>Export Data</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary-container text-surface-white font-body-medium text-body-medium shadow-sm hover:bg-primary-700 transition-colors focus:ring-2 focus:ring-primary-200" type="button">
+<span class="material-symbols-outlined text-[19px]">add</span>
+<span>Buat Kategori</span>
+</button>
+</div>
+</div>
+<!-- Filament 3.x Stat Cards (Mini Summary) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Stat 1 -->
+<div class="bg-surface-white rounded-xl p-4 shadow-sm flex items-center justify-between">
+<div class="space-y-1">
+<p class="font-caption text-caption text-text-muted font-medium">Total Kategori</p>
+<div class="flex items-baseline gap-2">
+<span class="font-metric-stat text-metric-stat text-on-surface font-bold">5</span>
+<span class="font-caption text-caption text-badge-success-text font-semibold">Semua Aktif</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-muted">Struktur taksonomi toko siap pakai</p>
+</div>
+<div class="w-12 h-12 rounded-xl bg-primary-50 text-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">category</span>
+</div>
+</div>
+<!-- Stat 2 -->
+<div class="bg-surface-white rounded-xl p-4 shadow-sm flex items-center justify-between">
+<div class="space-y-1">
+<p class="font-caption text-caption text-text-muted font-medium">Total Produk Terkait</p>
+<div class="flex items-baseline gap-2">
+<span class="font-metric-stat text-metric-stat text-on-surface font-bold">48</span>
+<span class="font-caption text-caption text-text-muted">Item SKUs</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-muted">Terdistribusi di 5 departemen</p>
+</div>
+<div class="w-12 h-12 rounded-xl bg-badge-info-bg text-badge-info-text flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">checkroom</span>
+</div>
+</div>
+<!-- Stat 3 -->
+<div class="bg-surface-white rounded-xl p-4 shadow-sm flex items-center justify-between">
+<div class="space-y-1">
+<p class="font-caption text-caption text-text-muted font-medium">Kategori Terbanyak</p>
+<div class="flex items-baseline gap-1.5 truncate">
+<span class="font-section-title text-section-title text-on-surface font-bold truncate">Gamis &amp; Abaya</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="font-semibold text-primary-600">18 Produk</span>
+<span>(37.5% dari katalog)</span>
+</p>
+</div>
+<div class="w-12 h-12 rounded-xl bg-badge-warning-bg text-badge-warning-text flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">stars</span>
+</div>
+</div>
+</div>
+<!-- Filament Table Container -->
+<div class="bg-surface-white rounded-xl shadow-sm overflow-hidden flex flex-col">
+<!-- Toolbar & Search Controls -->
+<div class="p-4 bg-surface-white flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+<!-- Search Input -->
+<div class="relative flex-1 max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-text-muted pointer-events-none">search</span>
+<input class="w-full h-[38px] pl-9 pr-10 bg-surface-white rounded-lg font-body-default text-body-default text-on-surface placeholder:text-text-muted focus:outline-none focus:ring-1 focus:ring-primary-600 transition-shadow shadow-xs" id="category-search" placeholder="Cari nama kategori, slug..." type="text"/>
+<div class="absolute right-2.5 top-2 px-1.5 py-0.5 rounded bg-badge-neutral-bg font-table-header text-[11px] text-text-muted pointer-events-none">/</div>
+</div>
+<!-- Action Selects & Bulk Controls -->
+<div class="flex items-center flex-wrap gap-2.5">
+<!-- Quick Filter -->
+<div class="relative">
+<select class="h-[38px] appearance-none pl-3 pr-8 rounded-lg bg-surface-white font-body-medium text-body-medium text-secondary hover:text-on-surface cursor-pointer focus:outline-none shadow-xs">
+<option value="all">Semua Status</option>
+<option value="active">Aktif</option>
+<option value="archived">Diarsipkan</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-[18px] text-text-muted pointer-events-none">expand_more</span>
+</div>
+<!-- Bulk Action Dropdown with Selected Counter -->
+<div class="relative inline-block text-left" id="bulk-menu-container">
+<button class="h-[38px] px-3.5 rounded-lg bg-badge-neutral-bg text-secondary font-body-medium text-body-medium inline-flex items-center gap-1.5 hover:bg-canvas-bg hover:text-on-surface transition-colors" id="bulk-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">checklist</span>
+<span>Aksi Massal</span>
+<span class="hidden px-1.5 py-0.2 rounded-full bg-primary-container text-surface-white text-[11px] font-bold" id="selected-badge">0</span>
+<span class="material-symbols-outlined text-[16px] ml-0.5">expand_more</span>
+</button>
+<!-- Bulk Dropdown Menu -->
+<div class="hidden absolute right-0 mt-1 w-48 rounded-xl bg-surface-white shadow-xl py-1 z-20" id="bulk-dropdown">
+<button class="w-full text-left px-3.5 py-2 font-body-medium text-body-medium text-badge-danger-text hover:bg-badge-danger-bg flex items-center gap-2 transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px] text-badge-danger-text">delete</span>
+<span>Hapus Terpilih</span>
+</button>
+<button class="w-full text-left px-3.5 py-2 font-body-medium text-body-medium text-secondary hover:bg-canvas-bg flex items-center gap-2 transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility_off</span>
+<span>Nonaktifkan</span>
+</button>
+</div>
+</div>
+<!-- Refresh Table Action -->
+<button class="h-[38px] w-[38px] flex items-center justify-center rounded-lg bg-surface-white text-secondary hover:text-on-surface hover:bg-canvas-bg transition-colors" title="Muat ulang tabel" type="button">
+<span class="material-symbols-outlined text-[19px]">refresh</span>
+</button>
+</div>
+</div>
+<!-- Table Wrapper -->
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-canvas-bg font-table-header text-table-header text-text-muted uppercase tracking-wider">
+<th class="w-12 px-4 py-3.5 text-center">
+<input class="rounded w-4 h-4 text-primary-container focus:ring-0 cursor-pointer accent-primary-container" id="select-all" type="checkbox"/>
+</th>
+<th class="px-4 py-3.5">Gambar</th>
+<th class="px-4 py-3.5">Nama</th>
+<th class="px-4 py-3.5">Slug</th>
+<th class="px-4 py-3.5">Jumlah Produk</th>
+<th class="px-4 py-3.5">Status</th>
+<th class="px-4 py-3.5 text-right">Aksi</th>
+</tr>
+</thead>
+<tbody class="font-body-default text-body-default text-on-surface">
+<!-- Row 1: Gamis & Abaya -->
+<tr class="hover:bg-canvas-bg/70 transition-colors group">
+<td class="px-4 py-3 text-center">
+<input class="row-checkbox rounded w-4 h-4 text-primary-container focus:ring-0 cursor-pointer accent-primary-container" type="checkbox"/>
+</td>
+<td class="px-4 py-3">
+<img class="w-12 h-12 rounded-lg object-cover shadow-xs" data-alt="Modern modest Indonesian Gamis dress in luxury mulberry silk, styled on an invisible mannequin with elegant draping in studio softbox lighting, warm ambient violet undertone" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJ8zeenHg_CCjHgDlAPfRTRUjq93cGEcRyt73cg_2dcazQrioMjbbgS3xcw-LMtpzGyXcPqmSDERzHXTQByisW2DfArUZJbt92td3s6uXgbDsj3wwT_NRXAbNquOSfPGyeB1Sa9cHG_MImsNEfp7aNWa9u7H8G0EdcTu9kG01C52FgHq7BwC0SrbW_aO58SC3x_Sy1DUtmO1M49NUqUQw1u8yxJ75d63Ubjy4q1sQTIiktVchy78Yy"/>
+</td>
+<td class="px-4 py-3">
+<div class="flex flex-col">
+<span class="font-body-bold text-body-bold text-on-surface group-hover:text-primary-container transition-colors">Gamis &amp; Abaya</span>
+<span class="font-caption text-caption text-text-muted">Busana muslimah syar'i &amp; kaftan modern</span>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="px-2 py-0.5 rounded-md font-mono text-[12px] bg-badge-neutral-bg text-secondary">
+                gamis-abaya
+              </span>
+</td>
+<td class="px-4 py-3">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low text-primary-container font-body-medium text-body-medium">
+<span class="material-symbols-outlined text-[16px]">local_offer</span>
+<span>18 Produk</span>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-badge-label text-badge-label bg-badge-success-bg text-badge-success-text">
+<span class="w-1.5 h-1.5 rounded-full bg-badge-success-text"></span>
+<span>Aktif</span>
+</span>
+</td>
+<td class="px-4 py-3 text-right">
+<div class="inline-flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-md text-secondary hover:text-primary-container hover:bg-primary-50 transition-colors" title="Ubah Kategori" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-md text-secondary hover:text-badge-danger-text hover:bg-badge-danger-bg transition-colors" title="Hapus Kategori" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Kaos & T-Shirt -->
+<tr class="hover:bg-canvas-bg/70 transition-colors group">
+<td class="px-4 py-3 text-center">
+<input class="row-checkbox rounded w-4 h-4 text-primary-container focus:ring-0 cursor-pointer accent-primary-container" type="checkbox"/>
+</td>
+<td class="px-4 py-3">
+<img class="w-12 h-12 rounded-lg object-cover shadow-xs" data-alt="Premium oversized cotton combad 24s T-shirt in pastel lavender folded neatly with subtle brand embroidery tag, studio lighting, soft neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMUfslhUj4Bgq7DrbWZ2c7NyEA1fDtxrgDOOmBp88P4RKsSVV-Aqd9r_UMqYsujo21-oMXqPFBtt_gw115N00YeO9wFcnw-oSVPGDcYT4LawE6zy8vpy8cJAGzUz4PZlFC6CN9hmeT5oQEfouFu3NZDYZazQx_2ZTQxUdtZnGODxV_nypqe5ifBOu9V10jW3u-nRSEO9D2n387DYJ9c-vFlA-mm46mheMNdW0n6i8pNdcGpp1Ret3f"/>
+</td>
+<td class="px-4 py-3">
+<div class="flex flex-col">
+<span class="font-body-bold text-body-bold text-on-surface group-hover:text-primary-container transition-colors">Kaos &amp; T-Shirt</span>
+<span class="font-caption text-caption text-text-muted">Daily oversized &amp; basic tees santai</span>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="px-2 py-0.5 rounded-md font-mono text-[12px] bg-badge-neutral-bg text-secondary">
+                kaos-tshirt
+              </span>
+</td>
+<td class="px-4 py-3">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low text-primary-container font-body-medium text-body-medium">
+<span class="material-symbols-outlined text-[16px]">local_offer</span>
+<span>12 Produk</span>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-badge-label text-badge-label bg-badge-success-bg text-badge-success-text">
+<span class="w-1.5 h-1.5 rounded-full bg-badge-success-text"></span>
+<span>Aktif</span>
+</span>
+</td>
+<td class="px-4 py-3 text-right">
+<div class="inline-flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-md text-secondary hover:text-primary-container hover:bg-primary-50 transition-colors" title="Ubah Kategori" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-md text-secondary hover:text-badge-danger-text hover:bg-badge-danger-bg transition-colors" title="Hapus Kategori" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Kemeja & Blouse -->
+<tr class="hover:bg-canvas-bg/70 transition-colors group">
+<td class="px-4 py-3 text-center">
+<input class="row-checkbox rounded w-4 h-4 text-primary-container focus:ring-0 cursor-pointer accent-primary-container" type="checkbox"/>
+</td>
+<td class="px-4 py-3">
+<img class="w-12 h-12 rounded-lg object-cover shadow-xs" data-alt="Editorial close up of pure white linen button up blouse with balloon sleeves and mother of pearl buttons, minimalist high-end fashion catalog photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEbHkUSgUlMtUqlET7tIswQVytcp5aD05HbiXPxi0skbkEJqmxWPoROuRY0vJ4yP0xPBrM2Z3qBB1vl1h1bXR5DWIZLy7ETcgW2lr-AoRdVKp9ey3Mv4MfmxQeE7WkaHBliO7VVbZIn__1_IkeqFLS9FKLmCua_jxOX1wgSgkj3LQaFUwf_DoqyQ3ZuGpNTBQ3wjZshX268Eg3DMKkdPx1Kta3CMPnEhbiwcmvFMgnHGg5tbhO2E74"/>
+</td>
+<td class="px-4 py-3">
+<div class="flex flex-col">
+<span class="font-body-bold text-body-bold text-on-surface group-hover:text-primary-container transition-colors">Kemeja &amp; Blouse</span>
+<span class="font-caption text-caption text-text-muted">Pakaian formal kantor &amp; kasual chic</span>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="px-2 py-0.5 rounded-md font-mono text-[12px] bg-badge-neutral-bg text-secondary">
+                kemeja-blouse
+              </span>
+</td>
+<td class="px-4 py-3">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low text-primary-container font-body-medium text-body-medium">
+<span class="material-symbols-outlined text-[16px]">local_offer</span>
+<span>9 Produk</span>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-badge-label text-badge-label bg-badge-success-bg text-badge-success-text">
+<span class="w-1.5 h-1.5 rounded-full bg-badge-success-text"></span>
+<span>Aktif</span>
+</span>
+</td>
+<td class="px-4 py-3 text-right">
+<div class="inline-flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-md text-secondary hover:text-primary-container hover:bg-primary-50 transition-colors" title="Ubah Kategori" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-md text-secondary hover:text-badge-danger-text hover:bg-badge-danger-bg transition-colors" title="Hapus Kategori" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Hijab & Pashmina -->
+<tr class="hover:bg-canvas-bg/70 transition-colors group">
+<td class="px-4 py-3 text-center">
+<input class="row-checkbox rounded w-4 h-4 text-primary-container focus:ring-0 cursor-pointer accent-primary-container" type="checkbox"/>
+</td>
+<td class="px-4 py-3">
+<img class="w-12 h-12 rounded-lg object-cover shadow-xs" data-alt="Stack of folded ultra-fine voal and silk chiffon hijab scarves in muted dusty lilac and earth tones, architectural clean backdrop with warm sunlight glow" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcPA0htN2tPfpVlUQfVPFASeOa-aylU9WYya9wtqIyC3hZGB1H9fhStyfuKs7BouR-Sb_xDiz8xjIW7Ca9qw2Gl0s2JfPCNMfPKvBBRfpJsgByu58guMgrDf-ImdOCrj4gmFFjYZ34YMWUkKrvWTFbPL8bjURFL2myRhiC3oofdeu-VSjXo2dSRFUw2oyl5IiJvzFBOkdI3MrfZE21Kxv7Q7FwWYr-IlaQXAuYaiptsup8A-xfC-tX"/>
+</td>
+<td class="px-4 py-3">
+<div class="flex flex-col">
+<span class="font-body-bold text-body-bold text-on-surface group-hover:text-primary-container transition-colors">Hijab &amp; Pashmina</span>
+<span class="font-caption text-caption text-text-muted">Segiempat voal, ceruty babydoll &amp; plisket</span>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="px-2 py-0.5 rounded-md font-mono text-[12px] bg-badge-neutral-bg text-secondary">
+                hijab-pashmina
+              </span>
+</td>
+<td class="px-4 py-3">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low text-primary-container font-body-medium text-body-medium">
+<span class="material-symbols-outlined text-[16px]">local_offer</span>
+<span>6 Produk</span>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-badge-label text-badge-label bg-badge-success-bg text-badge-success-text">
+<span class="w-1.5 h-1.5 rounded-full bg-badge-success-text"></span>
+<span>Aktif</span>
+</span>
+</td>
+<td class="px-4 py-3 text-right">
+<div class="inline-flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-md text-secondary hover:text-primary-container hover:bg-primary-50 transition-colors" title="Ubah Kategori" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-md text-secondary hover:text-badge-danger-text hover:bg-badge-danger-bg transition-colors" title="Hapus Kategori" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5: Celana & Bawahan -->
+<tr class="hover:bg-canvas-bg/70 transition-colors group">
+<td class="px-4 py-3 text-center">
+<input class="row-checkbox rounded w-4 h-4 text-primary-container focus:ring-0 cursor-pointer accent-primary-container" type="checkbox"/>
+</td>
+<td class="px-4 py-3">
+<img class="w-12 h-12 rounded-lg object-cover shadow-xs" data-alt="Wide leg high waist linen culottes in soft beige cream colorway on minimalist fashion studio pedestal, clean commercial boutique aesthetics" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFcnkIWDlO2TgxoPjtwbMIHFyahZwYe6eRTI0MPL1m28q2m3kszcddgAzNmAvvcnsRZzZ3NHGvqkHc2ZjSYeFhd1Niy6OnNg_hzzUjVu_AkD6FKpcWb1O4BQud9yLmCxNPIAbqrJo8UXnq8jlktiBFek6v8L85GhPIbF5S6MGfFOIs7ymeDIJOwRxSO3KQJsGWMODPVfPgVQm88T7rqG_hcDDZgTwRoTOgnoOx_Ck-w2ehe9HX6Qqa"/>
+</td>
+<td class="px-4 py-3">
+<div class="flex flex-col">
+<span class="font-body-bold text-body-bold text-on-surface group-hover:text-primary-container transition-colors">Celana &amp; Bawahan</span>
+<span class="font-caption text-caption text-text-muted">Kulot linen, rok plisket &amp; straight cut pants</span>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="px-2 py-0.5 rounded-md font-mono text-[12px] bg-badge-neutral-bg text-secondary">
+                celana-bawahan
+              </span>
+</td>
+<td class="px-4 py-3">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low text-primary-container font-body-medium text-body-medium">
+<span class="material-symbols-outlined text-[16px]">local_offer</span>
+<span>3 Produk</span>
+</div>
+</td>
+<td class="px-4 py-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-badge-label text-badge-label bg-badge-success-bg text-badge-success-text">
+<span class="w-1.5 h-1.5 rounded-full bg-badge-success-text"></span>
+<span>Aktif</span>
+</span>
+</td>
+<td class="px-4 py-3 text-right">
+<div class="inline-flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-md text-secondary hover:text-primary-container hover:bg-primary-50 transition-colors" title="Ubah Kategori" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-md text-secondary hover:text-badge-danger-text hover:bg-badge-danger-bg transition-colors" title="Hapus Kategori" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Filament Table Pagination Footer -->
+<div class="p-4 bg-surface-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-body-sm text-body-sm text-text-muted">
+<!-- Records Count Info -->
+<div class="flex items-center gap-4">
+<span>Menampilkan <strong class="font-semibold text-on-surface">1</strong> - <strong class="font-semibold text-on-surface">5</strong> dari <strong class="font-semibold text-on-surface">5</strong> kategori</span>
+<div class="h-4 w-px bg-badge-neutral-bg hidden sm:block"></div>
+<div class="flex items-center gap-2">
+<span>Per halaman:</span>
+<select class="h-7 px-2 rounded-md bg-canvas-bg font-body-sm text-body-sm text-on-surface cursor-pointer focus:outline-none">
+<option selected="" value="10">10</option>
+<option value="25">25</option>
+<option value="50">50</option>
+</select>
+</div>
+</div>
+<!-- Pagination Buttons -->
+<div class="flex items-center gap-1 self-end sm:self-auto">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted/40 cursor-not-allowed" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-primary-container text-surface-white font-body-bold text-body-bold flex items-center justify-center shadow-xs" type="button">
+          1
+        </button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted/40 cursor-not-allowed" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Simple multi-select & bulk action handling
+  document.addEventListener('DOMContentLoaded', () => {
+    const selectAll = document.getElementById('select-all');
+    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+    const selectedBadge = document.getElementById('selected-badge');
+    const bulkBtn = document.getElementById('bulk-btn');
+    const bulkDropdown = document.getElementById('bulk-dropdown');
+    const searchInput = document.getElementById('category-search');
+
+    function updateCount() {
+      const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
+      if (checkedCount > 0) {
+        selectedBadge.textContent = checkedCount;
+        selectedBadge.classList.remove('hidden');
+      } else {
+        selectedBadge.classList.add('hidden');
+      }
+      selectAll.checked = checkedCount > 0 && checkedCount === rowCheckboxes.length;
+      selectAll.indeterminate = checkedCount > 0 && checkedCount < rowCheckboxes.length;
+    }
+
+    if (selectAll) {
+      selectAll.addEventListener('change', () => {
+        rowCheckboxes.forEach(cb => cb.checked = selectAll.checked);
+        updateCount();
+      });
+    }
+
+    rowCheckboxes.forEach(cb => {
+      cb.addEventListener('change', updateCount);
+    });
+
+    if (bulkBtn && bulkDropdown) {
+      bulkBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        bulkDropdown.classList.toggle('hidden');
+      });
+
+      document.addEventListener('click', () => {
+        bulkDropdown.classList.add('hidden');
+      });
+    }
+
+    // Keyboard shortcut '/' to search
+    window.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement !== searchInput) {
+        e.preventDefault();
+        searchInput?.focus();
+      }
+    });
+  });
+</script></main></div>
+</body></html>
