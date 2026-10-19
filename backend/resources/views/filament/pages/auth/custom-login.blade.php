@@ -108,7 +108,6 @@
                             <input wire:model="data.remember" id="remember-me" name="remember" type="checkbox" checked />
                             <span>Ingat saya</span>
                         </label>
-                        <a class="sd-auth-link" href="#">Lupa kata sandi?</a>
                     </div>
 
                     <button
@@ -120,7 +119,7 @@
                     >
                         <span aria-live="polite">
                             <span wire:loading.remove wire:target="authenticate">Masuk ke Dasbor</span>
-                            <span wire:loading wire:target="authenticate">Memverifikasi kredensial...</span>
+                            <span wire:loading wire:target="authenticate">Memeriksa akun...</span>
                         </span>
                         <span class="material-symbols-outlined" aria-hidden="true" wire:loading.remove wire:target="authenticate">login</span>
                         <span class="material-symbols-outlined sd-spin" aria-hidden="true" wire:loading wire:target="authenticate">sync</span>
@@ -144,12 +143,5 @@
 
     <footer class="sd-auth-footer">
         <p>© {{ date('Y') }} ShopDress Indonesia. Hak cipta dilindungi.</p>
-        <nav class="sd-auth-footer-links" aria-label="Tautan footer">
-            <a href="#">Privasi</a>
-            <span aria-hidden="true">&bull;</span>
-            <a href="#">Ketentuan Layanan</a>
-            <span aria-hidden="true">&bull;</span>
-            <a href="#">Pusat Bantuan</a>
-        </nav>
     </footer>
 </div>
