@@ -15,6 +15,7 @@ use App\Models\Review;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
@@ -24,12 +25,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Gambar contoh memakai placeholder lokal di disk public (tanpa
+        // koneksi internet). Tiap record dibuatkan salinan file sendiri
+        // agar penghapusan satu record tidak memutus gambar record lain.
+        $placeholder = function (string $directory, string $filename, string $source): string {
+            $path = $directory.'/'.$filename;
+
+            if (! Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->put($path, file_get_contents(public_path('images/'.$source)));
+            }
+
+            return $path;
+        };
+
         // 1. Users (Admin and Customer)
         $admin = User::firstOrCreate(
             ['email' => 'admin@shopdress.com'],
             [
                 'name' => 'Administrator ShopDress',
-                'password' => Hash::make('password'),
+                'password' => Hash::make(env('SEED_ADMIN_PASSWORD', 'password')),
                 'phone' => '081234567890',
                 'address' => 'Jl. Fashion Boulevard No. 1, Jakarta Selatan',
                 'role' => 'admin',
@@ -40,7 +54,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'customer@shopdress.com'],
             [
                 'name' => 'Siti Nurhaliza',
-                'password' => Hash::make('password'),
+                'password' => Hash::make(env('SEED_CUSTOMER_PASSWORD', 'password')),
                 'phone' => '081298765432',
                 'address' => 'Jl. Melati Indah No. 45, Bandung, Jawa Barat',
                 'role' => 'customer',
@@ -51,7 +65,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'anisa@shopdress.com'],
             [
                 'name' => 'Anisa Rahma',
-                'password' => Hash::make('password'),
+                'password' => Hash::make(env('SEED_CUSTOMER_PASSWORD', 'password')),
                 'phone' => '081377889900',
                 'address' => 'Jl. Diponegoro No. 12, Surabaya, Jawa Timur',
                 'role' => 'customer',
@@ -64,31 +78,31 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Gamis & Abaya Modern',
                 'slug' => 'gamis-abaya-modern',
                 'description' => 'Koleksi busana muslimah gamis dan abaya anggun dengan bahan premium adem dan jatuh.',
-                'image' => 'https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=600&auto=format&fit=crop&q=80',
+                'image' => $placeholder('categories', 'placeholder-gamis-abaya-modern.svg', 'placeholder-category.svg'),
             ],
             [
                 'name' => 'Casual & Daily Dress',
                 'slug' => 'casual-daily-dress',
                 'description' => 'Dress santai harian yang nyaman, stylish, dan cocok untuk hangout bersama teman.',
-                'image' => 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&auto=format&fit=crop&q=80',
+                'image' => $placeholder('categories', 'placeholder-casual-daily-dress.svg', 'placeholder-category.svg'),
             ],
             [
                 'name' => 'Korean Style Dress',
                 'slug' => 'korean-style-dress',
                 'description' => 'Tren gaun ala Korea dengan potongan manis, ruffle, dan floral vintage look.',
-                'image' => 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600&auto=format&fit=crop&q=80',
+                'image' => $placeholder('categories', 'placeholder-korean-style-dress.svg', 'placeholder-category.svg'),
             ],
             [
                 'name' => 'Maxi & Long Dress',
                 'slug' => 'maxi-long-dress',
                 'description' => 'Gaun panjang anggun yang mempesona untuk acara semi-formal dan pesta santai.',
-                'image' => 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=600&auto=format&fit=crop&q=80',
+                'image' => $placeholder('categories', 'placeholder-maxi-long-dress.svg', 'placeholder-category.svg'),
             ],
             [
                 'name' => 'Party & Formal Dress',
                 'slug' => 'party-formal-dress',
                 'description' => 'Gaun pesta mewah berkelas dengan aksen lace, payet elegan, dan satin sutra.',
-                'image' => 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=600&auto=format&fit=crop&q=80',
+                'image' => $placeholder('categories', 'placeholder-party-formal-dress.svg', 'placeholder-category.svg'),
             ],
         ];
 
@@ -110,8 +124,7 @@ class DatabaseSeeder extends Seeder
                 'price' => 349000,
                 'featured' => true,
                 'images' => [
-                    'https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=800&auto=format&fit=crop&q=80',
-                    'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&auto=format&fit=crop&q=80',
+                    $placeholder('products', 'placeholder-aurelia-silk-gamis-dress.svg', 'placeholder-product.svg'),
                 ],
                 'variants' => [
                     ['size' => 'S', 'color' => 'Sage Green', 'stock' => 15, 'additional_price' => 0],
@@ -130,8 +143,7 @@ class DatabaseSeeder extends Seeder
                 'price' => 279000,
                 'featured' => true,
                 'images' => [
-                    'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=800&auto=format&fit=crop&q=80',
-                    'https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=800&auto=format&fit=crop&q=80',
+                    $placeholder('products', 'placeholder-ji-woo-floral-ruffle-midi-dress.svg', 'placeholder-product.svg'),
                 ],
                 'variants' => [
                     ['size' => 'S', 'color' => 'Dusty Pink', 'stock' => 25, 'additional_price' => 0],
@@ -149,7 +161,7 @@ class DatabaseSeeder extends Seeder
                 'price' => 225000,
                 'featured' => true,
                 'images' => [
-                    'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80',
+                    $placeholder('products', 'placeholder-luna-linen-button-down-shirt-dress.svg', 'placeholder-product.svg'),
                 ],
                 'variants' => [
                     ['size' => 'All Size', 'color' => 'Terracotta', 'stock' => 35, 'additional_price' => 0],
@@ -165,7 +177,7 @@ class DatabaseSeeder extends Seeder
                 'price' => 589000,
                 'featured' => true,
                 'images' => [
-                    'https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=800&auto=format&fit=crop&q=80',
+                    $placeholder('products', 'placeholder-seraphina-velvet-evening-gown.svg', 'placeholder-product.svg'),
                 ],
                 'variants' => [
                     ['size' => 'S', 'color' => 'Emerald Green', 'stock' => 8, 'additional_price' => 0],
@@ -183,7 +195,7 @@ class DatabaseSeeder extends Seeder
                 'price' => 310000,
                 'featured' => false,
                 'images' => [
-                    'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=800&auto=format&fit=crop&q=80',
+                    $placeholder('products', 'placeholder-boho-tiered-chiffon-maxi-dress.svg', 'placeholder-product.svg'),
                 ],
                 'variants' => [
                     ['size' => 'S', 'color' => 'Caramel Beige', 'stock' => 12, 'additional_price' => 0],
@@ -211,11 +223,11 @@ class DatabaseSeeder extends Seeder
             );
 
             // Images
-            foreach ($prodData['images'] as $index => $imageUrl) {
+            foreach ($prodData['images'] as $index => $imagePath) {
                 ProductImage::firstOrCreate(
                     [
                         'product_id' => $product->id,
-                        'image_path' => $imageUrl,
+                        'image_path' => $imagePath,
                     ],
                     [
                         'is_primary' => ($index === 0),
