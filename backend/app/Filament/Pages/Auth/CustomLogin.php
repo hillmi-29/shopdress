@@ -11,7 +11,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Models\Contracts\FilamentUser;
-use Filament\Notifications\Notification;
 use Filament\Pages\Auth\Login as BaseLogin;
 use Illuminate\Validation\ValidationException;
 
@@ -29,6 +28,12 @@ class CustomLogin extends BaseLogin
         'remember' => true,
     ];
 
+    /**
+     * Jumlah percobaan submit — dipakai halaman untuk menampilkan ringkasan
+     * error dan memindahkan fokus setelah submit gagal.
+     */
+    public int $loginAttempts = 0;
+
     public function mount(): void
     {
         if (Filament::auth()->check()) {
@@ -41,14 +46,41 @@ class CustomLogin extends BaseLogin
         ]);
     }
 
+    /**
+     * Validasi email saat field kehilangan fokus (bukan hanya saat submit).
+     */
+    public function updatedDataEmail(): void
+    {
+        $this->validateOnly('data.email', [
+            'data.email' => ['required', 'email'],
+        ]);
+    }
+
+    /**
+     * Validasi kata sandi saat field kehilangan fokus.
+     */
+    public function updatedDataPassword(): void
+    {
+        $this->validateOnly('data.password', [
+            'data.password' => ['required'],
+        ]);
+    }
+
     public function authenticate(): ?LoginResponse
     {
+        $this->loginAttempts++;
+
         try {
             $this->rateLimit(5);
         } catch (TooManyRequestsException $exception) {
-            $this->getRateLimitedNotification($exception)?->send();
-
-            return null;
+            // Layout login kustom tidak merender komponen notifikasi Filament,
+            // jadi pesan throttling ditampilkan sebagai error form.
+            throw ValidationException::withMessages([
+                'data.email' => rtrim(__('filament-panels::pages/auth/login.messages.notifications.throttled.title'), '.').'. '
+                    .__('filament-panels::pages/auth/login.messages.notifications.throttled.body', [
+                        'seconds' => $exception->secondsUntilAvailable,
+                    ]),
+            ]);
         }
 
         $this->validate([
