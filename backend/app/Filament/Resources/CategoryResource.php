@@ -115,6 +115,7 @@ class CategoryResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->weight('bold')
+                    ->url(fn (Category $record): string => static::productsFilterUrl($record))
                     ->description(fn (Category $record): ?string => $record->description !== null
                         ? Str::limit($record->description, 64)
                         : null),
@@ -132,7 +133,9 @@ class CategoryResource extends Resource
                     ->badge()
                     ->color('primary')
                     ->icon('heroicon-o-tag')
-                    ->formatStateUsing(fn (int $state): string => $state.' produk'),
+                    ->formatStateUsing(fn (int $state): string => $state.' produk')
+                    ->url(fn (Category $record): string => static::productsFilterUrl($record))
+                    ->tooltip('Lihat daftar produk di kategori ini'),
 
                 TextColumn::make('created_at')
                     ->label('Dibuat')
@@ -157,6 +160,18 @@ class CategoryResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    /**
+     * URL daftar Produk dengan filter kategori terisi otomatis.
+     */
+    protected static function productsFilterUrl(Category $record): string
+    {
+        return ProductResource::getUrl('index', [
+            'tableFilters' => [
+                'category_id' => ['value' => $record->getKey()],
+            ],
+        ], isAbsolute: false);
     }
 
     public static function getRelations(): array
