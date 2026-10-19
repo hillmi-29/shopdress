@@ -22,3 +22,7 @@ backend/database/*.sqlite-journal
 
 # Document files
 *.docx
+
+# Python cache (skills)
+__pycache__/
+*.pyc
