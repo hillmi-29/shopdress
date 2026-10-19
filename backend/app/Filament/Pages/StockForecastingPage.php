@@ -11,11 +11,11 @@ class StockForecastingPage extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-cpu-chip';
 
-    protected static ?string $navigationGroup = 'AI & Machine Learning';
+    protected static ?string $navigationGroup = 'Analitik & Prediksi';
 
-    protected static ?string $navigationLabel = 'Prediksi Stok & Demand';
+    protected static ?string $navigationLabel = 'Prediksi Stok & Permintaan';
 
-    protected static ?string $title = 'AI Demand Forecasting & Restock Alert';
+    protected static ?string $title = 'Prediksi Stok & Permintaan';
 
     protected static ?string $slug = 'stock-forecasting';
 
@@ -120,6 +120,7 @@ class StockForecastingPage extends Page
         return $stats->map(function ($item) use ($highest) {
             $item['bar_width'] = min(100, max(5, round(($item['stock'] / $highest) * 85)));
             $item['restock_width'] = $item['restock'] > 0 ? min(30, max(5, round(($item['restock'] / $highest) * 85))) : 0;
+
             return $item;
         });
     }
@@ -135,7 +136,7 @@ class StockForecastingPage extends Page
         $this->metrics = $service->getSummaryMetrics();
         $this->dispatch('notify', [
             'status' => 'success',
-            'message' => 'Kalkulasi WMA & EOQ berhasil diperbarui.',
+            'message' => 'Kalkulasi WMA, titik restok & stok pengaman berhasil diperbarui.',
         ]);
     }
 
@@ -150,12 +151,12 @@ class StockForecastingPage extends Page
     {
         $text = "Halo Konveksi,\nKami ingin memesan restock produksi ShopDress:\n";
         $text .= "- Produk: {$item['product_name']}\n";
-        $text .= "- Varian: {$item['color']} / Size {$item['size']} (SKU: {$item['sku']})\n";
+        $text .= "- Varian: {$item['color']} / Ukuran {$item['size']} (SKU: {$item['sku']})\n";
         $text .= "- Jumlah Pesanan Restock: {$item['recommended_restock']} pcs\n";
         $text .= "- Sisa Stok Saat Ini: {$item['current_stock']} pcs\n";
         $text .= "- Tingkat Kebutuhan: {$item['risk_label']}\n";
-        $text .= "Mohon konfirmasi ketersediaan bahan dan perkiraan jadwal pengerjaan. Terima kasih.";
+        $text .= 'Mohon konfirmasi ketersediaan bahan dan perkiraan jadwal pengerjaan. Terima kasih.';
 
-        return "https://wa.me/?text=" . urlencode($text);
+        return 'https://wa.me/?text='.urlencode($text);
     }
 }
