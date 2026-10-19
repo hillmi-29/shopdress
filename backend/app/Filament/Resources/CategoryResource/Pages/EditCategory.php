@@ -21,6 +21,14 @@ class EditCategory extends EditRecord
         return 'Perbarui nama, slug, deskripsi, dan gambar thumbnail kategori.';
     }
 
+    /**
+     * Setelah simpan, kembali ke daftar kategori agar alur kerja tetap cepat.
+     */
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
     protected function getHeaderActions(): array
     {
         return [

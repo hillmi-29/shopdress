@@ -83,6 +83,8 @@ class CategoryResource extends Resource
                             ->placeholder('Tuliskan deskripsi ringkas kategori untuk optimasi SEO dan tampilan katalog...')
                             ->rows(4)
                             ->maxLength(300)
+                            ->live(debounce: 700)
+                            ->hint(fn (?string $state): string => mb_strlen((string) $state).'/300 karakter')
                             ->helperText('Deskripsi singkat akan dipakai sebagai meta description Google dan teks kartu kategori (maks. 300 karakter).'),
 
                         FileUpload::make('image')

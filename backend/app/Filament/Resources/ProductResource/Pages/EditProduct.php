@@ -26,6 +26,14 @@ class EditProduct extends EditRecord
         return 'Perbarui informasi produk, varian ukuran & warna, serta galeri foto.';
     }
 
+    /**
+     * Setelah simpan, kembali ke daftar produk agar alur kerja tetap cepat.
+     */
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
     protected function getHeaderActions(): array
     {
         return [

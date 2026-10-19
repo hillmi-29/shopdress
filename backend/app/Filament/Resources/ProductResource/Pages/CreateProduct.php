@@ -26,6 +26,14 @@ class CreateProduct extends CreateRecord
         return 'Lengkapi informasi produk busana, varian ukuran, warna, harga, serta inventaris stok.';
     }
 
+    /**
+     * Setelah simpan, kembali ke daftar produk agar alur kerja tetap cepat.
+     */
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
     protected function getHeaderActions(): array
     {
         return [

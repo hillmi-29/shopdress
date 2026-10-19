@@ -64,6 +64,7 @@ class ProductResource extends Resource
                                             ->label('Nama Produk')
                                             ->placeholder('Contoh: Aurelia Silk Gamis Dress')
                                             ->required()
+                                            ->validationAttribute('nama produk')
                                             ->maxLength(255)
                                             ->live(onBlur: true)
                                             ->afterStateUpdated(function (string $operation, $state, callable $set) {
@@ -87,6 +88,7 @@ class ProductResource extends Resource
                                             ->prefix('shopdress.id/produk/')
                                             ->required()
                                             ->unique(Product::class, 'slug', ignoreRecord: true)
+                                            ->validationAttribute('slug URL')
                                             ->maxLength(255)
                                             ->helperText(fn (string $operation): string => $operation === 'create'
                                                 ? 'Terisi otomatis dari nama produk — bisa diubah manual.'
@@ -96,7 +98,10 @@ class ProductResource extends Resource
                                             ->label('Deskripsi Lengkap Produk')
                                             ->placeholder('Jelaskan keunggulan bahan, kelenturan, dan petunjuk perawatan baju...')
                                             ->rows(6)
-                                            ->required(),
+                                            ->required()
+                                            ->validationAttribute('deskripsi produk')
+                                            ->live(debounce: 700)
+                                            ->hint(fn (?string $state): string => number_format(mb_strlen((string) $state), 0, ',', '.').' karakter'),
                                     ]),
 
                                 Section::make('Media & Galeri Foto Produk')
@@ -112,7 +117,8 @@ class ProductResource extends Resource
                                                     ->image()
                                                     ->directory('products')
                                                     ->imageEditor()
-                                                    ->required(),
+                                                    ->required()
+                                                    ->validationAttribute('foto produk'),
 
                                                 Toggle::make('is_primary')
                                                     ->label('Jadikan Foto Utama')
@@ -141,21 +147,25 @@ class ProductResource extends Resource
                                                         'XXL' => 'XXL',
                                                         'All Size' => 'All Size',
                                                     ])
-                                                    ->required(),
+                                                    ->required()
+                                                    ->validationAttribute('ukuran'),
 
                                                 TextInput::make('color')
                                                     ->label('Warna')
                                                     ->placeholder('Sage Green, Hitam, dsb.')
-                                                    ->required(),
+                                                    ->required()
+                                                    ->validationAttribute('warna'),
 
                                                 TextInput::make('sku')
                                                     ->label('SKU')
                                                     ->required()
+                                                    ->validationAttribute('SKU')
                                                     ->default(fn () => 'SD-'.strtoupper(Str::random(6))),
 
                                                 TextInput::make('additional_price')
                                                     ->label('Harga Tambahan')
                                                     ->numeric()
+                                                    ->validationAttribute('harga tambahan')
                                                     ->default(0)
                                                     ->prefix('+ Rp'),
 
@@ -163,7 +173,8 @@ class ProductResource extends Resource
                                                     ->label('Stok Fisik')
                                                     ->numeric()
                                                     ->default(10)
-                                                    ->required(),
+                                                    ->required()
+                                                    ->validationAttribute('stok fisik'),
                                             ])
                                             ->columns(5)
                                             ->defaultItems(1),
@@ -194,6 +205,7 @@ class ProductResource extends Resource
                                             ->label('Kategori Busana')
                                             ->relationship('category', 'name')
                                             ->required()
+                                            ->validationAttribute('kategori busana')
                                             ->helperText('Pilih dari kategori yang sudah ada.')
                                             ->hintAction(
                                                 Action::make('kelolaKategori')
@@ -211,7 +223,8 @@ class ProductResource extends Resource
                                             ->label('Harga Dasar (Jual)')
                                             ->numeric()
                                             ->prefix('Rp')
-                                            ->required(),
+                                            ->required()
+                                            ->validationAttribute('harga dasar'),
                                     ]),
                             ]),
                     ])

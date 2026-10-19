@@ -21,6 +21,14 @@ class CreateCategory extends CreateRecord
         return 'Tambahkan kategori busana baru ke katalog produk ShopDress.';
     }
 
+    /**
+     * Setelah simpan, kembali ke daftar kategori agar alur kerja tetap cepat.
+     */
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
     protected function getHeaderActions(): array
     {
         return [
