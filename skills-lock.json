@@ -1,0 +1,119 @@
+{
+  "version": 1,
+  "skills": {
+    "competitive-pricing-strategy": {
+      "source": "nexscope-ai/eCommerce-Skills",
+      "sourceType": "github",
+      "skillPath": "competitive-pricing-strategy/SKILL.md",
+      "computedHash": "6b22e1c077354cc8a8ede0e397c9297e673763908d55a4350d792dd21f30d8e6"
+    },
+    "design-taste-frontend": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/taste-skill/SKILL.md",
+      "computedHash": "41463de84d80d8839b1e9fc8ddfd140578443d095b53710d1f331dbab3079712"
+    },
+    "ecommerce-branding": {
+      "source": "nexscope-ai/eCommerce-Skills",
+      "sourceType": "github",
+      "skillPath": "ecommerce-branding/SKILL.md",
+      "computedHash": "f3c9a4b3e9d2ac6f484f68f3865ceb05c231db53e9657635b3768f1b2dccc6ce"
+    },
+    "ecommerce-checkout-optimization": {
+      "source": "nexscope-ai/eCommerce-Skills",
+      "sourceType": "github",
+      "skillPath": "ecommerce-checkout-optimization/SKILL.md",
+      "computedHash": "152ece7e05848dee866c94d6be20310b5aba2e8d060d9babe03b49ad0158a85b"
+    },
+    "ecommerce-competitor-analysis": {
+      "source": "nexscope-ai/eCommerce-Skills",
+      "sourceType": "github",
+      "skillPath": "ecommerce-competitor-analysis/SKILL.md",
+      "computedHash": "750851d80d58251f0262475a3c45460957cdbe1da0615267690913f1419f7f44"
+    },
+    "ecommerce-content-marketing": {
+      "source": "nexscope-ai/eCommerce-Skills",
+      "sourceType": "github",
+      "skillPath": "ecommerce-content-marketing/SKILL.md",
+      "computedHash": "5d89b7fc22a0dd62912b642ae573bebe415f38732ca586e68a55561d994f1177"
+    },
+    "ecommerce-email-marketing-builder": {
+      "source": "nexscope-ai/eCommerce-Skills",
+      "sourceType": "github",
+      "skillPath": "ecommerce-email-marketing-builder/SKILL.md",
+      "computedHash": "3c80aca23a6fa6b245a70dffe3acdd4ec32ddabdfcd6202c71215d433fa27543"
+    },
+    "ecommerce-growth-strategy": {
+      "source": "nexscope-ai/eCommerce-Skills",
+      "sourceType": "github",
+      "skillPath": "ecommerce-growth-strategy/SKILL.md",
+      "computedHash": "283e5405f199c3c35a6da30cefd1e416ba36ef39eeee68b494538d3fa413e681"
+    },
+    "ecommerce-keyword-research": {
+      "source": "nexscope-ai/eCommerce-Skills",
+      "sourceType": "github",
+      "skillPath": "ecommerce-keyword-research/SKILL.md",
+      "computedHash": "814b44f8850fa3ed8a50a703e29926679f0896bd851f92eec22185bc0b1a886f"
+    },
+    "ecommerce-landing-page": {
+      "source": "nexscope-ai/eCommerce-Skills",
+      "sourceType": "github",
+      "skillPath": "ecommerce-landing-page/SKILL.md",
+      "computedHash": "5561134e022c8007afa7e7345a4d161163a7f8c33ef3bfe910ceea690ece2121"
+    },
+    "ecommerce-marketing-strategy-builder": {
+      "source": "nexscope-ai/eCommerce-Skills",
+      "sourceType": "github",
+      "skillPath": "ecommerce-marketing-strategy-builder/SKILL.md",
+      "computedHash": "3db95535a8922a04379eae20de3161f3ac6059fad91081c0e2b586f1cdf58e47"
+    },
+    "ecommerce-ppc-strategy-planner": {
+      "source": "nexscope-ai/eCommerce-Skills",
+      "sourceType": "github",
+      "skillPath": "ecommerce-ppc-strategy-planner/SKILL.md",
+      "computedHash": "8e7efd0269d7e07dace9304a71712e0e185792637f55cca3f126969aafd4c253"
+    },
+    "ecommerce-social-media-marketing": {
+      "source": "nexscope-ai/eCommerce-Skills",
+      "sourceType": "github",
+      "skillPath": "ecommerce-social-media-marketing/SKILL.md",
+      "computedHash": "9df8a888b380432946383b7cece1c2c8569c5e81ca5855e1c15145c4c7f0ba12"
+    },
+    "product-description-generator": {
+      "source": "nexscope-ai/eCommerce-Skills",
+      "sourceType": "github",
+      "skillPath": "product-description-generator/SKILL.md",
+      "computedHash": "cd488beb53d478f69526afd51fe8857fe4a1278f267276505a2d899e1168566b"
+    },
+    "product-page-seo": {
+      "source": "nexscope-ai/eCommerce-Skills",
+      "sourceType": "github",
+      "skillPath": "product-page-seo/SKILL.md",
+      "computedHash": "6a6c8cfe1214c20a7208623ead91d057b8f4a7e71860836f6394bdecf3e33d56"
+    },
+    "product-review-analysis": {
+      "source": "nexscope-ai/eCommerce-Skills",
+      "sourceType": "github",
+      "skillPath": "product-review-analysis/SKILL.md",
+      "computedHash": "3a7213fd891230d75894459618cbdcb179f2dd3c781db81265401ee553c446cc"
+    },
+    "product-title-optimization": {
+      "source": "nexscope-ai/eCommerce-Skills",
+      "sourceType": "github",
+      "skillPath": "product-title-optimization/SKILL.md",
+      "computedHash": "cda120c0b416bc3f166946045a3bd4cc7e044d8b3ba9bf9d3d4592e86c7f2560"
+    },
+    "sales-tracking-tool": {
+      "source": "nexscope-ai/eCommerce-Skills",
+      "sourceType": "github",
+      "skillPath": "sales-tracking-tool/SKILL.md",
+      "computedHash": "69da8dc6356f2b17ce0653f0fea3b00da27b054c9eaa83605083c9e8fc2fb851"
+    },
+    "warehouse-optimization": {
+      "source": "nexscope-ai/eCommerce-Skills",
+      "sourceType": "github",
+      "skillPath": "warehouse-optimization/SKILL.md",
+      "computedHash": "9e03d46b6178d1185d4646bc813ab556fdb66ff9cff40d2c5acad97d8a3958d5"
+    }
+  }
+}
