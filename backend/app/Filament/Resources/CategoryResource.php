@@ -27,37 +27,73 @@ class CategoryResource extends Resource
 
     protected static ?string $navigationLabel = 'Kategori';
 
+    protected static ?string $modelLabel = 'Kategori';
+
+    protected static ?string $pluralModelLabel = 'Kategori';
+
     protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Section::make('Informasi Kategori')
+                Section::make('Informasi & Detail Kategori')
+                    ->icon('heroicon-o-tag')
                     ->schema([
-                        Grid::make(2)->schema([
-                            TextInput::make('name')
-                                ->label('Nama Kategori')
-                                ->required()
-                                ->maxLength(255)
-                                ->live(onBlur: true)
-                                ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
+                        Grid::make(['default' => 1, 'md' => 2])
+                            ->schema([
+                                TextInput::make('name')
+                                    ->label('Nama Kategori')
+                                    ->placeholder('Contoh: Gamis & Abaya, Kemeja Linen')
+                                    ->required()
+                                    ->validationAttribute('nama kategori')
+                                    ->maxLength(255)
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(function (string $operation, $state, callable $set) {
+                                        if ($operation === 'create') {
+                                            $set('slug', Str::slug((string) $state));
+                                        }
+                                    })
+                                    ->extraInputAttributes(fn (string $operation): array => $operation === 'create' ? [
+                                        // Isi slug instan di sisi klien, tanpa menunggu roundtrip Livewire.
+                                        'x-on:input' => <<<'JS'
+                                            const slug = document.getElementById('data.slug');
+                                            if (slug) {
+                                                slug.value = $event.target.value.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/[\s-]+/g, '-');
+                                                slug.dispatchEvent(new Event('input', { bubbles: true }));
+                                            }
+                                            JS,
+                                    ] : [])
+                                    ->helperText('Nama kategori akan tampil pada navigasi toko online dan filter katalog.'),
 
-                            TextInput::make('slug')
-                                ->label('Slug')
-                                ->required()
-                                ->unique(Category::class, 'slug', ignoreRecord: true)
-                                ->maxLength(255),
-                        ]),
-
-                        FileUpload::make('image')
-                            ->label('Thumbnail Kategori')
-                            ->image()
-                            ->directory('categories'),
+                                TextInput::make('slug')
+                                    ->label('Slug URL')
+                                    ->prefix('shopdress.id/kategori/')
+                                    ->required()
+                                    ->validationAttribute('slug URL')
+                                    ->unique(Category::class, 'slug', ignoreRecord: true)
+                                    ->maxLength(255)
+                                    ->helperText(fn (string $operation): string => $operation === 'create'
+                                        ? 'Terisi otomatis dari nama kategori (SEO-friendly slug) — bisa diubah manual.'
+                                        : 'Ubah slug hanya bila perlu; tautan kategori di katalog akan ikut berubah.'),
+                            ]),
 
                         Textarea::make('description')
                             ->label('Deskripsi')
-                            ->rows(3),
+                            ->placeholder('Tuliskan deskripsi ringkas kategori untuk optimasi SEO dan tampilan katalog...')
+                            ->rows(4)
+                            ->maxLength(300)
+                            ->helperText('Deskripsi singkat akan dipakai sebagai meta description Google dan teks kartu kategori (maks. 300 karakter).'),
+
+                        FileUpload::make('image')
+                            ->label('Gambar Thumbnail Kategori')
+                            ->image()
+                            ->directory('categories')
+                            ->maxSize(2048)
+                            ->imageEditor()
+                            ->required()
+                            ->validationAttribute('gambar thumbnail')
+                            ->helperText('Rekomendasi 600×600 px (PNG/JPG), maksimal 2MB.'),
                     ]),
             ]);
     }
@@ -67,24 +103,34 @@ class CategoryResource extends Resource
         return $table
             ->columns([
                 ImageColumn::make('image')
-                    ->label('Thumbnail')
-                    ->circular(),
+                    ->label('Gambar')
+                    ->square()
+                    ->size(56)
+                    ->defaultImageUrl(asset('images/placeholder-category.svg')),
 
                 TextColumn::make('name')
                     ->label('Nama Kategori')
                     ->searchable()
                     ->sortable()
-                    ->weight('bold'),
+                    ->weight('bold')
+                    ->description(fn (Category $record): ?string => $record->description !== null
+                        ? Str::limit($record->description, 64)
+                        : null),
 
                 TextColumn::make('slug')
                     ->label('Slug')
-                    ->searchable(),
+                    ->searchable()
+                    ->badge()
+                    ->color('gray')
+                    ->extraCellAttributes(['class' => 'sd-cell-slug']),
 
                 TextColumn::make('products_count')
                     ->label('Jumlah Produk')
                     ->counts('products')
                     ->badge()
-                    ->color('primary'),
+                    ->color('primary')
+                    ->icon('heroicon-o-tag')
+                    ->formatStateUsing(fn (int $state): string => $state.' produk'),
 
                 TextColumn::make('created_at')
                     ->label('Dibuat')
@@ -96,9 +142,14 @@ class CategoryResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->iconButton()
+                    ->tooltip('Ubah kategori'),
+                Tables\Actions\DeleteAction::make()
+                    ->iconButton()
+                    ->tooltip('Hapus kategori'),
             ])
+            ->actionsColumnLabel('Aksi')
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
