@@ -100,7 +100,7 @@ class OrderResource extends Resource
                                 ->disabled(),
 
                             TextInput::make('grand_total')
-                                ->label('Grand Total')
+                                ->label('Total Akhir')
                                 ->prefix('Rp')
                                 ->numeric()
                                 ->disabled(),
@@ -111,6 +111,7 @@ class OrderResource extends Resource
                     ->schema([
                         Repeater::make('items')
                             ->relationship('items')
+                            ->label('Produk Dipesan')
                             ->schema([
                                 TextInput::make('product_name')
                                     ->label('Nama Produk')
@@ -122,7 +123,7 @@ class OrderResource extends Resource
                                     ->disabled(),
 
                                 TextInput::make('quantity')
-                                    ->label('Qty')
+                                    ->label('Jumlah')
                                     ->disabled(),
 
                                 TextInput::make('subtotal')
@@ -175,7 +176,7 @@ class OrderResource extends Resource
                     ->searchable(),
 
                 TextColumn::make('created_at')
-                    ->label('Tanggal Order')
+                    ->label('Tanggal Pesanan')
                     ->dateTime('d M Y, H:i')
                     ->sortable(),
             ])

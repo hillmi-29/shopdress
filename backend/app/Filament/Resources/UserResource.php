@@ -51,7 +51,7 @@ class UserResource extends Resource
                                 ->tel(),
 
                             Select::make('role')
-                                ->label('Peran (Role)')
+                                ->label('Peran')
                                 ->options([
                                     'customer' => 'Pelanggan (Customer)',
                                     'admin' => 'Administrator',
@@ -61,7 +61,7 @@ class UserResource extends Resource
                         ]),
 
                         TextInput::make('password')
-                            ->label('Password')
+                            ->label('Kata Sandi')
                             ->password()
                             ->dehydrated(fn ($state) => filled($state))
                             ->required(fn (string $context): bool => $context === 'create'),

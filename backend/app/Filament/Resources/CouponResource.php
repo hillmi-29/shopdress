@@ -106,7 +106,7 @@ class CouponResource extends Resource
                     ->formatStateUsing(fn (Coupon $record): string => "{$record->used_count} / " . ($record->usage_limit ?? '∞')),
 
                 TextColumn::make('expires_at')
-                    ->label('Kadaluwarsa')
+                    ->label('Kedaluwarsa')
                     ->dateTime('d M Y, H:i')
                     ->placeholder('Tanpa Batas'),
 
