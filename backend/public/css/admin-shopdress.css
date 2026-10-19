@@ -1,0 +1,2461 @@
+/* ============================================================================
+   ShopDress Admin — Shared design system
+   ----------------------------------------------------------------------------
+   Loaded on every admin panel page via the STYLES_AFTER render hook
+   (see AdminPanelProvider). Contains:
+     1. Design tokens (purple / slate palette, radii, shadows)
+     2. Panel chrome polish (canvas, tables, badges)
+     3. Semantic .sd-* components for custom pages (dashboard, etc.)
+     4. Resource list pages (products, categories, orders)
+     5. Accessibility polish
+     6. Auth / login (standalone layout + boot loader)
+     7. Navigation (page transitions & loading bar)
+   Dark mode follows Filament's `.dark` class on <html>.
+   ========================================================================== */
+
+/* ============================================================================
+   1. DESIGN TOKENS
+   ========================================================================== */
+
+:root {
+    /* Brand — violet/purple scale from the design files */
+    --sd-primary-50: #F5F3FF;
+    --sd-primary-100: #EDE9FE;
+    --sd-primary-200: #DDD6FE;
+    --sd-primary-300: #C4B5FD;
+    --sd-primary-400: #A78BFA;
+    --sd-primary-500: #7C3AED;
+    --sd-primary-600: #6D28D9;
+    --sd-primary-700: #5B21B6;
+    --sd-primary-800: #4C1D95;
+    --sd-primary-900: #3B0764;
+    --sd-primary-950: #2E1065;
+
+    /* Surfaces */
+    --sd-canvas: #F8FAFC;
+    --sd-surface: #FFFFFF;
+    --sd-surface-muted: #F1F5F9;
+    --sd-on-surface: #131B2E;
+    --sd-text-muted: #64748B;
+    --sd-text-soft: #94A3B8;
+    --sd-border-subtle: #E2E8F0;
+    --sd-border-strong: #CBD5E1;
+
+    /* Status pairs (bg / border / text / dot) */
+    --sd-success-bg: #ECFDF5;
+    --sd-success-border: #A7F3D0;
+    --sd-success-text: #065F46;
+    --sd-info-bg: #EFF6FF;
+    --sd-info-border: #BFDBFE;
+    --sd-info-text: #1E40AF;
+    --sd-warning-bg: #FFFBEB;
+    --sd-warning-border: #FDE68A;
+    --sd-warning-text: #92400E;
+    --sd-danger-bg: #FEF2F2;
+    --sd-danger-border: #FECACA;
+    --sd-danger-text: #991B1B;
+    --sd-neutral-bg: #F1F5F9;
+    --sd-neutral-border: #CBD5E1;
+    --sd-neutral-text: #334155;
+
+    /* Chart series (donut / legend) */
+    --sd-chart-1: #6D28D9;
+    --sd-chart-2: #A78BFA;
+    --sd-chart-3: #10B981;
+    --sd-chart-4: #F59E0B;
+    --sd-chart-5: #0EA5E9;
+    --sd-chart-6: #EC4899;
+    --sd-chart-7: #14B8A6;
+    --sd-chart-8: #8B5CF6;
+
+    /* Shape */
+    --sd-radius-sm: 6px;
+    --sd-radius-md: 8px;
+    --sd-radius-lg: 12px;
+    --sd-radius-pill: 9999px;
+    --sd-shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+    --sd-shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.07), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
+    --sd-shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.09), 0 2px 6px -2px rgba(15, 23, 42, 0.05);
+    --sd-shadow-lg: 0 10px 24px -4px rgba(15, 23, 42, 0.12);
+}
+
+.dark {
+    --sd-canvas: #0B1120;
+    --sd-surface: #111827;
+    --sd-surface-muted: #1F2937;
+    --sd-on-surface: #F9FAFB;
+    --sd-text-muted: #9CA3AF;
+    --sd-text-soft: #6B7280;
+    --sd-border-subtle: #1F2937;
+    --sd-border-strong: #374151;
+
+    /* Chart series re-tuned for dark surfaces (≥3:1 vs #111827) */
+    --sd-chart-1: #8B5CF6;
+    --sd-chart-2: #A78BFA;
+    --sd-chart-3: #34D399;
+    --sd-chart-4: #FBBF24;
+    --sd-chart-5: #38BDF8;
+    --sd-chart-6: #F472B6;
+    --sd-chart-7: #2DD4BF;
+    --sd-chart-8: #E879F9;
+
+    --sd-success-bg: rgba(16, 185, 129, 0.12);
+    --sd-success-border: rgba(16, 185, 129, 0.28);
+    --sd-success-text: #6EE7B7;
+    --sd-info-bg: rgba(59, 130, 246, 0.12);
+    --sd-info-border: rgba(59, 130, 246, 0.28);
+    --sd-info-text: #93C5FD;
+    --sd-warning-bg: rgba(245, 158, 11, 0.12);
+    --sd-warning-border: rgba(245, 158, 11, 0.28);
+    --sd-warning-text: #FCD34D;
+    --sd-danger-bg: rgba(239, 68, 68, 0.12);
+    --sd-danger-border: rgba(239, 68, 68, 0.28);
+    --sd-danger-text: #FCA5A5;
+    --sd-neutral-bg: rgba(148, 163, 184, 0.12);
+    --sd-neutral-border: rgba(148, 163, 184, 0.28);
+    --sd-neutral-text: #CBD5E1;
+
+    --sd-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.35);
+    --sd-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.45);
+    --sd-shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.5);
+    --sd-shadow-lg: 0 10px 24px -4px rgba(0, 0, 0, 0.55);
+}
+
+/* ============================================================================
+   2. PANEL CHROME POLISH
+   ========================================================================== */
+
+/* Canvas background — #F8FAFC per design files */
+body.fi-body {
+    background-color: var(--sd-canvas);
+}
+
+/* Badges: pill shape like the mockups */
+.fi-badge {
+    border-radius: var(--sd-radius-pill);
+}
+
+/* Table header: compact uppercase caption band */
+.fi-ta .fi-ta-header-cell-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sd-text-muted);
+}
+
+/* Table rows: py-3 cells like the mockups (Filament already pads the inner
+   cell wrappers with py-4, so the td itself must not add more) */
+.fi-ta .fi-ta-row > td {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.fi-ta .fi-ta-row > td > div {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+}
+
+/* Section headings inherit panel font weight consistent with design */
+.fi-section-header-heading {
+    letter-spacing: -0.01em;
+}
+
+/* ============================================================================
+   3. SEMANTIC COMPONENTS (.sd-*)
+   ========================================================================== */
+
+/* ---- Layout ---- */
+
+.sd-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.sd-grid-2,
+.sd-grid-3,
+.sd-grid-4 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .sd-grid-2,
+    .sd-grid-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1280px) {
+    .sd-grid-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .sd-grid-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* 8/4 split used for chart rows and the lower dashboard section */
+.sd-split-main {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+@media (min-width: 1024px) {
+    .sd-split-main {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+
+    .sd-split-main > .sd-col-8 {
+        grid-column: span 8 / span 8;
+    }
+
+    .sd-split-main > .sd-col-4 {
+        grid-column: span 4 / span 4;
+    }
+}
+
+/* ---- Typography helpers ---- */
+
+.sd-page-title {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--sd-on-surface);
+    text-wrap: balance;
+}
+
+.sd-section-title {
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--sd-on-surface);
+}
+
+.sd-caption {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+    color: var(--sd-text-muted);
+}
+
+.sd-text-muted {
+    color: var(--sd-text-muted);
+}
+
+.sd-text-strong {
+    color: var(--sd-on-surface);
+    font-weight: 600;
+}
+
+.sd-eyebrow {
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--sd-text-muted);
+}
+
+/* ---- Page header ---- */
+
+.sd-page-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .sd-page-header {
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: space-between;
+    }
+}
+
+.sd-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+    color: var(--sd-text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.sd-breadcrumbs a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--sd-text-muted);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.sd-breadcrumbs a:hover {
+    color: var(--sd-primary-600);
+}
+
+.dark .sd-breadcrumbs a:hover {
+    color: var(--sd-primary-400);
+}
+
+.sd-breadcrumbs .sd-crumb-current {
+    color: var(--sd-on-surface);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.sd-title-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+@media (min-width: 640px) {
+    .sd-title-row {
+        flex-direction: row;
+        align-items: baseline;
+        gap: 0.75rem;
+    }
+}
+
+/* Dashboard greeting: date renders as metadata under the title */
+.sd-title-date {
+    margin-top: 0.25rem;
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 500;
+    color: var(--sd-text-muted);
+}
+
+.sd-quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.625rem;
+}
+
+/* ---- Buttons ---- */
+
+.sd-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--sd-radius-md);
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    border: 1px solid transparent;
+}
+
+.sd-btn .material-symbols-outlined {
+    font-size: 18px;
+}
+
+.sd-btn-outline {
+    background-color: var(--sd-surface);
+    border-color: var(--sd-border-subtle);
+    color: var(--sd-text-muted);
+    box-shadow: var(--sd-shadow-xs);
+}
+
+.sd-btn-outline:hover {
+    background-color: var(--sd-canvas);
+    color: var(--sd-on-surface);
+}
+
+.sd-btn-primary {
+    background-color: var(--sd-primary-600);
+    color: #FFFFFF;
+    box-shadow: var(--sd-shadow-xs);
+}
+
+.sd-btn-primary:hover {
+    background-color: var(--sd-primary-700);
+}
+
+.sd-btn-subtle {
+    background-color: var(--sd-canvas);
+    border-color: var(--sd-border-subtle);
+    color: var(--sd-text-muted);
+}
+
+.sd-btn-subtle:hover {
+    background-color: var(--sd-surface-muted);
+    color: var(--sd-on-surface);
+}
+
+.sd-btn-full {
+    width: 100%;
+    justify-content: center;
+}
+
+/* ---- Cards ---- */
+
+.sd-card {
+    background-color: var(--sd-surface);
+    border: 1px solid var(--sd-border-subtle);
+    border-radius: var(--sd-radius-lg);
+    box-shadow: var(--sd-shadow-sm);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.sd-card-head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--sd-border-subtle);
+}
+
+@media (min-width: 640px) {
+    .sd-card-head {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+.sd-card-head-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    min-width: 0;
+}
+
+.sd-card-body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1;
+}
+
+.sd-card-foot {
+    padding: 0.875rem 1.25rem;
+    border-top: 1px solid var(--sd-border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--sd-text-muted);
+}
+
+.sd-card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sd-primary-600);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.sd-card-link:hover {
+    text-decoration: underline;
+}
+
+.dark .sd-card-link {
+    color: var(--sd-primary-400);
+}
+
+/* ---- Alert banner ---- */
+
+.sd-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    padding: 1rem;
+    border-radius: var(--sd-radius-lg);
+    border: 1px solid var(--sd-warning-border);
+    background-color: var(--sd-warning-bg);
+    box-shadow: var(--sd-shadow-xs);
+}
+
+.sd-alert-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+    border-radius: var(--sd-radius-md);
+    background-color: rgba(245, 158, 11, 0.18);
+    color: var(--sd-warning-text);
+}
+
+.dark .sd-alert-icon {
+    background-color: rgba(245, 158, 11, 0.22);
+}
+
+.sd-alert-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.sd-alert-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.375rem;
+}
+
+.sd-alert-title {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+    color: var(--sd-warning-text);
+}
+
+.sd-alert-text {
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--sd-warning-text);
+    opacity: 0.9;
+    margin-top: 0.125rem;
+}
+
+.sd-alert-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--sd-warning-text);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.sd-alert-action:hover {
+    text-decoration: underline;
+}
+
+.sd-alert-action .material-symbols-outlined {
+    font-size: 16px;
+}
+
+/* ---- Stat cards ---- */
+
+.sd-stat {
+    background-color: var(--sd-surface);
+    border: 1px solid var(--sd-border-subtle);
+    border-radius: var(--sd-radius-lg);
+    box-shadow: var(--sd-shadow-sm);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.sd-stat:hover {
+    box-shadow: var(--sd-shadow-md);
+    transform: translateY(-1px);
+}
+
+.sd-stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.sd-stat-label {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--sd-text-muted);
+}
+
+.sd-stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--sd-radius-md);
+    flex-shrink: 0;
+}
+
+.sd-stat-icon .material-symbols-outlined {
+    font-size: 20px;
+}
+
+.sd-stat-icon.sd-tone-primary {
+    background-color: var(--sd-primary-50);
+    color: var(--sd-primary-600);
+}
+
+.sd-stat-icon.sd-tone-violet {
+    background-color: var(--sd-primary-100);
+    color: var(--sd-primary-700);
+}
+
+.sd-stat-icon.sd-tone-info {
+    background-color: var(--sd-info-bg);
+    color: var(--sd-info-text);
+}
+
+.sd-stat-icon.sd-tone-success {
+    background-color: var(--sd-success-bg);
+    color: var(--sd-success-text);
+}
+
+.sd-stat-icon.sd-tone-warning {
+    background-color: var(--sd-warning-bg);
+    color: var(--sd-warning-text);
+}
+
+.sd-stat-icon.sd-tone-danger {
+    background-color: var(--sd-danger-bg);
+    color: var(--sd-danger-text);
+}
+
+.sd-stat-icon.sd-tone-neutral {
+    background-color: var(--sd-surface-muted);
+    color: var(--sd-text-muted);
+}
+
+.dark .sd-stat-icon.sd-tone-primary {
+    background-color: rgba(124, 58, 237, 0.16);
+    color: var(--sd-primary-400);
+}
+
+.dark .sd-stat-icon.sd-tone-violet {
+    background-color: rgba(124, 58, 237, 0.2);
+    color: var(--sd-primary-300);
+}
+
+.sd-stat-value {
+    font-size: 30px;
+    line-height: 36px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--sd-on-surface);
+    margin-top: 0.75rem;
+}
+
+.sd-stat-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 0.625rem;
+    flex-wrap: wrap;
+}
+
+.sd-stat-caption {
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--sd-text-muted);
+}
+
+/* ---- Badges & chips ---- */
+
+.sd-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.125rem 0.625rem;
+    border-radius: var(--sd-radius-pill);
+    border: 1px solid transparent;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+}
+
+.sd-badge .material-symbols-outlined {
+    font-size: 14px;
+}
+
+.sd-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    flex-shrink: 0;
+    background-color: currentColor;
+}
+
+.sd-badge-success {
+    background-color: var(--sd-success-bg);
+    border-color: var(--sd-success-border);
+    color: var(--sd-success-text);
+}
+
+.sd-badge-info {
+    background-color: var(--sd-info-bg);
+    border-color: var(--sd-info-border);
+    color: var(--sd-info-text);
+}
+
+.sd-badge-warning {
+    background-color: var(--sd-warning-bg);
+    border-color: var(--sd-warning-border);
+    color: var(--sd-warning-text);
+}
+
+.sd-badge-danger {
+    background-color: var(--sd-danger-bg);
+    border-color: var(--sd-danger-border);
+    color: var(--sd-danger-text);
+}
+
+.sd-badge-neutral {
+    background-color: var(--sd-neutral-bg);
+    border-color: var(--sd-neutral-border);
+    color: var(--sd-neutral-text);
+}
+
+.sd-badge-primary {
+    background-color: var(--sd-primary-50);
+    border-color: var(--sd-primary-200);
+    color: var(--sd-primary-700);
+}
+
+.dark .sd-badge-primary {
+    background-color: rgba(124, 58, 237, 0.16);
+    border-color: rgba(124, 58, 237, 0.35);
+    color: var(--sd-primary-300);
+}
+
+.sd-chip {
+    display: inline-block;
+    padding: 0.125rem 0.375rem;
+    border-radius: var(--sd-radius-sm);
+    font-size: 10px;
+    line-height: 14px;
+    font-weight: 500;
+}
+
+.sd-chip-purple {
+    background-color: var(--sd-primary-50);
+    color: var(--sd-primary-700);
+}
+
+.sd-chip-emerald {
+    background-color: var(--sd-success-bg);
+    color: var(--sd-success-text);
+}
+
+.sd-chip-amber {
+    background-color: var(--sd-warning-bg);
+    color: var(--sd-warning-text);
+}
+
+.sd-chip-sky {
+    background-color: var(--sd-info-bg);
+    color: var(--sd-info-text);
+}
+
+.sd-chip-slate {
+    background-color: var(--sd-surface-muted);
+    color: var(--sd-neutral-text);
+}
+
+.dark .sd-chip-purple {
+    background-color: rgba(124, 58, 237, 0.18);
+    color: var(--sd-primary-300);
+}
+
+/* ---- Tables (custom pages) ---- */
+
+.sd-table-scroll {
+    overflow-x: auto;
+    width: 100%;
+}
+
+.sd-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.sd-table thead tr {
+    background-color: var(--sd-canvas);
+    border-bottom: 1px solid var(--sd-border-subtle);
+}
+
+.sd-table th {
+    padding: 0.75rem 1rem;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--sd-text-muted);
+    white-space: nowrap;
+}
+
+.sd-table tbody tr {
+    border-bottom: 1px solid var(--sd-border-subtle);
+    transition: background-color 0.15s ease;
+}
+
+.sd-table tbody tr:last-child {
+    border-bottom: 0;
+}
+
+.sd-table tbody tr:hover {
+    background-color: var(--sd-canvas);
+}
+
+.sd-table td {
+    padding: 0.75rem 1rem;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--sd-on-surface);
+    vertical-align: middle;
+}
+
+.sd-table .sd-num {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+}
+
+.sd-table .sd-td-right {
+    text-align: right;
+}
+
+/* ---- User cell & avatar ---- */
+
+.sd-user-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-width: 0;
+}
+
+.sd-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.sd-avatar-lg {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 14px;
+}
+
+.sd-avatar-purple {
+    background-color: var(--sd-primary-100);
+    color: var(--sd-primary-700);
+}
+
+.sd-avatar-blue {
+    background-color: #DBEAFE;
+    color: #1E40AF;
+}
+
+.sd-avatar-emerald {
+    background-color: #D1FAE5;
+    color: #065F46;
+}
+
+.sd-avatar-amber {
+    background-color: #FEF3C7;
+    color: #92400E;
+}
+
+.sd-avatar-red {
+    background-color: #FEE2E2;
+    color: #991B1B;
+}
+
+.sd-avatar-slate {
+    background-color: var(--sd-surface-muted);
+    color: var(--sd-neutral-text);
+}
+
+.dark .sd-avatar-purple {
+    background-color: rgba(124, 58, 237, 0.25);
+    color: var(--sd-primary-300);
+}
+
+.dark .sd-avatar-slate {
+    background-color: rgba(148, 163, 184, 0.15);
+    color: var(--sd-neutral-text);
+}
+
+.sd-user-name {
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 600;
+    color: var(--sd-on-surface);
+}
+
+.sd-user-sub {
+    font-size: 11px;
+    line-height: 15px;
+    color: var(--sd-text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ---- Links ---- */
+
+.sd-link {
+    color: var(--sd-primary-600);
+    font-weight: 600;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+}
+
+.sd-link:hover {
+    text-decoration: underline;
+}
+
+.dark .sd-link {
+    color: var(--sd-primary-400);
+}
+
+.sd-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    border-radius: var(--sd-radius-sm);
+    color: var(--sd-text-muted);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    transition: color 0.15s ease;
+    text-decoration: none;
+}
+
+.sd-icon-btn:hover {
+    color: var(--sd-primary-600);
+}
+
+.dark .sd-icon-btn:hover {
+    color: var(--sd-primary-400);
+}
+
+.sd-icon-btn .material-symbols-outlined {
+    font-size: 18px;
+}
+
+/* ---- Charts ---- */
+
+.sd-chart-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.sd-chart-xaxis {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem 0;
+    border-top: 1px solid var(--sd-border-subtle);
+    font-size: 11px;
+    line-height: 16px;
+    color: var(--sd-text-muted);
+    overflow: hidden;
+}
+
+.sd-chart-legend {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--sd-text-muted);
+}
+
+.sd-chart-legend .sd-legend-line {
+    width: 12px;
+    height: 3px;
+    border-radius: 9999px;
+    background-color: var(--sd-chart-1);
+    display: inline-block;
+    margin-right: 0.375rem;
+}
+
+.sd-chart-legend .sd-legend-dash {
+    width: 14px;
+    border-bottom: 2px dashed var(--sd-text-muted);
+    display: inline-block;
+    margin-right: 0.375rem;
+    vertical-align: middle;
+}
+
+.sd-callout {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--sd-radius-sm);
+    background-color: var(--sd-primary-50);
+    color: var(--sd-primary-700);
+    font-size: 12px;
+    line-height: 16px;
+}
+
+.dark .sd-callout {
+    background-color: rgba(124, 58, 237, 0.16);
+    color: var(--sd-primary-300);
+}
+
+.sd-callout .material-symbols-outlined {
+    font-size: 14px;
+}
+
+.sd-chart-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+/* Line chart */
+
+.sd-chart-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    font-family: inherit;
+}
+
+.sd-line-chart {
+    margin-top: 0.5rem;
+    overflow: visible;
+}
+
+.sd-grid-line {
+    stroke: var(--sd-border-subtle);
+}
+
+.sd-axis-label {
+    /* 4.5:1+ on both themes (was --sd-text-soft, failed contrast) */
+    fill: var(--sd-text-muted);
+}
+
+.sd-prev-line {
+    /* 4.5:1+ on both themes for the comparison series */
+    stroke: var(--sd-text-muted);
+}
+
+.sd-current-line {
+    stroke: var(--sd-chart-1);
+}
+
+.sd-peak-line {
+    stroke: var(--sd-chart-1);
+}
+
+.sd-peak-dot {
+    fill: var(--sd-chart-1);
+    stroke: var(--sd-surface);
+}
+
+.sd-xaxis-peak {
+    font-weight: 700;
+    color: var(--sd-primary-700);
+}
+
+.dark .sd-xaxis-peak {
+    color: var(--sd-primary-300);
+}
+
+/* Donut */
+
+.sd-donut-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: 1rem 0;
+}
+
+.sd-donut-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none;
+}
+
+.sd-donut-total {
+    font-size: 20px;
+    line-height: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--sd-on-surface);
+}
+
+.sd-donut-hint {
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 600;
+    color: var(--sd-primary-600);
+}
+
+.sd-donut-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--sd-border-subtle);
+}
+
+.sd-donut-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 13px;
+    line-height: 18px;
+}
+
+.sd-donut-name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--sd-on-surface);
+    font-weight: 500;
+    min-width: 0;
+}
+
+.sd-donut-name span.sd-donut-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sd-donut-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 9999px;
+    flex-shrink: 0;
+}
+
+.sd-donut-figures {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--sd-text-muted);
+    white-space: nowrap;
+}
+
+.sd-donut-pct {
+    font-weight: 600;
+    color: var(--sd-on-surface);
+}
+
+/* ---- Top products list ---- */
+
+.sd-top-list {
+    display: flex;
+    flex-direction: column;
+    padding-top: 0.25rem;
+}
+
+.sd-top-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--sd-border-subtle);
+}
+
+.sd-top-item:last-child {
+    border-bottom: 0;
+}
+
+.sd-top-thumb {
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--sd-radius-md);
+    background-color: var(--sd-surface-muted);
+    border: 1px solid var(--sd-border-subtle);
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sd-text-soft);
+}
+
+.sd-top-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.sd-top-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.sd-top-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.25rem;
+}
+
+.sd-top-name {
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 600;
+    color: var(--sd-on-surface);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sd-top-units {
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 700;
+    color: var(--sd-success-text);
+    white-space: nowrap;
+}
+
+.sd-top-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.375rem;
+    margin-top: 0.25rem;
+}
+
+.sd-top-price {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sd-on-surface);
+    white-space: nowrap;
+}
+
+/* ---- Progress / velocity bars ---- */
+
+.sd-progress {
+    width: 100%;
+    height: 6px;
+    border-radius: 9999px;
+    background-color: var(--sd-surface-muted);
+    overflow: hidden;
+    margin-top: 0.5rem;
+}
+
+.dark .sd-progress {
+    background-color: rgba(148, 163, 184, 0.15);
+}
+
+.sd-progress-fill {
+    height: 100%;
+    border-radius: 9999px;
+    background-color: var(--sd-primary-600);
+    transition: width 0.3s ease;
+}
+
+/* ---- Empty state ---- */
+
+.sd-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    padding: 2.5rem 1rem;
+    text-align: center;
+    color: var(--sd-text-muted);
+    font-size: 13px;
+}
+
+.sd-empty .material-symbols-outlined {
+    font-size: 32px;
+    color: var(--sd-text-soft);
+}
+
+/* ---- Utility ---- */
+
+/* ---- Brand logo (topbar / sidebar) ---- */
+
+.sd-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.125rem;
+    letter-spacing: -0.01em;
+}
+
+.sd-brand-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--sd-radius-md);
+    background: linear-gradient(to top right, #6D28D9, #A78BFA);
+    color: #FFFFFF;
+    box-shadow: 0 4px 10px -2px rgba(109, 40, 217, 0.35);
+    flex-shrink: 0;
+}
+
+.sd-brand-mark svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.sd-brand-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.sd-brand-name {
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: #0F172A;
+    white-space: nowrap;
+}
+
+.sd-brand-name span {
+    color: var(--sd-primary-600);
+}
+
+.dark .sd-brand-name {
+    color: #FFFFFF;
+}
+
+.dark .sd-brand-name span {
+    color: var(--sd-primary-400);
+}
+
+.sd-brand-sub {
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1;
+    margin-top: 4px;
+    color: var(--sd-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    white-space: nowrap;
+}
+
+/* ============================================================================
+   4. RESOURCE LIST PAGES (products, categories, orders)
+   ========================================================================== */
+
+/* Resource tabs: underline bar like the mockups instead of a pill container */
+.fi-resource-list-records-page .fi-tabs {
+    background-color: transparent;
+    border-bottom: 1px solid var(--sd-border-subtle);
+    border-radius: 0;
+    box-shadow: none;
+    gap: 0.25rem;
+    padding: 0;
+}
+
+.fi-resource-list-records-page .fi-tabs-item {
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    font-size: 13px;
+    margin-bottom: -1px;
+    padding: 0.75rem 1rem;
+}
+
+.fi-resource-list-records-page .fi-tabs-item:hover {
+    background-color: transparent;
+}
+
+.fi-resource-list-records-page .fi-tabs-item:not(.fi-active):hover {
+    border-bottom-color: var(--sd-border-strong);
+}
+
+.fi-resource-list-records-page .fi-tabs-item.fi-active {
+    background-color: transparent;
+    border-bottom-color: var(--sd-primary-600);
+}
+
+.dark .fi-resource-list-records-page .fi-tabs-item.fi-active {
+    border-bottom-color: var(--sd-primary-400);
+}
+
+/* Product thumbnails: rounded square instead of a circle */
+.fi-ta-image img {
+    border-radius: var(--sd-radius-md);
+}
+
+/* ============================================================================
+   5. ACCESSIBILITY POLISH (per ui-ux-pro-max checklist)
+   ========================================================================== */
+
+/* Focused items scroll clear of the sticky topbar */
+.sd-btn,
+.sd-link,
+.sd-card-link,
+.sd-alert-action,
+.sd-icon-btn {
+    scroll-margin-top: 6rem;
+}
+
+/* Visible keyboard focus for custom components */
+.sd-btn:focus-visible,
+.sd-link:focus-visible,
+.sd-card-link:focus-visible,
+.sd-alert-action:focus-visible,
+.sd-icon-btn:focus-visible {
+    outline: 2px solid var(--sd-primary-600);
+    outline-offset: 2px;
+}
+
+.dark .sd-btn:focus-visible,
+.dark .sd-link:focus-visible,
+.dark .sd-card-link:focus-visible,
+.dark .sd-alert-action:focus-visible,
+.dark .sd-icon-btn:focus-visible {
+    outline-color: var(--sd-primary-400);
+}
+
+/* Motion: no hover lift or bar animation when the user asks for less motion */
+@media (prefers-reduced-motion: reduce) {
+    .sd-stat,
+    .sd-progress-fill {
+        transition: none;
+    }
+
+    .sd-stat:hover {
+        transform: none;
+    }
+}
+
+/* Tabular figures keep numeric columns aligned */
+.sd-table .sd-num,
+.sd-donut-figures {
+    font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================================
+   6. AUTH / LOGIN (custom-login + login-layout)
+   ----------------------------------------------------------------------------
+   The login page renders in its own standalone layout (outside the Filament
+   chrome) but draws every value from the same tokens as the panel, so moving
+   login → dashboard reads as one product. It follows the panel's saved theme
+   (see login-layout) and every value is token-based for dark mode.
+   ========================================================================== */
+
+.sd-auth-page {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, var(--sd-primary-50) 0%, var(--sd-canvas) 60%);
+    color: var(--sd-on-surface);
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.sd-auth-page ::selection {
+    background-color: var(--sd-primary-100);
+    color: var(--sd-primary-950);
+}
+
+.sd-auth-header {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1.5rem 0;
+}
+
+/* The 10px sub-label sits on the tinted gradient — neutral-700 keeps it ≥4.5:1 */
+.sd-auth-header .sd-brand-sub {
+    color: var(--sd-neutral-text);
+}
+
+.sd-auth-home {
+    text-decoration: none;
+    border-radius: var(--sd-radius-md);
+}
+
+.sd-auth-home:focus-visible {
+    outline: 2px solid var(--sd-primary-600);
+    outline-offset: 4px;
+}
+
+.sd-auth-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+}
+
+.sd-auth-col {
+    width: 100%;
+    max-width: 26rem;
+}
+
+.sd-auth-card {
+    background-color: var(--sd-surface);
+    border: 1px solid var(--sd-border-subtle);
+    border-radius: var(--sd-radius-lg);
+    box-shadow: var(--sd-shadow-md);
+    padding: 2rem;
+}
+
+@media (max-width: 480px) {
+    .sd-auth-card {
+        padding: 1.5rem;
+    }
+}
+
+.sd-auth-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.sd-auth-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: var(--sd-radius-lg);
+    background: linear-gradient(to top right, var(--sd-primary-700), var(--sd-primary-500));
+    color: #FFFFFF;
+    box-shadow: 0 4px 10px -2px rgba(109, 40, 217, 0.35);
+    margin-bottom: 1rem;
+}
+
+.sd-auth-icon .material-symbols-outlined {
+    font-size: 28px;
+}
+
+.sd-auth-title {
+    margin: 0;
+    font-size: 22px;
+    line-height: 30px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--sd-on-surface);
+    text-wrap: balance;
+}
+
+.sd-auth-subtitle {
+    margin: 0.375rem 0 0;
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--sd-text-muted);
+}
+
+/* ---- Form ---- */
+
+.sd-auth-form {
+    margin-top: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.125rem;
+}
+
+/* ---- Validation summary (focusable, links to the invalid fields) ---- */
+
+.sd-auth-summary {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    padding: 0.75rem;
+    border: 1px solid var(--sd-danger-border);
+    border-radius: var(--sd-radius-md);
+    background-color: var(--sd-danger-bg);
+    color: var(--sd-danger-text);
+    font-size: 13px;
+    line-height: 18px;
+}
+
+.sd-auth-summary:focus-visible {
+    outline: 2px solid var(--sd-danger-text);
+    outline-offset: 2px;
+}
+
+.sd-auth-summary .material-symbols-outlined {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.sd-auth-summary-title {
+    margin: 0;
+    font-weight: 600;
+}
+
+.sd-auth-summary-list {
+    margin: 0.125rem 0 0;
+    padding-left: 1rem;
+}
+
+.sd-auth-summary-list a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.sd-auth-summary-list a:hover {
+    text-decoration-thickness: 2px;
+}
+
+.sd-auth-summary-list a:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 1px;
+}
+
+.sd-auth-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.sd-auth-label {
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 600;
+    color: var(--sd-on-surface);
+    margin-bottom: 0.375rem;
+}
+
+.sd-auth-req {
+    color: var(--sd-danger-text);
+    font-weight: 600;
+}
+
+.sd-auth-box {
+    position: relative;
+}
+
+.sd-auth-box .sd-auth-box-icon {
+    position: absolute;
+    left: 0.875rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 19px;
+    color: var(--sd-text-muted);
+    pointer-events: none;
+    transition: color 0.15s ease;
+}
+
+.sd-auth-box:focus-within .sd-auth-box-icon {
+    color: var(--sd-primary-600);
+}
+
+.sd-auth-input {
+    width: 100%;
+    min-height: 2.75rem;
+    box-sizing: border-box;
+    padding: 0.625rem 0.875rem 0.625rem 2.625rem;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--sd-on-surface);
+    background-color: var(--sd-surface);
+    border: 1px solid var(--sd-border-strong);
+    border-radius: var(--sd-radius-md);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Placeholder is a hint, never the only label — keep it at AA contrast anyway */
+.sd-auth-input::placeholder {
+    color: var(--sd-text-muted);
+}
+
+/* Chromium/Edge ship a native password reveal button next to ours */
+.sd-auth-input::-ms-reveal,
+.sd-auth-input::-ms-clear {
+    display: none;
+}
+
+.sd-auth-input:focus {
+    outline: none;
+    border-color: var(--sd-primary-600);
+    box-shadow: 0 0 0 1px var(--sd-primary-600), 0 0 0 4px var(--sd-primary-100);
+}
+
+.sd-auth-input[aria-invalid="true"] {
+    border-color: var(--sd-danger-text);
+}
+
+.sd-auth-input[aria-invalid="true"]:focus {
+    box-shadow: 0 0 0 1px var(--sd-danger-text), 0 0 0 4px var(--sd-danger-bg);
+}
+
+/* 16px on phones: below that iOS zooms the page when the field focuses */
+@media (max-width: 640px) {
+    .sd-auth-input {
+        font-size: 16px;
+    }
+}
+
+.sd-auth-input--toggle {
+    padding-right: 3rem;
+}
+
+.sd-auth-toggle {
+    position: absolute;
+    right: 0.125rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    border-radius: var(--sd-radius-md);
+    color: var(--sd-text-muted);
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.sd-auth-toggle:hover {
+    color: var(--sd-on-surface);
+}
+
+.sd-auth-toggle:active {
+    color: var(--sd-primary-600);
+}
+
+.sd-auth-toggle:focus-visible {
+    outline: 2px solid var(--sd-primary-600);
+    outline-offset: 1px;
+}
+
+.sd-auth-toggle .material-symbols-outlined {
+    font-size: 20px;
+}
+
+.sd-auth-error {
+    margin: 0.375rem 0 0;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--sd-danger-text);
+}
+
+.sd-auth-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.sd-auth-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 1.5rem;
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--sd-text-muted);
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.15s ease;
+}
+
+.sd-auth-check input {
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+    accent-color: var(--sd-primary-600);
+    cursor: pointer;
+}
+
+.sd-auth-check input:focus-visible {
+    outline: 2px solid var(--sd-primary-600);
+    outline-offset: 2px;
+}
+
+.sd-auth-check:hover {
+    color: var(--sd-on-surface);
+}
+
+.sd-auth-link {
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 600;
+    color: var(--sd-primary-600);
+    text-decoration: none;
+    border-radius: 2px;
+}
+
+.sd-auth-link:hover {
+    text-decoration: underline;
+}
+
+.sd-auth-link:focus-visible {
+    outline: 2px solid var(--sd-primary-600);
+    outline-offset: 2px;
+}
+
+.sd-auth-submit {
+    width: 100%;
+    min-height: 2.75rem;
+    justify-content: center;
+    padding: 0.7rem 1rem;
+    font-weight: 600;
+    box-shadow: var(--sd-shadow-sm);
+}
+
+.sd-auth-submit:not(:disabled):active {
+    background-color: var(--sd-primary-800);
+}
+
+.sd-auth-submit:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.sd-auth-submit:disabled:hover {
+    background-color: var(--sd-primary-600);
+}
+
+.sd-spin {
+    animation: sdSpin 1s linear infinite;
+}
+
+@keyframes sdSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.sd-auth-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--sd-radius-md);
+    background-color: var(--sd-surface-muted);
+    color: var(--sd-neutral-text);
+    font-size: 12px;
+    line-height: 16px;
+}
+
+.sd-auth-note .material-symbols-outlined {
+    font-size: 15px;
+    color: var(--sd-success-text);
+}
+
+/* ---- Card footer, page footer ---- */
+
+.sd-auth-cardfoot {
+    margin-top: 1.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--sd-border-subtle);
+    display: flex;
+    justify-content: center;
+}
+
+.sd-auth-storelink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 1.5rem;
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 600;
+    color: var(--sd-on-surface);
+    text-decoration: none;
+    border-radius: 2px;
+}
+
+.sd-auth-storelink:hover {
+    color: var(--sd-primary-600);
+}
+
+.sd-auth-storelink:focus-visible {
+    outline: 2px solid var(--sd-primary-600);
+    outline-offset: 2px;
+}
+
+.sd-auth-storelink .material-symbols-outlined {
+    font-size: 17px;
+}
+
+.sd-auth-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem 2rem;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--sd-text-muted);
+    text-align: center;
+}
+
+.sd-auth-footer p {
+    margin: 0;
+}
+
+.sd-auth-footer-links {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.sd-auth-footer-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.5rem;
+    color: var(--sd-text-muted);
+    text-decoration: none;
+    border-radius: 2px;
+    transition: color 0.15s ease;
+}
+
+.sd-auth-footer-links a:hover {
+    color: var(--sd-on-surface);
+}
+
+.sd-auth-footer-links a:focus-visible {
+    outline: 2px solid var(--sd-primary-600);
+    outline-offset: 2px;
+}
+
+@media (min-width: 640px) {
+    .sd-auth-footer {
+        flex-direction: row;
+        justify-content: center;
+        gap: 1.25rem;
+    }
+}
+
+/* ---- Boot loader (tampil saat halaman login pertama dimuat) ---- */
+
+.sd-auth-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(180deg, var(--sd-primary-50) 0%, var(--sd-canvas) 60%);
+    /* Overlay murni dekoratif — jangan pernah menahan klik/ketikan pengguna. */
+    pointer-events: none;
+    transition:
+        opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 0.6s,
+        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sd-auth-loader--done {
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1.03);
+}
+
+.sd-auth-loader-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease-out;
+}
+
+.sd-auth-loader--done .sd-auth-loader-box {
+    opacity: 0;
+    transform: translateY(-14px);
+}
+
+.sd-auth-loader-inner {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 5.5rem;
+    height: 5.5rem;
+}
+
+.sd-auth-loader-glow {
+    position: absolute;
+    inset: -1.75rem;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.18) 0%, transparent 70%);
+    animation: sdAuthGlow 2.4s ease-in-out infinite;
+}
+
+.sd-auth-loader-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    background: conic-gradient(from 0deg, var(--sd-primary-100) 0%, var(--sd-primary-400) 50%, var(--sd-primary-100) 100%);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+    animation: sdAuthSpin 1.1s linear infinite;
+}
+
+.sd-auth-loader-mark {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: var(--sd-radius-lg);
+    background: linear-gradient(to top right, var(--sd-primary-700), var(--sd-primary-500));
+    color: #FFFFFF;
+    box-shadow: 0 8px 20px -6px rgba(109, 40, 217, 0.45);
+    animation: sdAuthBreathe 2.4s ease-in-out infinite;
+}
+
+.sd-auth-loader-mark svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.sd-auth-loader-text {
+    margin: 1.25rem 0 0;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--sd-text-muted);
+    letter-spacing: 0.02em;
+}
+
+@keyframes sdAuthSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes sdAuthGlow {
+    0%, 100% {
+        opacity: 0.6;
+        transform: scale(0.96);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.04);
+    }
+}
+
+@keyframes sdAuthBreathe {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* ---- Motion: transisi loader → halaman (dipicu class .sd-auth-ready) ---- */
+
+@keyframes sdAuthEnter {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes sdAuthHeaderIn {
+    from {
+        opacity: 0;
+        transform: translateY(-14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes sdAuthFooterIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Entrance berjalan tepat saat loader memudar. Tanpa JS (class tidak pernah
+   ditambahkan) konten tetap tampil tanpa animasi — tidak pernah tersembunyi. */
+@media (prefers-reduced-motion: no-preference) {
+    .sd-auth-ready .sd-auth-header {
+        animation: sdAuthHeaderIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+        animation-delay: 0.05s;
+    }
+
+    .sd-auth-ready .sd-auth-enter {
+        animation: sdAuthEnter 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+        animation-delay: 0.1s;
+    }
+
+    .sd-auth-ready .sd-auth-footer {
+        animation: sdAuthFooterIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+        animation-delay: 0.2s;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sd-auth-enter,
+    .sd-spin,
+    .sd-auth-loader-ring,
+    .sd-auth-loader-glow,
+    .sd-auth-loader-mark {
+        animation: none;
+    }
+
+    .sd-auth-loader,
+    .sd-auth-loader-box {
+        transition: none;
+    }
+}
+
+/* ---- Dark mode (follows the panel's saved theme) ---- */
+
+.dark .sd-auth-page {
+    background: linear-gradient(180deg, rgba(124, 58, 237, 0.14) 0%, var(--sd-canvas) 60%);
+}
+
+.dark .sd-auth-link,
+.dark .sd-auth-storelink:hover,
+.dark .sd-auth-toggle:active {
+    color: var(--sd-primary-400);
+}
+
+.dark .sd-auth-input:focus {
+    border-color: var(--sd-primary-400);
+    box-shadow: 0 0 0 1px var(--sd-primary-400), 0 0 0 4px rgba(167, 139, 250, 0.25);
+}
+
+.dark .sd-auth-input[aria-invalid="true"] {
+    border-color: var(--sd-danger-text);
+}
+
+.dark .sd-auth-input[aria-invalid="true"]:focus {
+    box-shadow: 0 0 0 1px var(--sd-danger-text), 0 0 0 4px rgba(252, 165, 165, 0.2);
+}
+
+.dark .sd-auth-home:focus-visible,
+.dark .sd-auth-toggle:focus-visible,
+.dark .sd-auth-link:focus-visible,
+.dark .sd-auth-storelink:focus-visible,
+.dark .sd-auth-check input:focus-visible,
+.dark .sd-auth-footer-links a:focus-visible {
+    outline-color: var(--sd-primary-400);
+}
+
+.dark .sd-auth-loader {
+    background: linear-gradient(180deg, rgba(124, 58, 237, 0.14) 0%, var(--sd-canvas) 60%);
+}
+
+.dark .sd-auth-loader-glow {
+    background: radial-gradient(circle, rgba(167, 139, 250, 0.22) 0%, transparent 70%);
+}
+
+.dark .sd-auth-loader-ring {
+    background: conic-gradient(from 0deg, rgba(167, 139, 250, 0.2) 0%, var(--sd-primary-400) 50%, rgba(167, 139, 250, 0.2) 100%);
+}
+
+/* ============================================================================
+   7. NAVIGATION — page transitions & loading bar
+   ============================================================================ */
+
+/* Crossfade antar-halaman (View Transitions API, Chromium & Safari).
+   Halaman baru memudar masuk di atas snapshot halaman lama — tanpa "wash"
+   latar di antaranya. Browser tanpa dukungan: navigasi biasa, aman. */
+@view-transition {
+    navigation: auto;
+}
+
+::view-transition-old(root) {
+    animation: none;
+}
+
+::view-transition-new(root) {
+    animation: sdViewIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes sdViewIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Bar progres: langsung terlihat saat link pindah halaman diklik, merambat
+   pelan (halaman lama), lalu melengkung penuh + memudar begitu halaman baru
+   tampil. Dipicu oleh partial nav-progress (hook BODY_START). */
+.sd-nav-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 60; /* di atas chrome panel */
+    width: 0;
+    height: 3px;
+    border-radius: 0 9999px 9999px 0;
+    background: linear-gradient(90deg, var(--sd-primary-600), var(--sd-primary-400));
+    box-shadow: 0 0 12px rgba(124, 58, 237, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: width 0.25s ease-out, opacity 0.4s ease 0.1s;
+}
+
+.sd-nav-progress--instant {
+    width: 40%;
+    opacity: 1;
+    transition: none;
+}
+
+.sd-nav-progress--loading {
+    width: 72%;
+    opacity: 1;
+    transition: width 2.4s cubic-bezier(0.1, 0.6, 0.3, 1), opacity 0.2s ease;
+}
+
+.sd-nav-progress--done {
+    width: 100%;
+    opacity: 0;
+}
+
+/* Reduced motion: tanpa crossfade halaman, tanpa bar. */
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation: none;
+    }
+
+    .sd-nav-progress {
+        transition: none;
+    }
+}
+
+/* ============================================================================
+   8. RESOURCE FORM PAGES (product create / edit)
+   ========================================================================== */
+
+/* --- Page header: tighter title, muted subheading like the mockups -------- */
+
+.fi-resource-create-record-page .fi-header-heading,
+.fi-resource-edit-record-page .fi-header-heading {
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
+
+.fi-resource-create-record-page .fi-header-subheading,
+.fi-resource-edit-record-page .fi-header-subheading {
+    color: var(--sd-text-muted);
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+    max-width: 42rem;
+}
+
+.fi-resource-create-record-page .fi-breadcrumbs-item-label:not(.transition),
+.fi-resource-edit-record-page .fi-breadcrumbs-item-label:not(.transition) {
+    color: var(--sd-on-surface);
+    font-weight: 600;
+}
+
+/* --- Cards: flat bordered sections like the mockups ----------------------- */
+
+.fi-page .fi-form .fi-section {
+    background-color: var(--sd-surface);
+    border: 1px solid var(--sd-border-subtle);
+    border-radius: var(--sd-radius-lg);
+    box-shadow: none;
+}
+
+/* Filament sudah menggambar garis pemisah di .fi-section-content-ctn —
+   cukup selaraskan warnanya dengan token, jangan tambah garis kedua. */
+.fi-page .fi-form .fi-section-content-ctn {
+    border-top-color: var(--sd-border-subtle);
+}
+
+.fi-page .fi-form .fi-section-header-icon {
+    color: var(--sd-primary-600);
+}
+
+.dark .fi-page .fi-form .fi-section-header-icon {
+    color: var(--sd-primary-400);
+}
+
+/* --- Fields: flat borders with a purple focus ring ------------------------ */
+
+.fi-page .fi-form .fi-fo-field-wrp-label,
+.fi-page .fi-form .fi-fo-field-wrp-label span {
+    font-weight: 600;
+}
+
+.fi-page .fi-form .fi-input-wrp {
+    border-radius: var(--sd-radius-md);
+    box-shadow: 0 0 0 1px var(--sd-border-strong);
+}
+
+/* Deeper selector on purpose: Filament's focus utility is a compound
+   selector (`:not(:has(...)):focus-within`) with higher specificity. */
+.fi-page .fi-form .fi-input-wrp:focus-within {
+    box-shadow: 0 0 0 1px var(--sd-primary-600);
+}
+
+.dark .fi-page .fi-form .fi-input-wrp:focus-within {
+    box-shadow: 0 0 0 1px var(--sd-primary-400);
+}
+
+/* --- Repeaters: bordered items + dashed full-width add button ------------- */
+
+.fi-page .fi-form .fi-fo-repeater-item {
+    border: 1px solid var(--sd-border-subtle);
+    box-shadow: none;
+}
+
+.fi-page .fi-form .fi-fo-repeater > div.flex {
+    justify-content: stretch;
+}
+
+.fi-page .fi-form .fi-fo-repeater > div.flex > .fi-btn {
+    background-color: transparent;
+    border: 1.5px dashed var(--sd-primary-300);
+    border-radius: var(--sd-radius-md);
+    box-shadow: none;
+    color: var(--sd-primary-600);
+    justify-content: center;
+    width: 100%;
+}
+
+.fi-page .fi-form .fi-fo-repeater > div.flex > .fi-btn:hover {
+    background-color: var(--sd-primary-50);
+    border-color: var(--sd-primary-400);
+}
+
+.dark .fi-page .fi-form .fi-fo-repeater > div.flex > .fi-btn {
+    border-color: rgba(167, 139, 250, 0.45);
+    color: var(--sd-primary-300);
+}
+
+.dark .fi-page .fi-form .fi-fo-repeater > div.flex > .fi-btn:hover {
+    background-color: rgba(167, 139, 250, 0.12);
+    border-color: var(--sd-primary-400);
+}
+
+/* --- File upload: dashed drop zone ---------------------------------------- */
+
+.fi-page .fi-form .fi-fo-file-upload {
+    align-items: stretch;
+}
+
+.fi-page .fi-form .filepond--root {
+    min-height: 6.5rem;
+}
+
+.fi-page .fi-form .filepond--panel-root {
+    background-color: var(--sd-canvas);
+    border: 1.5px dashed var(--sd-border-strong);
+    border-radius: var(--sd-radius-lg);
+}
+
+.fi-page .fi-form .filepond--drop-label {
+    color: var(--sd-text-muted);
+}
+
+.fi-page .fi-form .filepond--root:hover .filepond--panel-root {
+    border-color: var(--sd-primary-400);
+}
+
+/* --- Action bar: split layout + sticky glass footer ----------------------- */
+
+.fi-page .fi-form-actions .fi-btn,
+.fi-resource-create-record-page .fi-header .fi-ac .fi-btn,
+.fi-resource-edit-record-page .fi-header .fi-ac .fi-btn {
+    border-radius: var(--sd-radius-md);
+    min-height: 38px;
+    padding-inline: 1rem;
+}
+
+/* "Batal" pinned left, save actions grouped on the right (mockup order) */
+.fi-page .fi-form-actions .fi-ac > :first-child {
+    margin-inline-end: auto;
+}
+
+/* Bar sticks to the viewport bottom while the form scrolls (the mockup's
+   fixed footer). Filament's own sticky toggle only activates on very tall
+   pages, so pin it here for every form page. */
+.fi-page .fi-form-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 30;
+    background-color: var(--sd-surface);
+    background-color: color-mix(in srgb, var(--sd-surface) 95%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--sd-border-subtle);
+    border-radius: 0;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+    padding: 0.75rem 1.25rem;
+}
+
+/* ============================================================================
+   9. CATEGORY LIST PAGE (reuses the .sd-* components from section 3)
+   ========================================================================== */
+
+/* Stat card whose value is a label, not a number: "Kategori Terbanyak" keeps
+   the row height stable and truncates long names instead of wrapping. */
+.sd-stat-value-text {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    letter-spacing: -0.015em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Highlighted figure inside a stat caption, e.g. "1 produk" */
+.sd-stat-caption strong {
+    color: var(--sd-primary-600);
+    font-weight: 600;
+}
+
+.dark .sd-stat-caption strong {
+    color: var(--sd-primary-400);
+}
+
+/* Slug chip reads as a code token, like the mockup */
+.sd-cell-slug .fi-badge {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    font-size: 12px;
+    letter-spacing: -0.01em;
+}

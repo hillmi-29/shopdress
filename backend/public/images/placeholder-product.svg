@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56" role="img" aria-label="Belum ada foto produk">
+  <rect width="56" height="56" rx="8" fill="#F1F5F9"/>
+  <g fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="15" y="15" width="26" height="26" rx="3"/>
+    <circle cx="23" cy="23" r="2.5"/>
+    <path d="M15 35l7.5-6 5.5 4.5 3.5-3 9.5 4.5"/>
+  </g>
+</svg>

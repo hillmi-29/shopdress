@@ -2,15 +2,16 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\CustomLogin;
+use App\Filament\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -26,13 +27,26 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login(\App\Filament\Pages\Auth\CustomLogin::class)
+            ->login(CustomLogin::class)
             ->brandName('ShopDress Admin')
             ->brandLogo(fn () => view('filament.brand-logo'))
             ->brandLogoHeight('2.4rem')
-            ->font('Space Grotesk')
+            ->font('Inter')
             ->colors([
-                'primary' => Color::hex('#FF5D00'),
+                /* Purple brand palette from the Google Stitch design files */
+                'primary' => [
+                    50 => '#F5F3FF',
+                    100 => '#EDE9FE',
+                    200 => '#DDD6FE',
+                    300 => '#C4B5FD',
+                    400 => '#A78BFA',
+                    500 => '#7C3AED',
+                    600 => '#6D28D9',
+                    700 => '#5B21B6',
+                    800 => '#4C1D95',
+                    900 => '#3B0764',
+                    950 => '#2E1065',
+                ],
                 'gray' => Color::Slate,
                 'info' => Color::Sky,
                 'success' => Color::Emerald,
@@ -45,13 +59,19 @@ class AdminPanelProvider extends PanelProvider
             ->breadcrumbs(true)
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->databaseNotifications()
+            ->renderHook(
+                PanelsRenderHook::STYLES_AFTER,
+                fn () => view('filament.partials.admin-styles'),
+            )
+            ->renderHook(
+                PanelsRenderHook::BODY_START,
+                fn () => view('filament.partials.nav-progress'),
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
