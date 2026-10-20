@@ -60,6 +60,9 @@
             .sd-variant-table { min-width: 560px; }
         }
         .sd-table-card { min-width: 0; width: 100%; }
+        .mt-1\.5 { margin-top: 0.375rem; }
+        .mt-4 { margin-top: 1rem; }
+        .gap-2\.5 { gap: 0.625rem; }
         .hover\:bg-surface-container-lowest:hover { background-color: #ffffff; }
         .dark .hover\:bg-surface-container-lowest:hover { background-color: #111827; }
         .btn-po-emerald:hover { background-color: #059669; }
@@ -201,7 +204,7 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div class="flex flex-wrap items-center gap-2.5">
                         <h2 class="font-title-md text-neutral-heading">Daftar Produk</h2>
-                        <span class="px-2.5 py-0.5 text-caption font-caption rounded-full bg-surface-soft text-neutral-heading font-semibold border border-gray-200/50 dark:border-gray-700/50">
+                        <span class="px-2.5 py-0.5 text-caption font-caption rounded-full bg-surface-soft text-neutral-muted font-medium">
                             {{ $groups->count() }} produk &middot; {{ $filteredVariants }} varian
                         </span>
                     </div>
