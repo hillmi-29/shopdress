@@ -44,7 +44,7 @@ Sistem backend telah siap dan berjalan dengan arsitektur lengkap:
    - Pelacakan nomor resi otomatis dengan notifikasi status pesanan via Email.
 6. **Machine Learning / AI Forecasting di Admin Panel:**
    - Model analitik stok cerdas: *Weighted Moving Average (WMA)* demand velocity, prediksi habis stok (*Days to Stockout*), dan *Economic Order Quantity (EOQ)* saran restock.
-   - Visualisasi: Grafik Donut Status Risiko Stok, Grafik Batang Stok Fisik vs Saran Restock per Kategori, 4 Kartu KPI Metrik, dan tabel analitik varian dengan aksi pembuatan PO WhatsApp Konveksi otomatis.
+   - Visualisasi: ringkasan donut status stok dan bar stok per kategori, lalu daftar produk dengan detail varian yang bisa dibuka serta aksi PO WhatsApp Konveksi otomatis.
 
 ---
 
@@ -161,20 +161,20 @@ Harap buat desain UI/UX interaktif untuk 6 halaman utama berikut:
 
 ---
 
-### 6. AI Demand Forecasting & Restock Alert (Admin Panel Reference)
+### 6. Prediksi Stok & Permintaan (Admin Panel Reference)
 *Struktur halaman analitik stok yang sudah diterapkan di backend:*
-- **Baris Atas (Dua Widget Visual):**
-  - *Grafik Donut:* Distribusi Risiko Ketahanan Stok (Kritis, Waspada, Slow Moving, Aman).
-  - *Grafik Batang:* Perbandingan Stok Fisik Tersedia vs Saran Order Restock per Kategori.
-- **Baris Tengah (4 Kartu KPI Metrik):**
-  - `Restock Kritis`: Ikon segitiga merah + angka `0 Varian`.
-  - `Peringatan Waspada`: Ikon jam amber + angka `0 Varian`.
-  - `Stok Mengendap`: Ikon kubus boks slate + angka `9 Varian`.
-  - `Saran Total Restock`: Ikon paket/gembok slate + angka `0 Pcs`.
-- **Baris Bawah (Tabel Analisis Varian):**
-  - Kolom: `Produk`, `Varian & SKU`, `Stok Fisik` (dengan stok pengaman & ROP), `Laju Harian (WMA)` (dengan penjualan 7/30 hari), `Ketahanan`, `Risiko`, `Saran Restock`, `Tindakan`.
-  - Panel *Cara perhitungan* berisi 4 langkah (WMA, stok pengaman, ROP, saran restock) dan rincian hitung per baris untuk menjelaskan asal angka.
-  - Dilengkapi tombol cepat integrasi order konveksi via WhatsApp.
+- **Ringkasan Visual (Dua Kartu):**
+  - *Status Stok:* donut dengan total varian di tengah dan legenda `Kritis`, `Menipis`, `Menumpuk`, `Aman` beserta jumlahnya.
+  - *Stok per Kategori:* bar horizontal total stok tiap kategori, dengan total pcs di kanan atas dan saran restock bila ada.
+- **Daftar Produk (Tabel Terkelompok):**
+  - Satu baris mewakili satu produk, bukan satu varian. Produk dapat dibuka untuk melihat variannya.
+  - Kolom: `Produk` (gambar, kategori, jumlah varian), `Stok` (total varian yang cocok dengan filter), `Status` (varian terburuk), `Saran Restock`, dan aksi `Lihat varian`.
+  - Istilah status untuk pengguna awam: `Kritis`, `Menipis` (peringatan), `Menumpuk` (slow moving), dan `Aman`.
+- **Detail Varian (Expand):**
+  - Kolom: `Varian` (warna · ukuran dan SKU), `Stok` dengan keterangan ketahanan (`Cukup X hari`, `Cukup > 90 hari`, `Belum ada penjualan`, atau `Habis`), `Status`, `Restock`, dan `PO`.
+  - Tombol PO WhatsApp hanya muncul bila `recommended_restock > 0`.
+- **Filter:** pencarian produk/SKU/varian, kategori, serta tab status (`Semua`, `Kritis`, `Menipis`, `Menumpuk`, `Aman`). Chip judul menampilkan jumlah produk dan varian setelah filter.
+- **Panel "Cara hitung" (tertutup):** empat langkah ringkas (rata-rata jual WMA 70/30, stok pengaman, titik restock, saran restock minimum 12 pcs) dan penjelasan ambang status. Rincian matematis per baris tidak ditampilkan agar halaman tidak padat teks.
 
 ---
 

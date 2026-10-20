@@ -10,7 +10,6 @@
         .font-title-md { font-family: 'Inter', sans-serif; font-size: 18px; line-height: 26px; font-weight: 600; }
         .font-title-sm { font-family: 'Inter', sans-serif; font-size: 15px; line-height: 22px; font-weight: 600; }
         .font-body-sm { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 20px; }
-        .font-label-md { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 18px; font-weight: 500; }
         .font-caption { font-family: 'Inter', sans-serif; font-size: 11px; line-height: 16px; font-weight: 500; }
 
         .bg-surface-container-lowest { background-color: #ffffff; }
@@ -21,7 +20,7 @@
         .dark .text-neutral-heading { color: #f9fafb; }
         .text-neutral-muted { color: #64748B; }
         .dark .text-neutral-muted { color: #9ca3af; }
-        
+
         .bg-primary-container { background-color: #6D28D9; }
         .bg-primary-hover { background-color: #5B21B6; }
         .text-primary { color: #6D28D9; }
@@ -40,359 +39,195 @@
         .border-neutral-border-subtle { border-color: #F1F5F9; }
         .dark .border-neutral-border-subtle { border-color: #374151; }
 
-        /* Utility dari mockup yang tidak ikut ter-bundle CSS Filament:
-           tanpa ini kartu tampil kotak (radius 0) dan tanpa bayangan. */
+        /* Utility yang tidak ikut ter-bundle CSS Filament. */
         .rounded-2xl { border-radius: 1rem; }
         .shadow-xs { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); }
         .rounded-xs { border-radius: 2px; }
         .dark .dark\:border-gray-800 { border-color: #1F2937; }
+        .dark .dark\:border-gray-700\/50 { border-color: rgba(55, 65, 81, 0.5); }
+        .bg-status-slow-subtle { background-color: #E2E8F0; }
+        .dark .bg-status-slow-subtle { background-color: rgba(100, 116, 139, 0.22); }
+        .dark .text-primary { color: #A78BFA; }
+        .uppercase { text-transform: uppercase; }
+        .tracking-wider { letter-spacing: 0.05em; }
+        .sd-donut { width: 128px; height: 128px; flex-shrink: 0; }
+        .sd-donut svg { width: 100%; height: 100%; }
+        .sd-bar-track { height: 10px; border-radius: 9999px; background-color: #F1F5F9; overflow: hidden; }
+        .dark .sd-bar-track { background-color: #374151; }
+        .sd-bar-fill { height: 100%; border-radius: 9999px; background-color: #10B981; }
+        @media (min-width: 768px) {
+            .sd-product-table { min-width: 760px; }
+            .sd-variant-table { min-width: 560px; }
+        }
+        .sd-table-card { min-width: 0; width: 100%; }
+        .hover\:bg-surface-container-lowest:hover { background-color: #ffffff; }
+        .dark .hover\:bg-surface-container-lowest:hover { background-color: #111827; }
         .btn-po-emerald:hover { background-color: #059669; }
         .ring-track { stroke: #F1F5F9; }
         .dark .ring-track { stroke: #374151; }
-        .space-y-0.5 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.125rem; }
         .focus\:ring-primary-container:focus { --tw-ring-color: #6D28D9; }
         .focus\:border-primary-container:focus { border-color: #6D28D9; }
         .hover\:bg-surface-soft\/60:hover { background-color: rgba(248, 250, 252, 0.6); }
         .dark .hover\:bg-surface-soft\/60:hover { background-color: rgba(31, 41, 55, 0.6); }
-        .ml-1 { margin-left: 0.25rem; }
+        .divide-neutral-border-subtle > :not([hidden]) ~ :not([hidden]) { border-color: #F1F5F9; }
+        .dark .divide-neutral-border-subtle > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
         .text-\[11px\] { font-size: 11px; line-height: 16px; }
-        .text-\[9px\] { font-size: 9px; line-height: 12px; }
         .sd-num { font-variant-numeric: tabular-nums; }
         .sd-chevron-open { transform: rotate(180deg); }
-        @media (min-width: 768px) {
-            .sd-detail-col + .sd-detail-col { border-left: 1px solid #F1F5F9; padding-left: 1.25rem; }
-            .dark .sd-detail-col + .sd-detail-col { border-left-color: #374151; }
-        }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
     </style>
 
+    @php
+        $dist = $this->riskDistribution;
+        $categoryStats = $this->categoryStats;
+        $groups = collect($this->forecastData)->groupBy('product_id');
+        $filteredVariants = $groups->sum(fn ($items) => $items->count());
+        $riskOrder = ['CRITICAL' => 3, 'WARNING' => 2, 'SLOW_MOVING' => 1, 'SAFE' => 0];
+        $statusLabels = [
+            'CRITICAL' => 'Kritis',
+            'WARNING' => 'Menipis',
+            'SLOW_MOVING' => 'Menumpuk',
+            'SAFE' => 'Aman',
+        ];
+        $statusChip = [
+            'CRITICAL' => 'bg-status-critical-subtle text-status-critical',
+            'WARNING' => 'bg-status-warning-subtle text-status-warning',
+            'SLOW_MOVING' => 'bg-status-slow-subtle text-neutral-muted',
+            'SAFE' => 'bg-accent-emerald-subtle text-accent-emerald',
+        ];
+        $statusDot = [
+            'CRITICAL' => 'bg-status-critical',
+            'WARNING' => 'bg-status-warning',
+            'SLOW_MOVING' => 'bg-neutral-muted',
+            'SAFE' => 'bg-accent-emerald',
+        ];
+        $totalStock = (int) $categoryStats->sum('stock');
+        $totalRestock = (int) $categoryStats->sum('restock');
+        $formatPcs = fn ($value) => number_format((float) $value, 0, ',', '.');
+    @endphp
+
     <div class="space-y-6">
-        <!-- Context Banner -->
-        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-surface-container-lowest via-surface-soft to-surface-container-lowest p-6 border border-gray-100 dark:border-gray-800 shadow-xs">
-            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div class="space-y-1.5 max-w-3xl">
-                    <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-primary-subtle text-primary text-caption font-caption">
-                        <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
-                        <span>Perhitungan otomatis</span>
-                    </div>
-                    <p class="font-headline-sm text-neutral-heading leading-tight">
-                        Prediksi stok habis dan saran restock dengan WMA, ROP, dan stok pengaman
-                    </p>
-                    <p class="font-body-sm text-neutral-muted">
-                        Dihitung dari penjualan 7 & 30 hari terakhir, waktu tunggu konveksi 7 hari kerja, dan deviasi penjualan untuk stok pengaman.
-                    </p>
-                </div>
-                <div class="flex items-center gap-3 self-start md:self-auto shrink-0">
-                    <div class="px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-gray-100 dark:border-gray-800 shadow-xs flex items-center gap-3">
-                        <span class="material-symbols-outlined text-primary text-2xl">warehouse</span>
-                        <div>
-                            <p class="text-caption font-caption text-neutral-muted">Total varian</p>
-                            <p class="text-title-sm font-title-sm text-neutral-heading">{{ $this->riskDistribution['total'] }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-orange-500/5 rounded-full blur-2xl pointer-events-none"></div>
-        </div>
-
-        <!-- TOP ROW: Two Visual Analytics Cards (Side-by-Side) -->
+        <!-- RINGKASAN VISUAL -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- 1. Donut Chart Widget: Distribusi Risiko Ketahanan Stok -->
-            @php
-                // Persentase asli distribusi risiko — tanpa angka fallback mockup;
-                // dulu nilai 0% tertimpa placeholder sehingga legenda & ring
-                // menampilkan segmen "Waspada 5%" palsu.
-                $dist = $this->riskDistribution;
-                $safePct = (int) $dist['safe_pct'];
-                $slowPct = (int) $dist['slow_moving_pct'];
-                $warnPct = (int) $dist['warning_pct'];
-                $critPct = (int) $dist['critical_pct'];
+            <!-- Distribusi status -->
+            <div class="bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-xs flex flex-col">
+                <h2 class="font-title-md text-neutral-heading">Status Stok</h2>
 
-                $safeCirc = round((339.29 * $safePct) / 100, 2);
-                $slowCirc = round((339.29 * $slowPct) / 100, 2);
-                $warnCirc = round((339.29 * $warnPct) / 100, 2);
-                $critCirc = round((339.29 * $critPct) / 100, 2);
+                @php
+                    $totalForRing = max(1, (int) $dist['total']);
+                    $safeCirc = round((339.29 * $dist['safe']) / $totalForRing, 2);
+                    $slowCirc = round((339.29 * $dist['slow_moving']) / $totalForRing, 2);
+                    $warnCirc = round((339.29 * $dist['warning']) / $totalForRing, 2);
+                    $critCirc = round((339.29 * $dist['critical']) / $totalForRing, 2);
+                @endphp
 
-                // Label tengah donut mengikuti kelompok dengan porsi terbanyak.
-                $dominant = collect([
-                    ['pct' => $safePct, 'label' => 'Stok Aman', 'color' => 'text-accent-emerald'],
-                    ['pct' => $slowPct, 'label' => 'Mengendap', 'color' => 'text-neutral-muted'],
-                    ['pct' => $warnPct, 'label' => 'Waspada', 'color' => 'text-status-warning'],
-                    ['pct' => $critPct, 'label' => 'Kritis', 'color' => 'text-status-critical'],
-                ])->sortByDesc('pct')->first();
-            @endphp
-            <div class="min-w-0 bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-xs flex flex-col justify-between">
-                <div>
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <h2 class="font-title-md text-neutral-heading">Distribusi Risiko Stok</h2>
-                        </div>
-                        <span class="material-symbols-outlined text-neutral-muted text-lg">info</span>
-                    </div>
-                    <p class="font-body-sm text-neutral-muted mt-1 leading-snug">
-                        Varian dikelompokkan berdasarkan ketahanan stok.
-                    </p>
-                </div>
-
-                <div class="my-5 flex flex-row items-center justify-between gap-4">
-                    <!-- Inline Donut SVG Chart -->
-                    <div class="relative w-36 h-36 xl:w-40 xl:h-40 flex items-center justify-center shrink-0">
-                        <svg class="w-full h-full -rotate-90" viewBox="0 0 140 140">
-                            <!-- Background Track -->
+                <div class="my-auto py-4 flex flex-col sm:flex-row sm:items-center gap-5">
+                    <div class="relative sd-donut mx-auto sm:mx-0">
+                        <svg class="w-full h-full -rotate-90" viewBox="0 0 140 140" role="img" aria-label="Distribusi status stok">
                             <circle cx="70" cy="70" fill="transparent" r="54" class="ring-track" stroke-width="16"></circle>
-                            <!-- Safe Ring -->
                             @if($safeCirc > 0)
                                 <circle cx="70" cy="70" fill="transparent" r="54" stroke="#10B981" stroke-dasharray="{{ $safeCirc }} 339.29" stroke-linecap="round" stroke-width="16"></circle>
                             @endif
-                            <!-- Stok Mengendap Ring -->
                             @if($slowCirc > 0)
                                 <circle cx="70" cy="70" fill="transparent" r="54" stroke="#64748B" stroke-dasharray="{{ $slowCirc }} 339.29" stroke-dashoffset="-{{ $safeCirc }}" stroke-linecap="round" stroke-width="16"></circle>
                             @endif
-                            <!-- Warning Ring -->
                             @if($warnCirc > 0)
                                 <circle cx="70" cy="70" fill="transparent" r="54" stroke="#F59E0B" stroke-dasharray="{{ $warnCirc }} 339.29" stroke-dashoffset="-{{ $safeCirc + $slowCirc }}" stroke-linecap="round" stroke-width="16"></circle>
                             @endif
-                            <!-- Critical Ring -->
                             @if($critCirc > 0)
                                 <circle cx="70" cy="70" fill="transparent" r="54" stroke="#EF4444" stroke-dasharray="{{ $critCirc }} 339.29" stroke-dashoffset="-{{ $safeCirc + $slowCirc + $warnCirc }}" stroke-linecap="round" stroke-width="16"></circle>
                             @endif
                         </svg>
-                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
-                            <span class="text-[9px] font-caption text-neutral-muted uppercase tracking-tight">TERBANYAK</span>
-                            <span class="font-headline-sm text-neutral-heading text-xl font-bold my-0.5 leading-none">
-                                {{ $dominant['pct'] }}%
-                            </span>
-                            <span class="text-[11px] font-semibold {{ $dominant['color'] }} leading-tight">
-                                {{ $dominant['label'] }}
-                            </span>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                            <span class="font-headline-lg text-neutral-heading leading-none">{{ $dist['total'] }}</span>
+                            <span class="text-xs text-neutral-muted mt-1">varian</span>
                         </div>
                     </div>
 
-                    <!-- 4 Legend Cards Stacked -->
-                    <div class="flex-1 space-y-2 min-w-0">
-                        <div class="flex items-center justify-between p-2 px-3 rounded-xl bg-status-critical-subtle cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('CRITICAL')">
-                            <div class="flex items-center gap-1.5 min-w-0">
-                                <span class="w-2 h-2 rounded-full bg-status-critical shrink-0"></span>
-                                <span class="text-[11px] font-medium text-neutral-heading truncate" title="Stok habis atau di bawah stok pengaman">Kritis</span>
+                    <div class="min-w-0 flex-1 space-y-1">
+                        @foreach([
+                            ['key' => 'CRITICAL', 'label' => 'Kritis', 'count' => $dist['critical'], 'title' => 'Stok habis atau di bawah stok pengaman'],
+                            ['key' => 'WARNING', 'label' => 'Menipis', 'count' => $dist['warning'], 'title' => 'Stok sudah mencapai titik restock'],
+                            ['key' => 'SLOW_MOVING', 'label' => 'Menumpuk', 'count' => $dist['slow_moving'], 'title' => 'Stok cukup untuk lebih dari 60 hari'],
+                            ['key' => 'SAFE', 'label' => 'Aman', 'count' => $dist['safe'], 'title' => 'Stok di atas titik restock'],
+                        ] as $status)
+                            <div class="flex items-center justify-between rounded-lg px-2.5 py-2" title="{{ $status['title'] }}">
+                                <span class="flex items-center gap-2.5 text-sm text-neutral-heading">
+                                    <span class="w-2.5 h-2.5 rounded-full {{ $statusDot[$status['key']] }}"></span>
+                                    {{ $status['label'] }}
+                                </span>
+                                <span class="text-sm font-semibold text-neutral-heading sd-num">{{ $status['count'] }}</span>
                             </div>
-                            <span class="text-xs font-bold text-status-critical shrink-0 ml-1">{{ $critPct }}%</span>
-                        </div>
-
-                        <div class="flex items-center justify-between p-2 px-3 rounded-xl bg-status-warning-subtle cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('WARNING')">
-                            <div class="flex items-center gap-1.5 min-w-0">
-                                <span class="w-2 h-2 rounded-full bg-status-warning shrink-0"></span>
-                                <span class="text-[11px] font-medium text-neutral-heading truncate" title="Sudah mencapai titik restok (ROP)">Waspada</span>
-                            </div>
-                            <span class="text-xs font-bold text-status-warning shrink-0 ml-1">{{ $warnPct }}%</span>
-                        </div>
-
-                        <div class="flex items-center justify-between p-2 px-3 rounded-xl bg-accent-emerald-subtle cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('SAFE')">
-                            <div class="flex items-center gap-1.5 min-w-0">
-                                <span class="w-2 h-2 rounded-full bg-accent-emerald shrink-0"></span>
-                                <span class="text-[11px] font-medium text-neutral-heading truncate" title="Stok terkendali di atas titik restok">Aman</span>
-                            </div>
-                            <span class="text-xs font-bold text-accent-emerald shrink-0 ml-1">{{ $safePct }}%</span>
-                        </div>
-
-                        <div class="flex items-center justify-between p-2 px-3 rounded-xl bg-surface-soft cursor-pointer transition hover:opacity-90" wire:click="setRiskFilter('SLOW_MOVING')">
-                            <div class="flex items-center gap-1.5 min-w-0">
-                                <span class="w-2 h-2 rounded-full bg-neutral-muted shrink-0"></span>
-                                <span class="text-[11px] font-medium text-neutral-heading truncate" title="Ketahanan stok lebih dari 60 hari">Mengendap</span>
-                            </div>
-                            <span class="text-xs font-bold text-neutral-muted shrink-0 ml-1">{{ $slowPct }}%</span>
-                        </div>
+                        @endforeach
                     </div>
-                </div>
-
-                <div class="pt-3 border-t border-neutral-border-subtle flex items-center justify-between text-caption font-caption text-neutral-muted">
-                    <span>Metode: WMA 7 & 30 hari</span>
-                    <span class="text-neutral-heading font-medium">{{ $dist['slow_moving'] }} varian mengendap</span>
                 </div>
             </div>
 
-            <!-- 2. Bar Chart Widget: Stok Fisik Tersedia vs Saran Order Restock per Kategori -->
-            <div class="min-w-0 bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-xs flex flex-col justify-between">
-                <div>
-                    <div>
-                        <h2 class="font-title-md text-neutral-heading">Stok Fisik vs Saran Restock per Kategori</h2>
-                    </div>
-                    <!-- Legend below header matching reference -->
-                    <div class="flex items-center gap-4 text-xs font-medium mt-1.5">
-                        <div class="flex items-center gap-1.5">
-                            <span class="w-3 h-3 rounded-xs shrink-0" style="background:#10B981"></span>
-                            <span class="text-neutral-heading">Stok Fisik</span>
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <span class="w-3 h-3 rounded-xs bg-primary-container shrink-0"></span>
-                            <span class="text-neutral-heading">Saran Restock</span>
-                        </div>
-                    </div>
-
+            <!-- Stok per kategori -->
+            <div class="bg-surface-container-lowest rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-xs flex flex-col">
+                <div class="flex items-center justify-between gap-3">
+                    <h2 class="font-title-md text-neutral-heading">Stok per Kategori</h2>
+                    <span class="text-xs text-neutral-muted">{{ $formatPcs($totalStock) }} pcs</span>
                 </div>
 
-                <!-- Category Horizontal Bar Chart Visualization -->
-                <div class="my-5 space-y-3">
-                    @foreach($this->categoryStats as $cat)
-                        <div class="space-y-1">
-                            <div class="flex justify-between items-center text-xs">
-                                <span class="font-semibold text-neutral-heading">{{ $cat['name'] }}</span>
-                                <span class="text-neutral-muted">
-                                    Fisik: <strong class="text-neutral-heading font-bold">{{ $cat['stock'] }} pcs</strong>
-                                    &bull; Saran: <strong class="text-primary font-bold">{{ $cat['restock'] }} pcs</strong>
+                <div class="mt-5 flex-1 space-y-4">
+                    @foreach($categoryStats as $cat)
+                        <div>
+                            <div class="flex items-center justify-between gap-3 text-sm">
+                                <span class="min-w-0 truncate font-medium text-neutral-heading" title="{{ $cat['name'] }}">{{ $cat['name'] }}</span>
+                                <span class="shrink-0 text-neutral-muted">
+                                    <strong class="font-semibold text-neutral-heading sd-num">{{ $formatPcs($cat['stock']) }}</strong> pcs
+                                    @if($cat['restock'] > 0)
+                                        <span class="ml-1.5 font-semibold text-primary">+{{ $formatPcs($cat['restock']) }}</span>
+                                    @endif
                                 </span>
                             </div>
-                            <div class="h-4 bg-surface-soft rounded-full overflow-hidden flex items-center p-0.5">
-                                <div class="h-full rounded-full transition-all duration-300" style="width: {{ $cat['bar_width'] }}%; background:#10B981;"></div>
-                                @if($cat['restock_width'] > 0)
-                                    <div class="h-full bg-primary-container rounded-full ml-1 transition-all duration-300" style="width: {{ $cat['restock_width'] }}%;"></div>
-                                @endif
+                            <div class="mt-1.5 sd-bar-track">
+                                <div class="sd-bar-fill" style="width: {{ $cat['bar_width'] }}%;"></div>
                             </div>
                         </div>
                     @endforeach
                 </div>
 
-                <div class="pt-3 border-t border-neutral-border-subtle flex items-center justify-between text-caption font-caption text-neutral-muted">
-                    <span>Total stok fisik: {{ number_format($this->categoryStats->sum('stock'), 0, ',', '.') }} pcs</span>
-                    <span class="text-neutral-heading font-medium">{{ $this->categoryStats->sum('restock') > 0 ? number_format($this->categoryStats->sum('restock'), 0, ',', '.').' pcs disarankan restock' : 'Tidak ada saran restock' }}</span>
-                </div>
+                @if($totalRestock > 0)
+                    <p class="mt-4 text-xs font-medium text-primary">Saran restock: {{ $formatPcs($totalRestock) }} pcs</p>
+                @endif
             </div>
         </div>
 
-        <!-- MIDDLE ROW: 4 KPI Metric Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
-            <!-- 1. Restock Kritis -->
-            <div class="bg-surface-container-lowest rounded-2xl p-5 border border-gray-100 dark:border-gray-800 shadow-xs relative overflow-hidden transition-all duration-200 hover:-translate-y-0.5">
-                <div class="flex items-center justify-between">
-                    <span class="text-caption font-caption uppercase tracking-wider text-neutral-muted">Kritis</span>
-                    <div class="w-10 h-10 rounded-xl bg-status-critical-subtle text-status-critical flex items-center justify-center">
-                        <span class="material-symbols-outlined text-xl">warning</span>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <p class="font-headline-lg text-neutral-heading leading-tight">
-                        {{ $this->metrics['critical_count'] ?? 0 }} <span class="font-headline-sm text-neutral-muted font-normal text-base">Varian</span>
-                    </p>
-                    <div class="mt-2 flex items-center gap-1.5 text-caption font-caption {{ ($this->metrics['critical_count'] ?? 0) === 0 ? 'text-accent-emerald font-semibold' : 'text-status-critical font-semibold' }}">
-                        <span class="material-symbols-outlined text-sm">
-                            {{ ($this->metrics['critical_count'] ?? 0) === 0 ? 'check_circle' : 'error' }}
+        <!-- DAFTAR PRODUK -->
+        <div class="bg-surface-container-lowest rounded-2xl border border-gray-100 dark:border-gray-800 shadow-xs overflow-hidden sd-table-card" x-data="{ cara: false, buka: null }">
+            <div class="p-6 border-b border-neutral-border-subtle">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <h2 class="font-title-md text-neutral-heading">Daftar Produk</h2>
+                        <span class="px-2.5 py-0.5 text-caption font-caption rounded-full bg-surface-soft text-neutral-heading font-semibold border border-gray-200/50 dark:border-gray-700/50">
+                            {{ $groups->count() }} produk &middot; {{ $filteredVariants }} varian
                         </span>
-                        <span>{{ ($this->metrics['critical_count'] ?? 0) === 0 ? 'Tidak ada varian di bawah stok pengaman' : 'Perlu restock segera' }}</span>
                     </div>
-                </div>
-                <div class="mt-3 pt-3 border-t border-neutral-border-subtle text-caption font-caption text-neutral-muted">
-                    <span class="text-status-critical font-medium">Ambang: habis atau &le; stok pengaman</span>
-                </div>
-            </div>
 
-            <!-- 2. Peringatan Waspada -->
-            <div class="bg-surface-container-lowest rounded-2xl p-5 border border-gray-100 dark:border-gray-800 shadow-xs relative overflow-hidden transition-all duration-200 hover:-translate-y-0.5">
-                <div class="flex items-center justify-between">
-                    <span class="text-caption font-caption uppercase tracking-wider text-neutral-muted">Waspada</span>
-                    <div class="w-10 h-10 rounded-xl bg-status-warning-subtle text-status-warning flex items-center justify-center">
-                        <span class="material-symbols-outlined text-xl">schedule</span>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <p class="font-headline-lg text-neutral-heading leading-tight">
-                        {{ $this->metrics['warning_count'] ?? 0 }} <span class="font-headline-sm text-neutral-muted font-normal text-base">Varian</span>
-                    </p>
-                    <div class="mt-2 flex items-center gap-1.5 text-caption font-caption {{ ($this->metrics['warning_count'] ?? 0) === 0 ? 'text-accent-emerald font-semibold' : 'text-status-warning font-semibold' }}">
-                        <span class="material-symbols-outlined text-sm">
-                            {{ ($this->metrics['warning_count'] ?? 0) === 0 ? 'check_circle' : 'error' }}
-                        </span>
-                        <span>{{ ($this->metrics['warning_count'] ?? 0) === 0 ? 'Semua varian di atas titik restok' : 'Varian mencapai titik restok' }}</span>
-                    </div>
-                </div>
-                <div class="mt-3 pt-3 border-t border-neutral-border-subtle text-caption font-caption text-neutral-muted">
-                    <span class="text-status-warning font-medium">Ambang: &le; titik restok</span>
-                </div>
-            </div>
-
-            <!-- 3. Stok Mengendap -->
-            <div class="bg-surface-container-lowest rounded-2xl p-5 border border-gray-100 dark:border-gray-800 shadow-xs relative overflow-hidden transition-all duration-200 hover:-translate-y-0.5">
-                <div class="flex items-center justify-between">
-                    <span class="text-caption font-caption uppercase tracking-wider text-neutral-muted">Stok Mengendap</span>
-                    <div class="w-10 h-10 rounded-xl bg-surface-soft text-neutral-muted flex items-center justify-center">
-                        <span class="material-symbols-outlined text-xl">inventory</span>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <p class="font-headline-lg text-neutral-heading leading-tight">
-                        {{ $this->metrics['slow_moving_count'] ?? 0 }} <span class="font-headline-sm text-neutral-muted font-normal text-base">Varian</span>
-                    </p>
-                    <div class="mt-2 flex items-center gap-1.5 text-caption font-caption text-neutral-muted">
-                        <span class="material-symbols-outlined text-sm text-status-warning">bolt</span>
-                        <span>Cocok untuk promo bundling atau diskon</span>
-                    </div>
-                </div>
-                <div class="mt-3 pt-3 border-t border-neutral-border-subtle text-caption font-caption text-neutral-muted">
-                    <span class="text-neutral-heading font-medium">Ketahanan &gt; 60 hari</span>
-                </div>
-            </div>
-
-            <!-- 4. Saran Total Restock -->
-            <div class="bg-surface-container-lowest rounded-2xl p-5 border border-gray-100 dark:border-gray-800 shadow-xs relative overflow-hidden transition-all duration-200 hover:-translate-y-0.5">
-                <div class="flex items-center justify-between">
-                    <span class="text-caption font-caption uppercase tracking-wider text-neutral-muted">Saran Restock</span>
-                    <div class="w-10 h-10 rounded-xl bg-surface-soft text-neutral-muted flex items-center justify-center">
-                        <span class="material-symbols-outlined text-xl">package_2</span>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <p class="font-headline-lg text-neutral-heading leading-tight">
-                        {{ number_format($this->metrics['total_restock_units'] ?? 0, 0, ',', '.') }} <span class="font-headline-sm text-neutral-muted font-normal text-base">Pcs</span>
-                    </p>
-                    <div class="mt-2 flex items-center gap-1.5 text-caption font-caption {{ ($this->metrics['total_restock_units'] ?? 0) === 0 ? 'text-accent-emerald font-semibold' : 'text-primary font-semibold' }}">
-                        <span class="material-symbols-outlined text-sm">
-                            {{ ($this->metrics['total_restock_units'] ?? 0) === 0 ? 'check_circle' : 'local_shipping' }}
-                        </span>
-                        <span>{{ ($this->metrics['total_restock_units'] ?? 0) === 0 ? 'Tidak ada restock yang disarankan' : 'Siap di-order ke konveksi' }}</span>
-                    </div>
-                </div>
-                <div class="mt-3 pt-3 border-t border-neutral-border-subtle text-caption font-caption text-neutral-muted">
-                    <span class="text-neutral-heading font-medium">Formula: ROP &minus; stok fisik</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- BOTTOM ROW: Variant Analysis Table -->
-        <div class="bg-surface-container-lowest rounded-2xl border border-gray-100 dark:border-gray-800 shadow-xs overflow-hidden" x-data="{ cara: false, buka: null }">
-            <!-- Table Header Bar -->
-            <div class="p-6 bg-surface-container-lowest border-b border-neutral-border-subtle">
-                <!-- Top: Title & Description -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div>
-                        <div class="flex items-center gap-2.5">
-                            <h3 class="font-title-md text-neutral-heading">Analisis Varian</h3>
-                            <span class="px-2.5 py-0.5 text-caption font-caption rounded-full bg-surface-soft text-neutral-heading font-semibold border border-gray-200/50 dark:border-gray-700/50">
-                                {{ count($this->forecastData) }} varian ditampilkan
-                            </span>
-                        </div>
-                        <p class="font-body-sm text-neutral-muted mt-1">
-                            Laju harian memakai WMA; ketahanan = stok &divide; laju. Buka Rincian di tiap baris untuk melihat asal angkanya.
-                        </p>
-                    </div>
                     <button
                         type="button"
                         x-on:click="cara = !cara"
+                        x-bind:aria-expanded="cara.toString()"
+                        aria-controls="cara-hitung"
                         class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-surface-soft text-xs font-medium text-neutral-heading transition hover:bg-surface-container-lowest cursor-pointer self-start sm:self-auto shrink-0">
                         <span class="material-symbols-outlined text-base text-primary">calculate</span>
-                        <span>Cara perhitungan</span>
+                        <span>Cara hitung</span>
                         <span class="material-symbols-outlined text-sm transition-transform" x-bind:class="cara ? 'sd-chevron-open' : ''">expand_more</span>
                     </button>
                 </div>
 
-                <!-- Bottom: Cohesive & Beautiful Filter Toolbar -->
-                <div class="mt-4 pt-4 border-t border-neutral-border-subtle flex flex-col md:flex-row md:items-center justify-between gap-3">
-                    <!-- Left: Search Box & Category Dropdown in one line -->
-                    <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
-                        <!-- Search Box with pinned SVG icon & forced padding -->
-                        <div class="relative w-64 shrink-0">
-                            <input 
-                                type="text" 
-                                wire:model.live.debounce.300ms="search" 
-                                placeholder="Cari varian, warna, SKU..." 
+                <!-- Filter -->
+                <div class="mt-4 flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <div class="relative shrink-0" style="width: 280px;">
+                            <input
+                                type="text"
+                                wire:model.live.debounce.300ms="search"
+                                placeholder="Cari produk/SKU..."
                                 style="padding-left: 2.5rem !important; height: 38px !important;"
-                                class="w-full text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-surface-soft text-neutral-heading pr-3 focus:ring-2 focus:ring-primary-container focus:border-primary-container transition"
+                                class="w-full text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-surface-soft text-neutral-heading pr-3 focus:ring-2 focus:ring-primary-container focus:border-primary-container transition"
                             />
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-muted">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -401,406 +236,257 @@
                             </div>
                         </div>
 
-                        <!-- Category Selector Dropdown (Clean, single chevron, same height) -->
                         <div class="w-48 shrink-0">
-                            <select 
-                                wire:model.live="selectedCategory" 
+                            <select
+                                wire:model.live="selectedCategory"
                                 style="height: 38px !important;"
-                                class="w-full text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-surface-soft text-neutral-heading px-3 focus:ring-2 focus:ring-primary-container focus:border-primary-container transition">
-                                <option value="ALL">Semua Kategori</option>
+                                class="w-full text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-surface-soft text-neutral-heading px-3 focus:ring-2 focus:ring-primary-container focus:border-primary-container transition">
+                                <option value="ALL">Semua kategori</option>
                                 @foreach($this->categories as $c)
                                     <option value="{{ $c->slug }}">{{ $c->name }}</option>
                                 @endforeach
                             </select>
                         </div>
 
-                        @if(!empty($this->selectedRisk) || !empty($this->selectedCategory) || !empty($this->search))
-                            <button 
-                                type="button" 
-                                wire:click="resetFilters" 
-                                class="text-xs text-primary hover:underline font-medium px-2 py-1 transition cursor-pointer whitespace-nowrap">
-                                Reset Filter
+                        @if($this->selectedRisk || ($this->selectedCategory && $this->selectedCategory !== 'ALL') || $this->search)
+                            <button
+                                type="button"
+                                wire:click="resetFilters"
+                                class="text-sm text-primary hover:underline font-medium px-1.5 py-1 transition cursor-pointer whitespace-nowrap">
+                                Reset
                             </button>
                         @endif
                     </div>
 
-                    <!-- Right: Quick Risk Tabs Segmented Control -->
-                    <div class="flex flex-wrap items-center rounded-xl bg-surface-soft p-1 border border-gray-200/50 dark:border-gray-700/50 shrink-0 self-start lg:self-auto">
-                        <button 
-                            type="button" 
-                            wire:click="setRiskFilter(null)" 
-                            class="px-3 py-1 rounded-lg text-xs transition cursor-pointer {{ empty($this->selectedRisk) ? 'bg-surface-container-lowest text-neutral-heading font-semibold shadow-xs' : 'text-neutral-muted hover:text-neutral-heading' }}">
+                    <div class="flex flex-wrap items-center rounded-xl bg-surface-soft p-1 border border-gray-200/50 dark:border-gray-700/50 shrink-0 self-start xl:self-auto">
+                        <button
+                            type="button"
+                            wire:click="setRiskFilter(null)"
+                            class="px-3 py-1 rounded-lg text-sm transition cursor-pointer {{ empty($this->selectedRisk) ? 'bg-surface-container-lowest text-neutral-heading font-semibold shadow-xs' : 'text-neutral-muted hover:text-neutral-heading' }}">
                             Semua
                         </button>
-                        <button 
-                            type="button" 
-                            wire:click="setRiskFilter('CRITICAL')" 
-                            class="px-3 py-1 rounded-lg text-xs transition cursor-pointer {{ $this->selectedRisk === 'CRITICAL' ? 'bg-surface-container-lowest text-status-critical font-semibold shadow-xs' : 'text-neutral-muted hover:text-neutral-heading' }}">
-                            Kritis ({{ $this->riskDistribution['critical'] }})
+                        <button
+                            type="button"
+                            wire:click="setRiskFilter('CRITICAL')"
+                            class="px-3 py-1 rounded-lg text-sm transition cursor-pointer {{ $this->selectedRisk === 'CRITICAL' ? 'bg-surface-container-lowest text-status-critical font-semibold shadow-xs' : 'text-neutral-muted hover:text-neutral-heading' }}">
+                            Kritis
                         </button>
-                        <button 
-                            type="button" 
-                            wire:click="setRiskFilter('WARNING')" 
-                            class="px-3 py-1 rounded-lg text-xs transition cursor-pointer {{ $this->selectedRisk === 'WARNING' ? 'bg-surface-container-lowest text-status-warning font-semibold shadow-xs' : 'text-neutral-muted hover:text-neutral-heading' }}">
-                            Waspada ({{ $this->riskDistribution['warning'] }})
+                        <button
+                            type="button"
+                            wire:click="setRiskFilter('WARNING')"
+                            class="px-3 py-1 rounded-lg text-sm transition cursor-pointer {{ $this->selectedRisk === 'WARNING' ? 'bg-surface-container-lowest text-status-warning font-semibold shadow-xs' : 'text-neutral-muted hover:text-neutral-heading' }}">
+                            Menipis
                         </button>
-                        <button 
-                            type="button" 
-                            wire:click="setRiskFilter('SLOW_MOVING')" 
-                            class="px-3 py-1 rounded-lg text-xs transition cursor-pointer {{ $this->selectedRisk === 'SLOW_MOVING' ? 'bg-surface-container-lowest text-neutral-heading font-semibold shadow-xs' : 'text-neutral-muted hover:text-neutral-heading' }}">
-                            Mengendap ({{ $this->riskDistribution['slow_moving'] }})
+                        <button
+                            type="button"
+                            wire:click="setRiskFilter('SLOW_MOVING')"
+                            class="px-3 py-1 rounded-lg text-sm transition cursor-pointer {{ $this->selectedRisk === 'SLOW_MOVING' ? 'bg-surface-container-lowest text-neutral-heading font-semibold shadow-xs' : 'text-neutral-muted hover:text-neutral-heading' }}">
+                            Menumpuk
                         </button>
-                        <button 
-                            type="button" 
-                            wire:click="setRiskFilter('SAFE')" 
-                            class="px-3 py-1 rounded-lg text-xs transition cursor-pointer {{ $this->selectedRisk === 'SAFE' ? 'bg-surface-container-lowest text-neutral-heading font-semibold shadow-xs' : 'text-neutral-muted hover:text-neutral-heading' }}">
-                            Aman ({{ $this->riskDistribution['safe'] }})
+                        <button
+                            type="button"
+                            wire:click="setRiskFilter('SAFE')"
+                            class="px-3 py-1 rounded-lg text-sm transition cursor-pointer {{ $this->selectedRisk === 'SAFE' ? 'bg-surface-container-lowest text-accent-emerald font-semibold shadow-xs' : 'text-neutral-muted hover:text-neutral-heading' }}">
+                            Aman
                         </button>
                     </div>
                 </div>
 
-                <!-- Cara perhitungan -->
-                <div x-show="cara" x-cloak class="mt-4 rounded-xl border border-neutral-border-subtle bg-surface-soft p-4">
+                <!-- Cara hitung -->
+                <div x-show="cara" x-cloak id="cara-hitung" class="mt-4 rounded-xl border border-neutral-border-subtle bg-surface-soft p-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
                         <div class="flex gap-2.5">
                             <span class="w-6 h-6 rounded-full bg-primary-subtle text-primary text-[11px] font-bold flex items-center justify-center shrink-0">1</span>
                             <div>
-                                <p class="text-xs font-semibold text-neutral-heading">Laju harian (WMA)</p>
-                                <p class="text-caption font-caption text-neutral-muted mt-1">70% rata-rata 7 hari + 30% rata-rata 30 hari. Tanpa penjualan, dipakai batas minimum 0,05 pcs/hari.</p>
+                                <p class="text-xs font-semibold text-neutral-heading">Rata-rata jual</p>
+                                <p class="text-caption font-caption text-neutral-muted mt-1">70% penjualan 7 hari + 30% penjualan 30 hari terakhir.</p>
                             </div>
                         </div>
                         <div class="flex gap-2.5">
                             <span class="w-6 h-6 rounded-full bg-primary-subtle text-primary text-[11px] font-bold flex items-center justify-center shrink-0">2</span>
                             <div>
                                 <p class="text-xs font-semibold text-neutral-heading">Stok pengaman</p>
-                                <p class="text-caption font-caption text-neutral-muted mt-1">Z &times; simpangan baku harian &times; &radic;7. Z = 1,65 untuk kelas A, 1,28 untuk B/C.</p>
+                                <p class="text-caption font-caption text-neutral-muted mt-1">Cadangan untuk lonjakan permintaan selama 7 hari.</p>
                             </div>
                         </div>
                         <div class="flex gap-2.5">
                             <span class="w-6 h-6 rounded-full bg-primary-subtle text-primary text-[11px] font-bold flex items-center justify-center shrink-0">3</span>
                             <div>
-                                <p class="text-xs font-semibold text-neutral-heading">Titik restok (ROP)</p>
-                                <p class="text-caption font-caption text-neutral-muted mt-1">Laju harian &times; 7 hari kerja + stok pengaman.</p>
+                                <p class="text-xs font-semibold text-neutral-heading">Titik restock</p>
+                                <p class="text-caption font-caption text-neutral-muted mt-1">Batas stok minimum sebelum perlu restock.</p>
                             </div>
                         </div>
                         <div class="flex gap-2.5">
                             <span class="w-6 h-6 rounded-full bg-primary-subtle text-primary text-[11px] font-bold flex items-center justify-center shrink-0">4</span>
                             <div>
                                 <p class="text-xs font-semibold text-neutral-heading">Saran restock</p>
-                                <p class="text-caption font-caption text-neutral-muted mt-1">ROP &minus; stok fisik, minimum 12 pcs (1 lusin) bila perlu restock.</p>
+                                <p class="text-caption font-caption text-neutral-muted mt-1">Selisih titik restock dan stok, minimum 12 pcs.</p>
                             </div>
                         </div>
                     </div>
                     <p class="mt-3 pt-3 border-t border-neutral-border-subtle text-caption font-caption text-neutral-muted leading-relaxed">
-                        Ambang risiko: <strong class="text-neutral-heading">Kritis</strong> stok &le; stok pengaman &middot;
-                        <strong class="text-neutral-heading">Waspada</strong> stok &le; ROP &middot;
-                        <strong class="text-neutral-heading">Mengendap</strong> ketahanan &gt; 60 hari &middot;
-                        <strong class="text-neutral-heading">Aman</strong> sisanya.
+                        Kritis: stok di bawah stok pengaman &middot;
+                        Menipis: stok mencapai titik restock &middot;
+                        Menumpuk: stok cukup lebih dari 60 hari.
                     </p>
                 </div>
             </div>
 
-            <!-- High Clarity Data Table -->
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
+            <div class="overflow-x-auto" style="max-width: 100%;">
+                <table class="w-full text-left sd-product-table">
                     <thead>
                         <tr class="bg-surface-soft text-caption font-caption text-neutral-muted uppercase tracking-wider border-b border-neutral-border-subtle">
-                            <th class="py-3.5 px-6 font-semibold" scope="col" style="width: 26%; min-width: 232px;">Produk</th>
-                            <th class="py-3.5 px-3 font-semibold" scope="col">Varian & SKU</th>
-                            <th class="py-3.5 px-3 font-semibold text-right" scope="col" title="Stok fisik tersedia. Di bawahnya: stok pengaman dan titik restok (ROP).">Stok Fisik</th>
-                            <th class="py-3.5 px-3 font-semibold text-right" scope="col" title="70% rata-rata penjualan 7 hari + 30% rata-rata 30 hari.">Laju Harian (WMA)</th>
-                            <th class="py-3.5 px-3 font-semibold text-right" scope="col" title="Stok fisik ÷ laju harian. Tanda — berarti belum ada penjualan 30 hari.">Ketahanan</th>
-                            <th class="py-3.5 px-3 font-semibold text-center" scope="col" title="Kritis: stok ≤ stok pengaman. Waspada: stok ≤ ROP. Mengendap: ketahanan > 60 hari.">Risiko</th>
-                            <th class="py-3.5 px-3 font-semibold text-right" scope="col" title="ROP − stok fisik, minimum 12 pcs (1 lusin) bila perlu restock.">Saran Restock</th>
-                            <th class="py-3.5 px-4 font-semibold text-center" scope="col" style="width: 13%;">Tindakan</th>
+                            <th class="py-3 px-6 font-semibold" scope="col">Produk</th>
+                            <th class="py-3 px-4 font-semibold text-right" scope="col">Stok</th>
+                            <th class="py-3 px-4 font-semibold text-center" scope="col">Status</th>
+                            <th class="py-3 px-4 font-semibold text-right" scope="col">Saran Restock</th>
+                            <th class="py-3 px-6 font-semibold text-right" scope="col"><span class="sr-only">Aksi</span></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-neutral-border-subtle text-body-sm font-body-sm">
-                        @forelse($this->forecastData as $item)
+                        @forelse($groups as $productId => $variants)
                             @php
-                                $adaPenjualan = $item['sales_30d'] > 0;
-                                $rata7 = $item['sales_7d'] / 7;
-                                $rata30 = $item['sales_30d'] / 30;
-                                $saran = (int) $item['recommended_restock'];
-                                $kebutuhan = max(0, (int) $item['reorder_point'] - (int) $item['current_stock']);
-                                $batchMinimum = $saran > 0 && $kebutuhan < 12;
-                                $laju = function ($value): string {
-                                    $teks = rtrim(rtrim(number_format((float) $value, 2, ',', '.'), '0'), ',');
-                                    return $teks === '' ? '0' : $teks;
-                                };
-                                $z = $item['service_level_z'] !== null
-                                    ? rtrim(rtrim(number_format((float) $item['service_level_z'], 2, ',', '.'), '0'), ',')
-                                    : null;
+                                $first = $variants->first();
+                                $worst = $variants->sortByDesc(fn ($v) => $riskOrder[$v['risk']] ?? 0)->first();
+                                $groupStock = (int) $variants->sum('current_stock');
+                                $groupRestock = (int) $variants->sum('recommended_restock');
+                                $variantCount = $variants->count();
                             @endphp
                             <tr class="hover:bg-surface-soft/60 transition-colors">
-                                <!-- Kolom Produk -->
                                 <td class="py-4 px-6">
                                     <div class="flex items-center gap-3">
-                                        @if($item['image_url'])
-                                            <img src="{{ $item['image_url'] }}" alt="{{ $item['product_name'] }}" class="w-11 h-14 object-cover rounded-lg shrink-0 shadow-xs border border-gray-100 dark:border-gray-800">
+                                        @if($first['image_url'])
+                                            <img src="{{ $first['image_url'] }}" alt="" class="w-11 h-14 rounded-lg object-cover border border-gray-100 dark:border-gray-800 shrink-0">
                                         @else
-                                            <div class="w-11 h-14 bg-surface-soft rounded-lg shrink-0 flex items-center justify-center text-neutral-muted border border-gray-100 dark:border-gray-800">
+                                            <div class="w-11 h-14 rounded-lg bg-surface-soft border border-gray-100 dark:border-gray-800 flex items-center justify-center text-neutral-muted shrink-0">
                                                 <span class="material-symbols-outlined text-xl">apparel</span>
                                             </div>
                                         @endif
-                                        <div>
-                                            <span class="font-title-sm text-neutral-heading block leading-snug">{{ $item['product_name'] }}</span>
-                                            <span class="text-caption font-caption text-neutral-muted">Kategori: {{ $item['category_name'] }}</span>
+                                        <div class="min-w-0">
+                                            <p class="font-title-sm text-neutral-heading leading-snug">{{ $first['product_name'] }}</p>
+                                            <p class="text-caption font-caption text-neutral-muted">
+                                                {{ $first['category_name'] }} &middot; {{ $variantCount }} varian
+                                            </p>
                                         </div>
                                     </div>
                                 </td>
 
-                                <!-- Kolom Varian & SKU -->
-                                <td class="py-4 px-3">
-                                    <div class="space-y-0.5">
-                                        <span class="font-semibold text-neutral-heading">{{ $item['color'] }}</span>
-                                        <span class="text-caption font-caption text-neutral-muted block">Ukuran {{ $item['size'] }}</span>
-                                        <span class="font-mono text-caption font-caption text-neutral-muted block">{{ $item['sku'] }}</span>
-                                    </div>
+                                <td class="py-4 px-4 text-right" title="Total stok varian yang cocok dengan filter">
+                                    <span class="font-title-sm font-semibold text-neutral-heading sd-num">{{ $formatPcs($groupStock) }}</span>
+                                    <span class="text-caption font-caption text-neutral-muted"> pcs</span>
                                 </td>
 
-                                <!-- Kolom Stok Fisik + batas hasil hitung -->
-                                <td class="py-4 px-3 text-right">
-                                    <span class="font-headline-sm text-neutral-heading font-bold sd-num">{{ $item['current_stock'] }}</span>
-                                    <span class="text-caption font-caption text-neutral-muted block">pcs</span>
-                                    <span class="text-caption font-caption text-neutral-muted block whitespace-nowrap mt-1" title="Stok pengaman dan titik restok hasil perhitungan otomatis.">
-                                        Pengaman {{ $item['safety_stock'] }} &middot; ROP {{ $item['reorder_point'] }}
+                                <td class="py-4 px-4 text-center">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full whitespace-nowrap {{ $statusChip[$worst['risk']] }} text-caption font-caption font-semibold" title="Status varian terburuk di produk ini">
+                                        <span class="w-1.5 h-1.5 rounded-full {{ $statusDot[$worst['risk']] }}"></span>
+                                        {{ $statusLabels[$worst['risk']] }}
                                     </span>
                                 </td>
 
-                                <!-- Kolom Laju Harian -->
-                                <td class="py-4 px-3 text-right">
-                                    @if($adaPenjualan)
-                                        <span class="font-semibold text-neutral-heading sd-num whitespace-nowrap">{{ $laju($item['daily_demand']) }} pcs/hari</span>
-                                        <span class="text-caption font-caption text-neutral-muted block whitespace-nowrap" title="Penjualan 7 hari dan 30 hari (pcs)">7h {{ $item['sales_7d'] }} &middot; 30h {{ $item['sales_30d'] }}</span>
+                                <td class="py-4 px-4 text-right">
+                                    @if($groupRestock > 0)
+                                        <span class="font-title-sm font-semibold text-primary sd-num">{{ $formatPcs($groupRestock) }}</span>
+                                        <span class="text-caption font-caption text-neutral-muted"> pcs</span>
                                     @else
-                                        <span class="font-semibold text-neutral-heading sd-num whitespace-nowrap" title="Belum ada penjualan 30 hari; dipakai batas minimum 0,05 pcs/hari.">0,05 pcs/hari</span>
-                                        <span class="text-caption font-caption text-neutral-muted block whitespace-nowrap" title="Belum ada penjualan 30 hari; dipakai batas minimum 0,05 pcs/hari.">Batas minimum</span>
+                                        <span class="text-neutral-muted" title="Tidak ada varian yang perlu restock.">&mdash;</span>
                                     @endif
                                 </td>
 
-                                <!-- Kolom Ketahanan Stok -->
-                                <td class="py-4 px-3 text-right">
-                                    @if($item['current_stock'] <= 0)
-                                        <span class="font-semibold text-status-critical">Habis</span>
-                                    @elseif($adaPenjualan)
-                                        <span class="font-semibold text-neutral-heading">{{ $item['days_until_stockout'] > 90 ? '> 90 hari' : $item['days_until_stockout'] . ' hari' }}</span>
-                                    @else
-                                        <span class="font-semibold text-neutral-muted">&mdash;</span>
-                                        <span class="text-caption font-caption text-neutral-muted block">Tanpa penjualan</span>
-                                    @endif
-                                </td>
-
-                                <!-- Kolom Tingkat Risiko -->
-                                <td class="py-4 px-3 text-center">
-                                    @if($item['risk'] === 'CRITICAL')
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full whitespace-nowrap bg-status-critical-subtle text-status-critical text-caption font-caption font-semibold">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-status-critical"></span>
-                                            Kritis
-                                        </span>
-                                    @elseif($item['risk'] === 'WARNING')
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full whitespace-nowrap bg-status-warning-subtle text-status-warning text-caption font-caption font-semibold">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-status-warning"></span>
-                                            Waspada
-                                        </span>
-                                    @elseif($item['risk'] === 'SLOW_MOVING')
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full whitespace-nowrap bg-surface-soft text-neutral-muted text-caption font-caption font-semibold">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-neutral-muted"></span>
-                                            Mengendap
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full whitespace-nowrap bg-accent-emerald-subtle text-accent-emerald text-caption font-caption font-semibold">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-accent-emerald"></span>
-                                            Aman
-                                        </span>
-                                    @endif
-                                </td>
-
-                                <!-- Kolom Saran Restock -->
-                                <td class="py-4 px-3 text-right">
-                                    <span class="font-headline-sm text-neutral-heading font-bold sd-num">{{ $saran }}</span>
-                                    <span class="text-caption font-caption text-neutral-muted block whitespace-nowrap">
-                                        @if($saran > 0)
-                                            pcs
-                                        @else
-                                            {{ $adaPenjualan ? 'Tercukupi' : 'Tanpa acuan' }}
-                                        @endif
-                                    </span>
-                                    @if($batchMinimum)
-                                        <span class="text-caption font-caption text-neutral-muted block whitespace-nowrap">min. 1 lusin</span>
-                                    @endif
+                                <td class="py-4 px-6 text-right">
                                     <button
                                         type="button"
-                                        x-on:click="buka = buka === {{ $item['variant_id'] }} ? null : {{ $item['variant_id'] }}"
-                                        x-bind:aria-expanded="(buka === {{ $item['variant_id'] }}).toString()"
-                                        aria-controls="rincian-{{ $item['variant_id'] }}"
-                                        class="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline cursor-pointer whitespace-nowrap">
-                                        <span x-text="buka === {{ $item['variant_id'] }} ? 'Tutup' : 'Rincian'"></span>
-                                        <span class="material-symbols-outlined text-sm transition-transform" x-bind:class="buka === {{ $item['variant_id'] }} ? 'sd-chevron-open' : ''">expand_more</span>
+                                        x-on:click="buka = buka === {{ $productId }} ? null : {{ $productId }}"
+                                        x-bind:aria-expanded="(buka === {{ $productId }}).toString()"
+                                        aria-controls="produk-{{ $productId }}"
+                                        class="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-primary hover:bg-surface-soft/60 transition cursor-pointer whitespace-nowrap">
+                                        <span x-text="buka === {{ $productId }} ? 'Tutup' : 'Lihat varian'"></span>
+                                        <span class="material-symbols-outlined text-base transition-transform" x-bind:class="buka === {{ $productId }} ? 'sd-chevron-open' : ''">expand_more</span>
                                     </button>
-                                </td>
-
-                                <!-- Kolom Tindakan -->
-                                <td class="py-4 px-4 text-center">
-                                    <a 
-                                        href="{{ $this->generatePoTemplate($item) }}" 
-                                        target="_blank" 
-                                        class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-accent-emerald btn-po-emerald text-white text-caption font-caption font-semibold shadow-xs transition active:scale-95 cursor-pointer whitespace-nowrap">
-                                        <span class="material-symbols-outlined text-sm">chat</span>
-                                        <span>PO via WhatsApp</span>
-                                    </a>
                                 </td>
                             </tr>
 
-                            <!-- Rincian perhitungan otomatis -->
-                            <tr id="rincian-{{ $item['variant_id'] }}" x-show="buka === {{ $item['variant_id'] }}" x-cloak>
-                                <td colspan="8" class="px-6 pb-5 pt-1">
-                                    <div class="rounded-xl border border-neutral-border-subtle bg-surface-soft p-4 text-left">
-                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                                            <!-- Penjualan -->
-                                            <div class="sd-detail-col min-w-0">
-                                                <p class="text-caption font-caption uppercase tracking-wider text-neutral-muted">Penjualan</p>
-                                                <dl class="mt-2 space-y-1.5 text-xs">
-                                                    <div class="flex items-baseline justify-between gap-3">
-                                                        <dt class="text-neutral-muted">7 hari</dt>
-                                                        <dd class="text-neutral-heading sd-num">{{ $item['sales_7d'] }} pcs &middot; {{ $laju($rata7) }}/hari</dd>
-                                                    </div>
-                                                    <div class="flex items-baseline justify-between gap-3">
-                                                        <dt class="text-neutral-muted">30 hari</dt>
-                                                        <dd class="text-neutral-heading sd-num">{{ $item['sales_30d'] }} pcs &middot; {{ $laju($rata30) }}/hari</dd>
-                                                    </div>
-                                                    <div class="flex items-baseline justify-between gap-3 border-t border-neutral-border-subtle pt-2">
-                                                        <dt class="font-semibold text-neutral-heading">Laju WMA 70/30</dt>
-                                                        <dd class="font-bold text-neutral-heading sd-num">{{ $laju($item['daily_demand']) }} pcs/hari</dd>
-                                                    </div>
-                                                </dl>
-                                                @if(! $adaPenjualan)
-                                                    <p class="mt-2 text-caption font-caption text-neutral-muted">
-                                                        Belum ada penjualan 30 hari; laju memakai batas minimum 0,05 pcs/hari.
-                                                    </p>
-                                                @endif
-                                            </div>
-
-                                            <!-- Stok -->
-                                            <div class="sd-detail-col min-w-0">
-                                                <p class="text-caption font-caption uppercase tracking-wider text-neutral-muted">Stok</p>
-                                                <dl class="mt-2 space-y-1.5 text-xs">
-                                                    <div class="flex items-baseline justify-between gap-3">
-                                                        <dt class="text-neutral-muted">Stok fisik</dt>
-                                                        <dd class="text-neutral-heading sd-num">{{ $item['current_stock'] }} pcs</dd>
-                                                    </div>
-                                                    <div class="flex items-baseline justify-between gap-3">
-                                                        <dt class="text-neutral-muted">Stok pengaman</dt>
-                                                        <dd class="text-neutral-heading sd-num">{{ $item['safety_stock'] }} pcs</dd>
-                                                    </div>
-                                                    <div class="flex items-baseline justify-between gap-3 border-t border-neutral-border-subtle pt-2">
-                                                        <dt class="font-semibold text-neutral-heading">Titik restok (ROP)</dt>
-                                                        <dd class="font-bold text-neutral-heading sd-num">{{ $item['reorder_point'] }} pcs</dd>
-                                                    </div>
-                                                </dl>
-                                                <p class="mt-2 text-caption font-caption text-neutral-muted">
-                                                    @if(! $adaPenjualan)
-                                                        Stok pengaman dan ROP tidak dihitung karena belum ada penjualan 30 hari.
-                                                    @elseif((float) $item['demand_deviation'] > 0)
-                                                        Pengaman = Z {{ $z }} &times; &sigma; {{ $laju($item['demand_deviation']) }} &times; &radic;7.
-                                                        ROP = {{ $laju($item['daily_demand']) }} &times; 7 + {{ $item['safety_stock'] }}.
-                                                    @else
-                                                        Pengaman = cadangan 3 hari &times; rata-rata 30 hari.
-                                                        ROP = {{ $laju($item['daily_demand']) }} &times; 7 + {{ $item['safety_stock'] }}.
-                                                    @endif
-                                                </p>
-                                            </div>
-
-                                            <!-- Keputusan -->
-                                            <div class="sd-detail-col min-w-0">
-                                                <p class="text-caption font-caption uppercase tracking-wider text-neutral-muted">Keputusan</p>
-                                                @if($saran > 0)
-                                                    <p class="mt-2 text-xs text-neutral-heading">
-                                                        Stok {{ $item['current_stock'] }} pcs sudah di bawah ROP {{ $item['reorder_point'] }} pcs.
-                                                        @if($batchMinimum)
-                                                            Kebutuhan {{ $kebutuhan }} pcs, diangkat ke batch minimum 12 pcs (1 lusin).
-                                                        @else
-                                                            Kebutuhan restock = ROP &minus; stok = {{ $saran }} pcs.
-                                                        @endif
-                                                    </p>
-                                                    <p class="mt-2 text-xs font-semibold text-primary">Saran: {{ $saran }} pcs.</p>
-                                                @else
-                                                    <p class="mt-2 text-xs text-neutral-heading">
-                                                        @if($adaPenjualan)
-                                                            Stok {{ $item['current_stock'] }} pcs masih di atas ROP {{ $item['reorder_point'] }} pcs, jadi belum perlu restock.
-                                                        @else
-                                                            Tidak ada penjualan 30 hari, jadi belum ada saran restock. Pantau sebagai stok mengendap.
-                                                        @endif
-                                                    </p>
-                                                @endif
-                                                <p class="mt-2 text-caption font-caption text-neutral-muted">
-                                                    {{ $item['risk_label'] }} &middot; Kelas ABC: {{ $item['abc_class'] }} &middot; waktu tunggu 7 hari kerja.
-                                                </p>
-                                            </div>
+                            <!-- Detail varian -->
+                            <tr id="produk-{{ $productId }}" x-show="buka === {{ $productId }}" x-cloak>
+                                <td colspan="5" class="px-6 pb-5 pt-1">
+                                    <div class="rounded-xl border border-neutral-border-subtle bg-surface-soft p-4">
+                                        <div class="overflow-x-auto">
+                                            <table class="w-full text-left sd-variant-table">
+                                                <thead>
+                                                    <tr class="text-[11px] font-caption uppercase tracking-wider text-neutral-muted">
+                                                        <th class="pb-2 pr-3 font-semibold" scope="col">Varian</th>
+                                                        <th class="pb-2 px-3 font-semibold text-right" scope="col">Stok</th>
+                                                        <th class="pb-2 px-3 font-semibold text-center" scope="col">Status</th>
+                                                        <th class="pb-2 px-3 font-semibold text-right" scope="col">Restock</th>
+                                                        <th class="pb-2 pl-3 font-semibold text-right" scope="col">PO</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="divide-y divide-neutral-border-subtle">
+                                                    @foreach($variants as $v)
+                                                        <tr>
+                                                            <td class="py-2.5 pr-3">
+                                                                <p class="text-xs font-semibold text-neutral-heading">{{ $v['color'] }} &middot; {{ $v['size'] }}</p>
+                                                                <p class="text-[11px] font-mono text-neutral-muted">{{ $v['sku'] }}</p>
+                                                            </td>
+                                                            <td class="py-2.5 px-3 text-right">
+                                                                <span class="text-xs font-semibold text-neutral-heading sd-num">{{ $formatPcs($v['current_stock']) }} pcs</span>
+                                                                <span class="block text-[11px] text-neutral-muted">
+                                                                    @if($v['current_stock'] <= 0)
+                                                                        Habis
+                                                                    @elseif($v['sales_30d'] <= 0)
+                                                                        Belum ada penjualan
+                                                                    @elseif($v['days_until_stockout'] > 90)
+                                                                        Cukup &gt; 90 hari
+                                                                    @else
+                                                                        Cukup {{ $v['days_until_stockout'] }} hari
+                                                                    @endif
+                                                                </span>
+                                                            </td>
+                                                            <td class="py-2.5 px-3 text-center">
+                                                                <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full whitespace-nowrap {{ $statusChip[$v['risk']] }} text-[11px] font-medium">
+                                                                    <span class="w-1.5 h-1.5 rounded-full {{ $statusDot[$v['risk']] }}"></span>
+                                                                    {{ $statusLabels[$v['risk']] }}
+                                                                </span>
+                                                            </td>
+                                                            <td class="py-2.5 px-3 text-right">
+                                                                @if($v['recommended_restock'] > 0)
+                                                                    <span class="text-xs font-semibold text-neutral-heading sd-num">{{ $formatPcs($v['recommended_restock']) }} pcs</span>
+                                                                @else
+                                                                    <span class="text-neutral-muted" title="{{ $v['sales_30d'] <= 0 ? 'Belum ada penjualan 30 hari; restock otomatis belum disarankan.' : 'Stok masih di atas titik restock.' }}">&mdash;</span>
+                                                                @endif
+                                                            </td>
+                                                            <td class="py-2.5 pl-3 text-right">
+                                                                @if($v['recommended_restock'] > 0)
+                                                                    <a
+                                                                        href="{{ $this->generatePoTemplate($v) }}"
+                                                                        target="_blank"
+                                                                        rel="noopener"
+                                                                        title="Buat PO via WhatsApp"
+                                                                        aria-label="Buat PO via WhatsApp untuk {{ $v['color'] }} ukuran {{ $v['size'] }}"
+                                                                        class="inline-flex items-center gap-1 rounded-lg bg-accent-emerald btn-po-emerald px-2.5 py-1.5 text-[11px] font-semibold text-white transition active:scale-95">
+                                                                        <span class="material-symbols-outlined text-sm">chat</span>
+                                                                        PO
+                                                                    </a>
+                                                                @else
+                                                                    <span class="text-neutral-muted" title="PO tersedia setelah ada saran restock">&mdash;</span>
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center py-12 text-neutral-muted">
-                                    Tidak ada varian yang cocok dengan filter atau pencarian.
+                                <td colspan="5" class="py-12 text-center text-sm text-neutral-muted">
+                                    Tidak ada produk yang cocok dengan filter.
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
-            </div>
-
-            <!-- Table Ledger Summary Footer -->
-            <div class="p-4 px-6 bg-surface-soft flex flex-col sm:flex-row items-center justify-between gap-3 text-body-sm font-body-sm text-neutral-muted border-t border-neutral-border-subtle">
-                <div class="flex items-center gap-2">
-                    <span>Menampilkan <strong>{{ count($this->forecastData) }}</strong> varian</span>
-                    <span class="text-neutral-muted">&bull;</span>
-                    <span class="text-caption font-caption">Formula: ROP = (laju harian &times; waktu tunggu) + stok pengaman</span>
-                </div>
-                <div class="text-caption font-caption text-neutral-muted">
-                    Waktu tunggu 7 hari kerja &middot; batch minimum 12 pcs
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Insights Footer Callouts -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2 pb-6">
-            <div class="p-5 rounded-2xl bg-surface-container-lowest border border-gray-100 dark:border-gray-800 shadow-xs flex items-start gap-4">
-                <div class="w-10 h-10 rounded-xl bg-accent-emerald-subtle text-accent-emerald flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined">health_and_safety</span>
-                </div>
-                <div>
-                    <h4 class="font-title-sm text-neutral-heading">Stok Pengaman</h4>
-                    <p class="font-body-sm text-neutral-muted mt-1">
-                        Stok pengaman menutup fluktuasi penjualan selama waktu tunggu konveksi 7 hari.
-                    </p>
-                </div>
-            </div>
-
-            <div class="p-5 rounded-2xl bg-surface-container-lowest border border-gray-100 dark:border-gray-800 shadow-xs flex items-start gap-4">
-                <div class="w-10 h-10 rounded-xl bg-primary-subtle text-primary flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined">campaign</span>
-                </div>
-                <div>
-                    <h4 class="font-title-sm text-neutral-heading">Varian Mengendap</h4>
-                    <p class="font-body-sm text-neutral-muted mt-1">
-                        Ketahanan stok di atas 60 hari. Jadikan kandidat promo bundling atau diskon.
-                    </p>
-                </div>
-            </div>
-
-            <div class="p-5 rounded-2xl bg-surface-container-lowest border border-gray-100 dark:border-gray-800 shadow-xs flex items-start gap-4">
-                <div class="w-10 h-10 rounded-xl bg-surface-soft text-neutral-heading flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined">precision_manufacturing</span>
-                </div>
-                <div>
-                    <h4 class="font-title-sm text-neutral-heading">PO via WhatsApp</h4>
-                    <p class="font-body-sm text-neutral-muted mt-1">
-                        Tombol PO membuka WhatsApp dengan pesan berisi SKU, warna, ukuran, dan jumlah order.
-                    </p>
-                </div>
             </div>
         </div>
     </div>
