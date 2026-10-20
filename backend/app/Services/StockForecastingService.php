@@ -169,6 +169,8 @@ class StockForecastingService
                 'abc_class' => $abcClass,
                 'safety_stock' => $safetyStock,
                 'reorder_point' => $reorderPoint,
+                'demand_deviation' => round($demandDeviation, 2),
+                'service_level_z' => $salesLast30Days > 0 ? $this->serviceLevelZ[$abcClass] : null,
                 'risk' => $risk,
                 'risk_label' => $riskLabel,
                 'risk_color' => $riskColor,

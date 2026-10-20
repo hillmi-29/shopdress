@@ -172,7 +172,8 @@ Harap buat desain UI/UX interaktif untuk 6 halaman utama berikut:
   - `Stok Mengendap`: Ikon kubus boks slate + angka `9 Varian`.
   - `Saran Total Restock`: Ikon paket/gembok slate + angka `0 Pcs`.
 - **Baris Bawah (Tabel Analisis Varian):**
-  - Kolom: `Produk`, `Varian & SKU`, `Stok Fisik`, `Laju Penjualan`, `Ketahanan Stok`, `Tingkat Risiko`, `Saran Restock`, `Tindakan`.
+  - Kolom: `Produk`, `Varian & SKU`, `Stok Fisik` (dengan stok pengaman & ROP), `Laju Harian (WMA)` (dengan penjualan 7/30 hari), `Ketahanan`, `Risiko`, `Saran Restock`, `Tindakan`.
+  - Panel *Cara perhitungan* berisi 4 langkah (WMA, stok pengaman, ROP, saran restock) dan rincian hitung per baris untuk menjelaskan asal angka.
   - Dilengkapi tombol cepat integrasi order konveksi via WhatsApp.
 
 ---
