@@ -9,11 +9,19 @@ use App\Models\Order;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 
 class ListOrders extends ListRecords
 {
     protected static string $resource = OrderResource::class;
+
+    public function getHeader(): ?View
+    {
+        return view('filament.pages.partials.resource-list-header', [
+            'title' => OrderResource::getTitleCasePluralModelLabel(),
+        ]);
+    }
 
     protected function getHeaderActions(): array
     {

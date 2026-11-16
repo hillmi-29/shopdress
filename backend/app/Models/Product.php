@@ -32,6 +32,11 @@ class Product extends Model
         'featured' => 'boolean',
     ];
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     protected static function boot()
     {
         parent::boot();

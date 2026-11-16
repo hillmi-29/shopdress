@@ -1,4 +1,4 @@
-{{-- Halaman login — memakai kelas .sd-* yang sama dengan dashboard (lihat section 6 admin-shopdress.css) --}}
+{{-- Halaman login - memakai kelas .sd-* yang sama dengan dashboard (lihat section 6 theme.css) --}}
 <div class="sd-auth-page">
     <header class="sd-auth-header">
         <a href="{{ url('/') }}" class="sd-auth-home" aria-label="Kembali ke beranda">

@@ -5,7 +5,460 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+:root {
+    /* =====================================================================
+       ShopDress Brand Design Tokens
+       Ubah warna di satu tempat ini untuk mengubah seluruh tema frontend.
+       Palet: violet sebagai primary, warm off-white sebagai latar.
+       ===================================================================== */
+    --brand: #7c3aed;
+    --brand-dark: #5b21b6;
+    --brand-deep: #32135f;
+    --brand-soft: #f4edff;
+    --brand-light: #e9ddff;
+    --accent: #c9973f;
+    --accent-soft: #fbf3e2;
+    --bg: #faf7f2;
+    --surface: #ffffff;
+    --surface-2: #f6f1e9;
+    --border: #e9e1d7;
+    --border-light: #f2ece4;
+    --text: #241d2e;
+    --text-muted: #6b6475;
+    --text-subtle: #9a929f;
+    --success: #15803d;
+    --success-soft: #ecfdf3;
+    --error: #b91c1c;
+    --error-soft: #fef2f2;
+}
+
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', ui-serif, Georgia, serif;
+
+    /* Semantic color tokens */
+    --color-brand: var(--brand);
+    --color-brand-dark: var(--brand-dark);
+    --color-brand-deep: var(--brand-deep);
+    --color-brand-soft: var(--brand-soft);
+    --color-brand-light: var(--brand-light);
+    --color-accent: var(--accent);
+    --color-accent-soft: var(--accent-soft);
+    --color-bg: var(--bg);
+    --color-surface: var(--surface);
+    --color-surface-2: var(--surface-2);
+    --color-border: var(--border);
+    --color-border-light: var(--border-light);
+    --color-text: var(--text);
+    --color-text-muted: var(--text-muted);
+    --color-text-subtle: var(--text-subtle);
+    --color-success: var(--success);
+    --color-success-soft: var(--success-soft);
+    --color-error: var(--error);
+    --color-error-soft: var(--error-soft);
+
+    /* Violet primary compatibility */
+    --color-primary-50: #f5f3ff;
+    --color-primary-100: #ede9fe;
+    --color-primary-200: #ddd6fe;
+    --color-primary-300: #c4b5fd;
+    --color-primary-400: #a78bfa;
+    --color-primary-500: #8b5cf6;
+    --color-primary-600: #7c3aed;
+    --color-primary-700: #6d28d9;
+    --color-primary-800: #5b21b6;
+    --color-primary-900: #4c1d95;
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+}
+
+body {
+    background-color: var(--bg);
+}
+
+::selection {
+    background-color: var(--brand-light);
+    color: var(--brand-dark);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #d6cabf;
+    border-radius: 9999px;
+    border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #b9a997;
+}
+
+/* Accessible focus ring */
+:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 3px;
+}
+
+/* =====================================================
+   Typography helpers
+   ===================================================== */
+.font-display {
+    font-family: var(--font-display);
+    font-variation-settings: 'SOFT' 50, 'WONK' 0;
+    letter-spacing: -0.025em;
+}
+
+.display-hero {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    line-height: 0.98;
+}
+
+.section-kicker {
+    color: var(--brand);
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+/* =====================================================
+   Motion — subtle, 150–400ms, ease-out
+   ===================================================== */
+
+/* Scroll reveal, only active after JS marks the document ready. */
+html.reveal-ready .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+        opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+}
+
+html.reveal-ready .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Skeleton shimmer placeholder */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.skeleton-shimmer {
+    background: linear-gradient(
+        90deg,
+        var(--brand-soft) 20%,
+        #ffffff 44%,
+        var(--brand-soft) 66%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite ease-in-out;
+}
+
+/* Toast slide-down from top-center */
+@keyframes toast-slide-down {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -14px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0) scale(1);
+    }
+}
+
+.toast-top-enter {
+    animation: toast-slide-down 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Cart badge bounce */
+@keyframes badge-bounce {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.45); }
+    60% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+.badge-bounce {
+    animation: badge-bounce 0.38s ease-out;
+}
+
+/* Soft pop for add-to-cart feedback */
+@keyframes pop-check {
+    0% { transform: scale(0.7); opacity: 0; }
+    55% { transform: scale(1.12); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.pop-check {
+    animation: pop-check 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* =====================================================
+   Page transition loader
+   ===================================================== */
+.page-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 1.5rem;
+    background:
+        radial-gradient(ellipse at 50% 34%, var(--brand-soft) 0%, transparent 58%),
+        radial-gradient(ellipse at 50% 74%, var(--accent-soft) 0%, transparent 62%),
+        var(--bg);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+        opacity 0.3s ease,
+        visibility 0.3s ease;
+}
+
+html.sd-navigating .page-loader {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+html.sd-navigating {
+    cursor: progress;
+}
+
+.page-loader__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translateY(-2vh);
+}
+
+.page-loader__mark {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 4.5rem;
+    height: 4.5rem;
+    margin-bottom: 1.15rem;
+}
+
+.page-loader__ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    border: 1.5px solid var(--border);
+    border-top-color: var(--brand);
+    border-right-color: var(--accent);
+    animation: page-loader-spin 0.9s linear infinite;
+}
+
+.page-loader__monogram {
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    box-shadow: 0 18px 35px -22px rgba(50, 19, 95, 0.45);
+    color: var(--brand-deep);
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+}
+
+.page-loader__wordmark {
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.035em;
+    color: var(--text);
+}
+
+.page-loader__wordmark span {
+    color: var(--brand);
+}
+
+.page-loader__caption {
+    margin-top: 0.55rem;
+    font-size: 0.625rem;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-subtle);
+}
+
+.page-loader__line {
+    display: block;
+    width: 7rem;
+    height: 2px;
+    margin-top: 1.1rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--border);
+}
+
+.page-loader__line span {
+    display: block;
+    width: 45%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--brand), var(--accent));
+    animation: page-loader-line 1.15s ease-in-out infinite;
+}
+
+@keyframes page-loader-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes page-loader-line {
+    0% {
+        transform: translateX(-120%);
+    }
+    100% {
+        transform: translateX(330%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page-loader__ring,
+    .page-loader__line span {
+        animation: none;
+    }
+}
+
+@media print {
+    .page-loader {
+        display: none !important;
+    }
+}
+
+/* Product card lift + media zoom */
+.product-card {
+    transition:
+        transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 0.2s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 22px 44px -28px rgba(50, 19, 95, 0.38);
+}
+
+.product-card .product-media img {
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.product-card:hover .product-media img {
+    transform: scale(1.045);
+}
+
+.product-card .card-add {
+    transition:
+        transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.product-card:hover .card-add {
+    transform: scale(1.06);
+}
+
+/* Category card */
+.category-card {
+    transition:
+        transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-4px);
+}
+
+/* Hide scrollbar for horizontal rails */
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hero slide slow drift */
+@keyframes hero-drift {
+    from { transform: scale(1.01); }
+    to { transform: scale(1.07); }
+}
+
+.hero-media img {
+    animation: hero-drift 14s ease-out both;
+}
+
+/* Hide number spinner */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* =====================================================
+   Flow animations inside Alpine components
+   ===================================================== */
+.drawer-panel {
+    transition: transform 0.34s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Prefers-reduced-motion: disable non-essential animations */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    html.reveal-ready .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .hero-media img {
+        animation: none !important;
+    }
 }

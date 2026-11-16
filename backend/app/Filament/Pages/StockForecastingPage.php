@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\Category;
 use App\Services\StockForecastingService;
 use Filament\Pages\Page;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 
 class StockForecastingPage extends Page
@@ -22,6 +23,13 @@ class StockForecastingPage extends Page
     protected static ?int $navigationSort = 1;
 
     protected static string $view = 'filament.pages.stock-forecasting-page';
+
+    public function getHeader(): ?View
+    {
+        return view('filament.pages.partials.resource-list-header', [
+            'title' => static::getNavigationLabel(),
+        ]);
+    }
 
     protected function getHeaderWidgets(): array
     {

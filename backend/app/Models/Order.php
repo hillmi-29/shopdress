@@ -28,6 +28,7 @@ class Order extends Model
         'recipient_phone',
         'tracking_number',
         'notes',
+        'landmark_photo',
     ];
 
     protected $casts = [

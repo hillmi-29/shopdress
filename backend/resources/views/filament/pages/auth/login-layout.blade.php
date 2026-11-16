@@ -27,11 +27,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
 
-    {{-- Design system yang sama dengan seluruh panel admin --}}
-    <link
-        href="{{ asset('css/admin-shopdress.css') }}?v={{ @filemtime(public_path('css/admin-shopdress.css')) }}"
-        rel="stylesheet"
-    />
+    {{-- Design system yang sama dengan seluruh panel admin (Vite theme) --}}
+    @vite('resources/css/filament/admin/theme.css')
 
     <style>
         /* Reset ringan — layout ini berdiri sendiri di luar kerangka panel */

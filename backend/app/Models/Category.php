@@ -21,6 +21,11 @@ class Category extends Model
         'description',
     ];
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     protected static function boot()
     {
         parent::boot();

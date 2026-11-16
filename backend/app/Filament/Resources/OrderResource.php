@@ -7,6 +7,7 @@ use App\Enums\PaymentStatus;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Mail\OrderStatusUpdatedMail;
 use App\Models\Order;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
@@ -85,6 +86,13 @@ class OrderResource extends Resource
                                 ->label('Alamat Pengiriman')
                                 ->rows(2),
                         ]),
+
+                        FileUpload::make('landmark_photo')
+                            ->label('Foto Patokan Lokasi')
+                            ->image()
+                            ->disk('public')
+                            ->disabled()
+                            ->columnSpanFull(),
 
                         Grid::make(3)->schema([
                             TextInput::make('total_amount')

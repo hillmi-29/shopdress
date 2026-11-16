@@ -16,6 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'midtrans/webhook',
             'api/midtrans/webhook',
         ]);
+
+        // API yang dilayani dari domain stateful (host web sendiri) memakai
+        // session + cookie, sehingga Blade frontend dapat memakai endpoint
+        // /api/* (wishlist, cart) dengan auth session tanpa token Bearer.
+        $middleware->statefulApi();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

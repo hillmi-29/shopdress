@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
+use App\Exceptions\CheckoutException;
 use App\Mail\PaymentSuccessMail;
 use App\Models\Order;
 use Exception;
@@ -32,11 +33,49 @@ class MidtransService
     }
 
     /**
-     * Generate Midtrans Snap Token for an Order.
+     * Fail fast with a customer-safe message when Midtrans is not configured.
+     */
+    protected function ensureConfigured(): void
+    {
+        $serverKey = trim((string) config('midtrans.server_key'));
+        $clientKey = trim((string) config('midtrans.client_key'));
+
+        $missing = $serverKey === ''
+            || $clientKey === ''
+            || str_contains($serverKey, 'YOUR_')
+            || str_contains($clientKey, 'YOUR_');
+
+        if (! $missing) {
+            return;
+        }
+
+        Log::warning('Midtrans credentials are missing or still use placeholder values.');
+
+        throw new CheckoutException('Pembayaran online belum dikonfigurasi. Silakan hubungi admin.');
+    }
+
+    /**
+     * Generate and persist a Midtrans Snap Token for an existing Order.
      */
     public function createSnapToken(Order $order): string
     {
+        $snapToken = $this->generateSnapToken($order);
+
+        $order->update(['snap_token' => $snapToken]);
+
+        return $snapToken;
+    }
+
+    /**
+     * Generate a Midtrans Snap Token without persisting it.
+     *
+     * This is used by the checkout flow before the order is written, so a
+     * Midtrans failure cannot leave a half-created order behind.
+     */
+    public function generateSnapToken(Order $order): string
+    {
         $this->setupConfig();
+        $this->ensureConfigured();
 
         $itemDetails = [];
         foreach ($order->items as $item) {
@@ -90,9 +129,7 @@ class MidtransService
         ];
 
         try {
-            $snapToken = Snap::getSnapToken($params);
-            $order->update(['snap_token' => $snapToken]);
-            return $snapToken;
+            return Snap::getSnapToken($params);
         } catch (Exception $e) {
             Log::error('Midtrans Snap Error: ' . $e->getMessage(), ['order' => $order->order_number]);
             throw $e;
@@ -132,8 +169,13 @@ class MidtransService
                 return ['status' => 'error', 'message' => 'Order not found'];
             }
 
-            // Verify signature if provided
-            if ($signatureKey && ! $this->verifySignature($orderNumber, $statusCode, $grossAmount, $signatureKey)) {
+            // Verify signature (mandatory)
+            if (! $signatureKey || ! $statusCode || ! $grossAmount) {
+                Log::warning('Midtrans Webhook Missing Signature Data', ['order_id' => $orderNumber]);
+                return ['status' => 'error', 'message' => 'Missing signature data'];
+            }
+
+            if (! $this->verifySignature($orderNumber, $statusCode, $grossAmount, $signatureKey)) {
                 Log::warning('Midtrans Webhook Invalid Signature', ['order_id' => $orderNumber]);
                 return ['status' => 'error', 'message' => 'Invalid signature'];
             }

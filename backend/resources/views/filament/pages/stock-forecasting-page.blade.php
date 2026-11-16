@@ -335,7 +335,7 @@
                 </div>
             </div>
 
-            <div class="overflow-x-auto" style="max-width: 100%;">
+            <div class="overflow-x-auto" style="max-width: 100%; position: relative;">
                 <table class="w-full text-left sd-product-table">
                     <thead>
                         <tr class="bg-surface-soft text-caption font-caption text-neutral-muted uppercase tracking-wider border-b border-neutral-border-subtle">

@@ -32,20 +32,21 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(fn () => view('filament.brand-logo'))
             ->brandLogoHeight('2.4rem')
             ->font('Inter')
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
-                /* Purple brand palette from the Google Stitch design files */
+                /* Existing ShopDress blue primary palette. */
                 'primary' => [
-                    50 => '#F5F3FF',
-                    100 => '#EDE9FE',
-                    200 => '#DDD6FE',
-                    300 => '#C4B5FD',
-                    400 => '#A78BFA',
-                    500 => '#7C3AED',
-                    600 => '#6D28D9',
-                    700 => '#5B21B6',
-                    800 => '#4C1D95',
-                    900 => '#3B0764',
-                    950 => '#2E1065',
+                    50 => '#EEF3FF',
+                    100 => '#E0E8FF',
+                    200 => '#C7D5FE',
+                    300 => '#A4BAFC',
+                    400 => '#7B96F8',
+                    500 => '#5675EF',
+                    600 => '#3B5BDB',
+                    700 => '#2F49B8',
+                    800 => '#283D94',
+                    900 => '#243574',
+                    950 => '#17224A',
                 ],
                 'gray' => Color::Slate,
                 'info' => Color::Sky,
@@ -58,7 +59,7 @@ class AdminPanelProvider extends PanelProvider
             ->collapsibleNavigationGroups(true)
             ->breadcrumbs(true)
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
-            ->databaseNotifications()
+            ->databaseNotifications(isLazy: false)
             ->renderHook(
                 PanelsRenderHook::STYLES_AFTER,
                 fn () => view('filament.partials.admin-styles'),
@@ -66,6 +67,14 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::BODY_START,
                 fn () => view('filament.partials.nav-progress'),
+            )
+            ->renderHook(
+                PanelsRenderHook::GLOBAL_SEARCH_BEFORE,
+                fn () => view('filament.partials.topbar-search'),
+            )
+            ->renderHook(
+                PanelsRenderHook::SIDEBAR_NAV_START,
+                fn () => view('filament.partials.sidebar-header'),
             )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

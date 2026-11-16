@@ -33,3 +33,6 @@ backend/database/*.sqlite-journal
 # Python cache (skills)
 __pycache__/
 *.pyc
+
+# Backup files
+*.backup.*

@@ -7,34 +7,25 @@ use App\Models\CartItem;
 use App\Models\ProductVariant;
 use App\Models\User;
 use Exception;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class CartService
 {
+    /**
+     * Session key that remembers the guest session ID across session regeneration.
+     */
+    public const GUEST_CART_SESSION_KEY = 'cart_session_id';
+
     /**
      * Get or create the cart for current session or authenticated user.
      */
     public function getCart(?User $user = null): Cart
     {
         if ($user) {
+            $this->mergeGuestCart($user);
+
             $cart = Cart::firstOrCreate(['user_id' => $user->id]);
-
-            // Merge guest session cart if exists
-            $sessionId = Session::getId();
-            $guestCart = Cart::where('session_id', $sessionId)->whereNull('user_id')->first();
-
-            if ($guestCart && $guestCart->id !== $cart->id) {
-                foreach ($guestCart->items as $guestItem) {
-                    $existingItem = $cart->items()->where('product_variant_id', $guestItem->product_variant_id)->first();
-                    if ($existingItem) {
-                        $existingItem->increment('quantity', $guestItem->quantity);
-                    } else {
-                        $guestItem->update(['cart_id' => $cart->id]);
-                    }
-                }
-                $guestCart->delete();
-            }
 
             return $cart->load(['items.variant.product.primaryImage']);
         }
@@ -44,7 +35,79 @@ class CartService
             ['session_id' => $sessionId, 'user_id' => null]
         );
 
+        // Session IDs change on login. Keep the current guest ID in the session
+        // payload so the cart can still be found afterwards.
+        Session::put(self::GUEST_CART_SESSION_KEY, $sessionId);
+
         return $cart->load(['items.variant.product.primaryImage']);
+    }
+
+    /**
+     * Move all guest cart items into the authenticated user's cart.
+     *
+     * Safe to call more than once: the guest marker is removed after merging.
+     */
+    public function mergeGuestCart(?User $user, ?string $guestSessionId = null): void
+    {
+        if (! $user) {
+            return;
+        }
+
+        $guestSessionId ??= Session::get(self::GUEST_CART_SESSION_KEY);
+
+        if (! $guestSessionId) {
+            return;
+        }
+
+        DB::transaction(function () use ($user, $guestSessionId) {
+            $guestCart = Cart::query()
+                ->where('session_id', $guestSessionId)
+                ->whereNull('user_id')
+                ->lockForUpdate()
+                ->first();
+
+            if (! $guestCart) {
+                return;
+            }
+
+            $userCart = Cart::firstOrCreate(['user_id' => $user->id]);
+
+            if ($guestCart->id === $userCart->id) {
+                return;
+            }
+
+            foreach ($guestCart->items()->with('variant')->get() as $guestItem) {
+                $existingItem = $userCart->items()
+                    ->where('product_variant_id', $guestItem->product_variant_id)
+                    ->lockForUpdate()
+                    ->first();
+
+                $stock = $guestItem->variant?->stock;
+                $quantity = $guestItem->quantity + ($existingItem?->quantity ?? 0);
+
+                // Never merge a quantity that the current stock cannot fulfil.
+                if ($stock !== null && $quantity > $stock) {
+                    $quantity = $stock;
+                }
+
+                if ($quantity <= 0) {
+                    continue;
+                }
+
+                if ($existingItem) {
+                    $existingItem->update(['quantity' => $quantity]);
+                } else {
+                    $guestItem->update([
+                        'cart_id' => $userCart->id,
+                        'quantity' => $quantity,
+                    ]);
+                }
+            }
+
+            $guestCart->delete();
+        });
+
+        Session::forget(self::GUEST_CART_SESSION_KEY);
     }
 
     /**
