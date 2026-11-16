@@ -2,18 +2,29 @@
 
 Dokumentasi arsitektur, arsitektur basis data, alur transaksi, dan roadmap pengerjaan untuk proyek e-commerce jualan baju online **ShopDress**.
 
+> **Mulai cepat:**
+> ```bash
+> cd backend
+> composer install
+> cp .env.example .env && php artisan key:generate
+> php artisan migrate --seed
+> npm install && npm run build
+> php artisan serve
+> ```
+> Detail lengkap ada di [`backend/README.md`](backend/README.md).
+
 ---
 
 ## 🛠️ 1. Tech Stack & Library
 
 * **Backend Framework:** Laravel 11 (PHP 8.2+)
 * **Admin Dashboard Panel:** Filament v3 (FilamentPHP)
-* **Frontend UI:** Blade Templates + Alpine.js + Tailwind CSS
-* **Database Management:** MySQL / MariaDB
-* **Authentication:** Laravel Breeze (Customer) + Filament Native Auth (Admin)
+* **Frontend UI:** Blade Templates + Alpine.js + Tailwind CSS v4
+* **Database Management:** SQLite (default pengembangan) / MySQL–MariaDB (produksi)
+* **Authentication:** Laravel Sanctum (API) + session auth (customer) + Filament native auth (admin)
 * **Payment Gateway:** Midtrans Snap API (`midtrans/midtrans-php`)
 * **Email System:** Laravel Mailable + Queue Worker (Database Queue Driver)
-* **Media & File Storage:** Spatie MediaLibrary / Filament Native File Upload
+* **Media & File Storage:** Filament Native File Upload + Laravel public disk
 
 ---
 
@@ -21,70 +32,59 @@ Dokumentasi arsitektur, arsitektur basis data, alur transaksi, dan roadmap penge
 
 ```text
 shopdress/
-├── app/
-│   ├── Enums/
-│   │   ├── OrderStatus.php         # PENDING, PAID, PROCESSING, SHIPPED, COMPLETED, CANCELLED
-│   │   └── PaymentStatus.php       # UNPAID, EXPIRED, SETTLED, FAILED
-│   ├── Filament/                   # Admin Panel (Filament)
-│   │   ├── Pages/
-│   │   │   └── StockForecastingPage.php # AI Predictive Stock & Restock Forecasting
-│   │   ├── Resources/
-│   │   │   ├── CategoryResource.php
-│   │   │   ├── ProductResource.php
-│   │   │   ├── OrderResource.php
-│   │   │   ├── UserResource.php
-│   │   │   └── CouponResource.php
-│   │   └── Widgets/
-│   │       ├── StatsOverviewWidget.php
-│   │       └── LatestOrdersWidget.php
-│   ├── Http/
-│   │   ├── Controllers/
-│   │   │   ├── HomeController.php
-│   │   │   ├── ProductController.php
-│   │   │   ├── CartController.php
-│   │   │   ├── CheckoutController.php
-│   │   │   ├── MidtransWebhookController.php
-│   │   │   ├── WishlistController.php
-│   │   │   └── UserDashboardController.php
-│   ├── Mail/
-│   │   ├── OrderCreatedMail.php
-│   │   ├── PaymentSuccessMail.php
-│   │   └── OrderStatusUpdatedMail.php
-│   ├── Models/
-│   │   ├── User.php
-│   │   ├── Category.php
-│   │   ├── Product.php
-│   │   ├── ProductVariant.php    # Size + Color + Stock SKU
-│   │   ├── ProductImage.php
-│   │   ├── Cart.php
-│   │   ├── CartItem.php
-│   │   ├── Order.php
-│   │   ├── OrderItem.php
-│   │   ├── Review.php
-│   │   ├── Wishlist.php
-│   │   └── Coupon.php
-│   └── Services/
-│       ├── CartService.php
-│       ├── InventoryService.php
-│       ├── StockForecastingService.php # Algoritma WMA + EOQ Peramalan Stok
-│       └── MidtransService.php
-├── config/
-│   └── midtrans.php
-├── database/
-│   ├── migrations/
-│   └── seeders/
-└── resources/
-    └── views/
-        ├── components/
-        ├── layouts/
-        ├── pages/
-        │   ├── home.blade.php
-        │   ├── products/
-        │   ├── cart.blade.php
-        │   ├── checkout.blade.php
-        │   └── user/
-        └── emails/
+├── backend/                          # Aplikasi Laravel 11
+│   ├── app/
+│   │   ├── Enums/                    # OrderStatus, PaymentStatus
+│   │   ├── Exceptions/               # Exception domain (CheckoutException)
+│   │   ├── Filament/                 # Admin Panel (Filament)
+│   │   │   ├── Pages/                # StockForecastingPage, Auth
+│   │   │   ├── Resources/            # Category, Product, Order, User, Coupon
+│   │   │   └── Widgets/              # StatsOverview, LatestOrders
+│   │   ├── Http/
+│   │   │   ├── Controllers/
+│   │   │   │   ├── Api/              # REST API (auth, cart, checkout, region)
+│   │   │   │   ├── Frontend/         # Controller halaman customer
+│   │   │   │   └── Webhooks/         # Midtrans webhook
+│   │   │   └── Requests/             # Form request validation
+│   │   ├── Listeners/                # Event listener (email, dsb.)
+│   │   ├── Mail/                     # Mailable transaksi
+│   │   ├── Models/                   # Model Eloquent
+│   │   ├── Observers/                # Model observer
+│   │   ├── Providers/                # Service provider & Filament panel
+│   │   ├── Services/                 # Cart, Inventory, Checkout, Midtrans, Region
+│   │   ├── Support/                  # Helper (FrontendUrls)
+│   │   └── View/Composers/           # View composer
+│   ├── config/                       # Konfigurasi (termasuk midtrans.php)
+│   ├── database/
+│   │   ├── factories/
+│   │   ├── migrations/
+│   │   ├── seeders/
+│   │   └── regions.sqlite            # Data wilayah Indonesia (lokal)
+│   ├── lang/                         # Terjemahan
+│   ├── public/                       # Asset publik & hasil build Vite
+│   ├── resources/
+│   │   ├── css/
+│   │   ├── js/
+│   │   └── views/
+│   │       ├── emails/
+│   │       ├── filament/             # Kustomisasi panel admin
+│   │       ├── frontend/             # Halaman customer (Blade)
+│   │       └── vendor/               # Override view package
+│   ├── routes/                       # web.php, api.php
+│   ├── storage/
+│   └── tests/                        # Unit & feature test
+├── docs/                             # Dokumentasi & referensi desain
+│   ├── design-reference/admin/       # Mockup HTML halaman admin
+│   ├── guides/                       # Panduan penggunaan
+│   ├── project-progress-and-ui-spec.md
+│   └── qa-report.md
+├── .agents/                          # Skill & aturan agent AI
+├── README.md
+└── CLAUDE.md
 ```
+
+> Setup, perintah, dan catatan pengembangan backend ada di
+> [`backend/README.md`](backend/README.md).
 
 ---
 
