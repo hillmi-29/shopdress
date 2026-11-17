@@ -14,8 +14,8 @@ class CategoryController extends Controller
      */
     public function index(): View
     {
-        $categories = Category::withCount('products')
-            ->orderBy('name')
+        $categories = Category::withActiveProductCount()
+            ->orderByPopularity()
             ->get();
 
         return view('frontend.categories.index', compact('categories'));
@@ -32,11 +32,11 @@ class CategoryController extends Controller
             ->where('is_active', true)
             ->where('category_id', $category->id)
             ->with(['primaryImage', 'variants'])
-            ->latest()
+            ->orderByPopularity()
             ->paginate(12);
 
-        $categories = Category::withCount('products')
-            ->orderBy('name')
+        $categories = Category::withActiveProductCount()
+            ->orderByPopularity()
             ->get();
 
         $wishlistProductIds = auth()->check()

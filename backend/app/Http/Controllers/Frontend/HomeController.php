@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use App\Enums\PaymentStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\User;
@@ -23,63 +21,35 @@ class HomeController extends Controller
      */
     public function homepage(): View
     {
-        $categories = Category::withCount('products')->get();
+        $categories = Category::withActiveProductCount()
+            ->orderByPopularity()
+            ->get();
 
         $featuredProducts = Product::with(['category', 'primaryImage', 'variants'])
             ->where('is_active', true)
             ->where('featured', true)
-            ->latest()
+            ->orderByPopularity()
             ->take(4)
             ->get();
 
         if ($featuredProducts->isEmpty()) {
             $featuredProducts = Product::with(['category', 'primaryImage', 'variants'])
                 ->where('is_active', true)
-                ->latest()
+                ->orderByPopularity()
                 ->take(4)
                 ->get();
         }
 
         $featuredIds = $featuredProducts->pluck('id')->all();
 
-        // Best-selling products from settled orders, excluding the curated
-        // recommendation row so the 4x3 grid shows different products.
-        $favoriteProductIds = OrderItem::query()
-            ->join('product_variants', 'product_variants.id', '=', 'order_items.product_variant_id')
-            ->join('orders', 'orders.id', '=', 'order_items.order_id')
-            ->where('orders.payment_status', PaymentStatus::SETTLED->value)
-            ->whereNotIn('product_variants.product_id', $featuredIds)
-            ->selectRaw('product_variants.product_id, SUM(order_items.quantity) as total_sold')
-            ->groupBy('product_variants.product_id')
-            ->orderByDesc('total_sold')
-            ->limit(12)
-            ->pluck('product_variants.product_id')
-            ->all();
-
+        // Best sellers from settled orders first, then newest products to fill
+        // the 4x3 grid. Featured products are excluded so this row stays distinct.
         $customerFavorites = Product::with(['category', 'primaryImage', 'variants'])
             ->where('is_active', true)
-            ->whereIn('id', $favoriteProductIds)
-            ->get()
-            ->sortBy(fn ($product) => array_search($product->id, $favoriteProductIds, true))
-            ->values();
-
-        $remainingSlots = 12 - $customerFavorites->count();
-
-        if ($remainingSlots > 0) {
-            $excludedIds = $customerFavorites->pluck('id')
-                ->merge($featuredIds)
-                ->unique()
-                ->all();
-
-            $customerFavorites = $customerFavorites->concat(
-                Product::with(['category', 'primaryImage', 'variants'])
-                    ->where('is_active', true)
-                    ->whereNotIn('id', $excludedIds)
-                    ->latest()
-                    ->take($remainingSlots)
-                    ->get()
-            );
-        }
+            ->whereNotIn('id', $featuredIds)
+            ->orderByPopularity()
+            ->take(12)
+            ->get();
 
         $testimonials = Review::with(['user:id,name', 'product:id,name,slug'])
             ->where('rating', '>=', 4)
@@ -125,7 +95,7 @@ class HomeController extends Controller
             $request->session()->regenerate();
 
             return redirect()->intended(route('home'))
-                ->with('success', 'Selamat datang kembali, ' . auth()->user()->name . '!');
+                ->with('success', 'Selamat datang kembali, '.auth()->user()->name.'!');
         }
 
         return back()->withErrors([
@@ -160,7 +130,7 @@ class HomeController extends Controller
         $request->session()->regenerate();
 
         return redirect()->route('home')
-            ->with('success', 'Akun berhasil dibuat! Selamat datang di ShopDress, ' . $user->name . '!');
+            ->with('success', 'Akun berhasil dibuat! Selamat datang di ShopDress, '.$user->name.'!');
     }
 
     /**

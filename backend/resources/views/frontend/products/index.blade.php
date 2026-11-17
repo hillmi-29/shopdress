@@ -9,7 +9,7 @@
         $productUrl = fn ($p) => \App\Support\FrontendUrls::product($p);
         $totalCount = $products->total();
         $activeCatSlug = request('category', '');
-        $activeSort = request('sort', 'latest');
+        $activeSort = request('sort', 'popular');
         $hasSearch = request()->filled('search');
         $activeCategory = $categories->firstWhere('slug', $activeCatSlug);
         $hasFilters = request()->hasAny(['category', 'sort', 'search', 'min_price', 'max_price']);
@@ -124,6 +124,7 @@
                         <select name="sort"
                                 aria-label="Urutkan produk"
                                 class="h-10 w-full min-w-[10.5rem] cursor-pointer appearance-none rounded-full border border-[var(--border)] bg-[var(--surface-2)]/70 pl-4 pr-10 text-[11px] font-bold text-[var(--text)] transition focus:border-[var(--brand)] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[var(--brand-soft)]">
+                            <option value="popular" {{ $activeSort === 'popular' ? 'selected' : '' }}>Terlaris</option>
                             <option value="latest" {{ $activeSort === 'latest' ? 'selected' : '' }}>Terbaru</option>
                             <option value="price_asc" {{ $activeSort === 'price_asc' ? 'selected' : '' }}>Harga: Termurah</option>
                             <option value="price_desc" {{ $activeSort === 'price_desc' ? 'selected' : '' }}>Harga: Termahal</option>

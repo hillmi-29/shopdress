@@ -35,19 +35,20 @@ class ProductController extends Controller
             $query->where('price', '<=', request('max_price'));
         }
 
-        $sort = request('sort', 'latest');
+        $sort = request('sort', 'popular');
         match ($sort) {
+            'latest' => $query->latest(),
             'price_asc' => $query->orderBy('price', 'asc'),
             'price_desc' => $query->orderBy('price', 'desc'),
             'name_asc' => $query->orderBy('name', 'asc'),
             'name_desc' => $query->orderBy('name', 'desc'),
-            default => $query->latest(),
+            default => $query->orderByPopularity(),
         };
 
         $products = $query->paginate(12)->withQueryString();
 
-        $categories = Category::withCount('products')
-            ->orderBy('name')
+        $categories = Category::withActiveProductCount()
+            ->orderByPopularity()
             ->get();
 
         $wishlistProductIds = auth()->check()
@@ -77,7 +78,7 @@ class ProductController extends Controller
         $relatedQuery = fn () => Product::with(['category', 'primaryImage', 'variants'])
             ->where('id', '!=', $product->id)
             ->where('is_active', true)
-            ->inRandomOrder()
+            ->orderByPopularity()
             ->take(4);
 
         $relatedProducts = $relatedQuery()

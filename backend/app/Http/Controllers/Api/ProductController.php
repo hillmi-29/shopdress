@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -30,7 +31,7 @@ class ProductController extends Controller
             $search = $request->query('search');
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -62,7 +63,7 @@ class ProductController extends Controller
         }
 
         // Sorting
-        $sort = $request->query('sort', 'latest');
+        $sort = $request->query('sort', 'popular');
         switch ($sort) {
             case 'price_asc':
                 $query->orderBy('price', 'asc');
@@ -77,8 +78,11 @@ class ProductController extends Controller
                 $query->orderBy('name', 'desc');
                 break;
             case 'latest':
-            default:
                 $query->latest();
+                break;
+            case 'popular':
+            default:
+                $query->orderByPopularity();
                 break;
         }
 
@@ -102,9 +106,9 @@ class ProductController extends Controller
             'variants',
             'reviews.user:id,name',
         ])
-        ->where('slug', $slug)
-        ->where('is_active', true)
-        ->firstOrFail();
+            ->where('slug', $slug)
+            ->where('is_active', true)
+            ->firstOrFail();
 
         return response()->json([
             'status' => 'success',
@@ -117,9 +121,12 @@ class ProductController extends Controller
      */
     public function filters(): JsonResponse
     {
-        $categories = Category::select('id', 'name', 'slug')->get();
-        $sizes = \App\Models\ProductVariant::distinct()->pluck('size')->values();
-        $colors = \App\Models\ProductVariant::distinct()->pluck('color')->values();
+        $categories = Category::select('id', 'name', 'slug')
+            ->withActiveProductCount()
+            ->orderByPopularity()
+            ->get();
+        $sizes = ProductVariant::distinct()->pluck('size')->values();
+        $colors = ProductVariant::distinct()->pluck('color')->values();
         $minPrice = Product::where('is_active', true)->min('price') ?? 0;
         $maxPrice = Product::where('is_active', true)->max('price') ?? 0;
 
@@ -137,4 +144,3 @@ class ProductController extends Controller
         ]);
     }
 }
-

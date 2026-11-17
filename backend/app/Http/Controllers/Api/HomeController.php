@@ -14,12 +14,14 @@ class HomeController extends Controller
      */
     public function index(): JsonResponse
     {
-        $categories = Category::withCount('products')->get();
+        $categories = Category::withActiveProductCount()
+            ->orderByPopularity()
+            ->get();
 
         $featuredProducts = Product::with(['primaryImage', 'variants'])
             ->where('is_active', true)
             ->where('featured', true)
-            ->latest()
+            ->orderByPopularity()
             ->take(8)
             ->get();
 
@@ -39,4 +41,3 @@ class HomeController extends Controller
         ]);
     }
 }
-
