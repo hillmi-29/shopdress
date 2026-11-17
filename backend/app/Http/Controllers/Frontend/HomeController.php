@@ -146,7 +146,12 @@ class HomeController extends Controller
      */
     public function profile(): View
     {
-        return view('frontend.profile.edit');
+        $addresses = auth()->user()->addresses()
+            ->orderByDesc('is_default')
+            ->latest()
+            ->get();
+
+        return view('frontend.profile.edit', compact('addresses'));
     }
 
     /**

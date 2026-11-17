@@ -6,6 +6,7 @@ use App\Exceptions\CheckoutException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CheckoutRequest;
 use App\Models\Order;
+use App\Models\User;
 use App\Services\CartService;
 use App\Services\CheckoutService;
 use App\Services\MidtransService;
@@ -19,8 +20,7 @@ class CheckoutController extends Controller
         protected CartService $cartService,
         protected CheckoutService $checkoutService,
         protected MidtransService $midtransService
-    ) {
-    }
+    ) {}
 
     /**
      * Display checkout page.
@@ -38,11 +38,17 @@ class CheckoutController extends Controller
         $shippingCost = 20000;
         $grandTotal = $totalAmount + $shippingCost;
 
+        $savedAddresses = auth()->user()->addresses()
+            ->orderByDesc('is_default')
+            ->latest()
+            ->get();
+
         return view('frontend.checkout.index', compact(
             'cart',
             'totalAmount',
             'shippingCost',
             'grandTotal',
+            'savedAddresses',
         ));
     }
 
@@ -65,6 +71,10 @@ class CheckoutController extends Controller
             }
 
             $order = $this->checkoutService->checkout($user, $data);
+
+            if ($request->boolean('save_address')) {
+                $this->saveCheckoutAddress($user, $data);
+            }
 
             return redirect()->route('checkout.payment', ['order' => $order->id])
                 ->with('snap_token', $order->snap_token);
@@ -115,5 +125,53 @@ class CheckoutController extends Controller
             ->findOrFail($orderId);
 
         return view('frontend.checkout.success', compact('order'));
+    }
+
+    /**
+     * Optionally keep the address entered at checkout in the customer's address book.
+     */
+    private function saveCheckoutAddress(User $user, array $data): void
+    {
+        try {
+            $street = trim((string) ($data['street'] ?? ''));
+
+            if ($street === '') {
+                return;
+            }
+
+            $exists = $user->addresses()
+                ->where('recipient_name', $data['recipient_name'])
+                ->where('recipient_phone', $data['recipient_phone'])
+                ->where('street', $street)
+                ->exists();
+
+            if ($exists) {
+                return;
+            }
+
+            $user->addresses()->create([
+                'label' => 'Alamat pengiriman',
+                'recipient_name' => $data['recipient_name'],
+                'recipient_phone' => $data['recipient_phone'],
+                'province_code' => $data['province_code'] ?? null,
+                'province_name' => $data['province_name'] ?? null,
+                'regency_code' => $data['regency_code'] ?? null,
+                'regency_name' => $data['regency_name'] ?? null,
+                'district_code' => $data['district_code'] ?? null,
+                'district_name' => $data['district_name'] ?? null,
+                'village_code' => $data['village_code'] ?? null,
+                'village_name' => $data['village_name'] ?? null,
+                'postal_code' => $data['postal_code'] ?? null,
+                'rt' => $data['rt'] ?? null,
+                'rw' => $data['rw'] ?? null,
+                'street' => $street,
+                'is_default' => ! $user->addresses()->exists(),
+            ]);
+        } catch (\Throwable $e) {
+            Log::warning('Gagal menyimpan alamat dari checkout.', [
+                'user_id' => $user->id,
+                'exception' => $e,
+            ]);
+        }
     }
 }

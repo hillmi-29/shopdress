@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Frontend\AddressController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CategoryController;
 use App\Http\Controllers\Frontend\CheckoutController;
@@ -36,6 +37,10 @@ Route::post('/daftar', [HomeController::class, 'registerPost'])->name('register.
 
 Route::middleware('auth')->group(function () {
     Route::get('/profil', [HomeController::class, 'profile'])->name('profile.edit');
+    Route::post('/profil/alamat', [AddressController::class, 'store'])->name('profile.addresses.store');
+    Route::put('/profil/alamat/{address}', [AddressController::class, 'update'])->name('profile.addresses.update');
+    Route::delete('/profil/alamat/{address}', [AddressController::class, 'destroy'])->name('profile.addresses.destroy');
+    Route::post('/profil/alamat/{address}/default', [AddressController::class, 'setDefault'])->name('profile.addresses.default');
     Route::get('/pesanan', [HomeController::class, 'orders'])->name('orders.index');
     Route::get('/pesanan/{id}', [HomeController::class, 'orderDetail'])->name('orders.show');
     Route::post('/logout', [HomeController::class, 'logout'])->name('logout');

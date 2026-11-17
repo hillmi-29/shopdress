@@ -20,6 +20,19 @@ class CheckoutRequest extends FormRequest
             'notes' => ['nullable', 'string', 'max:500'],
             'coupon_code' => ['nullable', 'string', 'exists:coupons,code'],
             'landmark_photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'save_address' => ['nullable', 'boolean'],
+            'province_code' => ['required_if:save_address,1', 'nullable', 'string', 'max:10'],
+            'province_name' => ['required_if:save_address,1', 'nullable', 'string', 'max:100'],
+            'regency_code' => ['required_if:save_address,1', 'nullable', 'string', 'max:10'],
+            'regency_name' => ['required_if:save_address,1', 'nullable', 'string', 'max:100'],
+            'district_code' => ['required_if:save_address,1', 'nullable', 'string', 'max:10'],
+            'district_name' => ['required_if:save_address,1', 'nullable', 'string', 'max:100'],
+            'village_code' => ['required_if:save_address,1', 'nullable', 'string', 'max:10'],
+            'village_name' => ['required_if:save_address,1', 'nullable', 'string', 'max:100'],
+            'postal_code' => ['required_if:save_address,1', 'nullable', 'string', 'max:10'],
+            'rt' => ['nullable', 'string', 'max:6'],
+            'rw' => ['nullable', 'string', 'max:6'],
+            'street' => ['required_if:save_address,1', 'nullable', 'string', 'max:500'],
         ];
     }
 

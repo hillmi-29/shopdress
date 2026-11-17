@@ -171,6 +171,38 @@
                     </span>
                 </div>
 
+                @if ($savedAddresses->isNotEmpty())
+                    <div class="mt-5 rounded-2xl border border-[var(--border-light)] bg-[var(--bg)]/70 p-3.5 sm:p-4">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <p class="text-[10px] font-bold text-[var(--text)]">Alamat tersimpan</p>
+                            <a href="{{ route('profile.edit') }}" class="text-[9px] font-bold text-[var(--brand)] underline-offset-4 transition hover:underline">Kelola alamat</a>
+                        </div>
+                        <div class="mt-3 grid gap-2 sm:grid-cols-2">
+                            @foreach ($savedAddresses as $savedAddress)
+                                <button type="button"
+                                        @click="applySavedAddress({{ $savedAddress->id }})"
+                                        class="rounded-xl border p-3 text-left transition"
+                                        :class="selectedAddressId === {{ $savedAddress->id }}
+                                            ? 'border-[var(--brand)] bg-[var(--brand-soft)]/40 ring-2 ring-[var(--brand)]/15'
+                                            : 'border-[var(--border)] bg-[var(--surface)] hover:border-[var(--brand)]/50'">
+                                    <span class="flex items-start justify-between gap-2">
+                                        <span class="min-w-0">
+                                            <span class="block text-[9px] font-black uppercase tracking-[0.12em] text-[var(--text-subtle)]">{{ $savedAddress->label ?: 'Alamat' }}</span>
+                                            <span class="mt-1 block truncate text-[11px] font-bold text-[var(--text)]">{{ $savedAddress->recipient_name }}</span>
+                                            <span class="block text-[9px] text-[var(--text-muted)]">{{ $savedAddress->recipient_phone }}</span>
+                                        </span>
+                                        @if ($savedAddress->is_default)
+                                            <span class="shrink-0 rounded-full bg-[var(--brand)] px-2 py-0.5 text-[8px] font-bold uppercase tracking-[0.08em] text-white">Utama</span>
+                                        @endif
+                                    </span>
+                                    <span class="mt-2 block text-[9px] leading-4 text-[var(--text-muted)]">{{ $savedAddress->full_address }}</span>
+                                </button>
+                            @endforeach
+                        </div>
+                        <p class="mt-2 text-[9px] leading-4 text-[var(--text-subtle)]">Pilih alamat untuk mengisi formulir secara otomatis, lalu lengkapi jika diperlukan.</p>
+                    </div>
+                @endif
+
                 <div class="mt-5 grid gap-4 sm:grid-cols-2">
                     <div>
                         <label for="recipient_name" class="mb-1.5 block text-[11px] font-bold text-[var(--text)]">Nama Penerima <span class="text-[var(--error)]">*</span></label>
@@ -351,6 +383,20 @@
                     {{-- Hidden shipping address string submitted to backend --}}
                     <input type="hidden" name="shipping_address" :value="form.shipping_address" required>
 
+                    {{-- Structured address fields, used when saving this address to the profile --}}
+                    <input type="hidden" name="province_code" :value="address.province_code">
+                    <input type="hidden" name="province_name" :value="address.province_name">
+                    <input type="hidden" name="regency_code" :value="address.regency_code">
+                    <input type="hidden" name="regency_name" :value="address.regency_name">
+                    <input type="hidden" name="district_code" :value="address.district_code">
+                    <input type="hidden" name="district_name" :value="address.district_name">
+                    <input type="hidden" name="village_code" :value="address.village_code">
+                    <input type="hidden" name="village_name" :value="address.village_name">
+                    <input type="hidden" name="postal_code" :value="address.postal_code">
+                    <input type="hidden" name="rt" :value="address.rt">
+                    <input type="hidden" name="rw" :value="address.rw">
+                    <input type="hidden" name="street" :value="address.street">
+
                     {{-- Upload Foto Patokan (Opsional) --}}
                     <div class="sm:col-span-2" x-data="{ previewUrl: null, fileName: '' }">
                         <label for="landmark_photo" class="mb-1.5 flex items-center justify-between text-[11px] font-bold text-[var(--text)]">
@@ -385,6 +431,18 @@
                         </div>
                         <p class="mt-1 text-[9px] text-[var(--text-subtle)]">Unggah foto pagar, rumah, ruko, atau patokan visual terdekat untuk memudahkan kurir mengantar pesanan.</p>
                     </div>
+
+                    <label class="flex cursor-pointer items-start gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)] p-3.5 sm:col-span-2">
+                        <input type="checkbox"
+                               name="save_address"
+                               value="1"
+                               x-model="form.save_address"
+                               class="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-[var(--brand)] focus:ring-[var(--brand)]/20">
+                        <span>
+                            <span class="block text-[11px] font-bold text-[var(--text)]">Simpan alamat ini untuk checkout berikutnya</span>
+                            <span class="mt-0.5 block text-[9px] leading-4 text-[var(--text-muted)]">Alamat bisa diubah atau dihapus kapan saja di halaman profil.</span>
+                        </span>
+                    </label>
 
                     <div class="sm:col-span-2">
                         <label for="notes" class="mb-1.5 block text-[11px] font-bold text-[var(--text)]">Catatan Khusus <span class="font-medium text-[var(--text-subtle)]">(opsional)</span></label>
@@ -531,6 +589,7 @@
                     recipient_phone: @js($user->phone ?? ''),
                     shipping_address: @js($user->address ?? ''),
                     notes: '',
+                    save_address: false,
                 },
                 address: {
                     province_code: '',
@@ -546,6 +605,8 @@
                     rw: '',
                     street: @js($user->address ?? ''),
                 },
+                savedAddresses: @js($savedAddresses),
+                selectedAddressId: null,
                 provinces: [],
                 regencies: [],
                 districts: [],
@@ -565,11 +626,27 @@
                 submitting: false,
 
                 init() {
-                    this.fetchProvinces();
-                    this.updateShippingAddress();
+                    const preferred = this.savedAddresses.find(address =>
+                        address.is_default
+                        && address.province_code
+                        && address.regency_code
+                        && address.district_code
+                        && address.village_code
+                    );
+
+                    if (preferred) {
+                        this.applySavedAddress(preferred.id);
+                    } else {
+                        this.fetchProvinces();
+                        this.updateShippingAddress();
+                    }
                 },
 
                 async fetchProvinces() {
+                    if (this.provinces.length) {
+                        return;
+                    }
+
                     this.loadingProvinces = true;
                     try {
                         const res = await fetch('{{ url("api/regions/provinces") }}');
@@ -579,6 +656,25 @@
                         console.error('Gagal memuat provinsi:', e);
                     } finally {
                         this.loadingProvinces = false;
+                    }
+                },
+
+                async loadRegencies() {
+                    this.regencies = [];
+                    this.districts = [];
+                    this.villages = [];
+
+                    if (! this.address.province_code) return;
+
+                    this.loadingRegencies = true;
+                    try {
+                        const res = await fetch(`{{ url("api/regions/regencies") }}?province_code=${encodeURIComponent(this.address.province_code)}`);
+                        const json = await res.json();
+                        this.regencies = json.data || [];
+                    } catch (e) {
+                        console.error('Gagal memuat kota/kabupaten:', e);
+                    } finally {
+                        this.loadingRegencies = false;
                     }
                 },
 
@@ -592,37 +688,17 @@
                     this.address.village_code = '';
                     this.address.village_name = '';
                     this.address.postal_code = '';
-                    this.regencies = [];
-                    this.districts = [];
-                    this.villages = [];
                     this.updateShippingAddress();
 
-                    if (!this.address.province_code) return;
-                    this.loadingRegencies = true;
-                    try {
-                        const res = await fetch(`{{ url("api/regions/regencies") }}?province_code=${encodeURIComponent(this.address.province_code)}`);
-                        const json = await res.json();
-                        this.regencies = json.data || [];
-                    } catch (e) {
-                        console.error('Gagal memuat kota/kabupaten:', e);
-                    } finally {
-                        this.loadingRegencies = false;
-                    }
+                    await this.loadRegencies();
                 },
 
-                async onRegencyChange() {
-                    const r = this.regencies.find(item => item.code === this.address.regency_code);
-                    this.address.regency_name = r ? r.name : '';
-                    this.address.district_code = '';
-                    this.address.district_name = '';
-                    this.address.village_code = '';
-                    this.address.village_name = '';
-                    this.address.postal_code = '';
+                async loadDistricts() {
                     this.districts = [];
                     this.villages = [];
-                    this.updateShippingAddress();
 
-                    if (!this.address.regency_code) return;
+                    if (! this.address.regency_code) return;
+
                     this.loadingDistricts = true;
                     try {
                         const res = await fetch(`{{ url("api/regions/districts") }}?regency_code=${encodeURIComponent(this.address.regency_code)}`);
@@ -635,16 +711,24 @@
                     }
                 },
 
-                async onDistrictChange() {
-                    const d = this.districts.find(item => item.code === this.address.district_code);
-                    this.address.district_name = d ? d.name : '';
+                async onRegencyChange() {
+                    const r = this.regencies.find(item => item.code === this.address.regency_code);
+                    this.address.regency_name = r ? r.name : '';
+                    this.address.district_code = '';
+                    this.address.district_name = '';
                     this.address.village_code = '';
                     this.address.village_name = '';
                     this.address.postal_code = '';
-                    this.villages = [];
                     this.updateShippingAddress();
 
-                    if (!this.address.district_code) return;
+                    await this.loadDistricts();
+                },
+
+                async loadVillages() {
+                    this.villages = [];
+
+                    if (! this.address.district_code) return;
+
                     this.loadingVillages = true;
                     try {
                         const res = await fetch(`{{ url("api/regions/villages") }}?district_code=${encodeURIComponent(this.address.district_code)}`);
@@ -657,10 +741,56 @@
                     }
                 },
 
+                async onDistrictChange() {
+                    const d = this.districts.find(item => item.code === this.address.district_code);
+                    this.address.district_name = d ? d.name : '';
+                    this.address.village_code = '';
+                    this.address.village_name = '';
+                    this.address.postal_code = '';
+                    this.updateShippingAddress();
+
+                    await this.loadVillages();
+                },
+
                 onVillageChange() {
                     const v = this.villages.find(item => item.code === this.address.village_code);
                     this.address.village_name = v ? v.name : '';
                     this.address.postal_code = v?.postal_code || '';
+                    this.updateShippingAddress();
+                },
+
+                async applySavedAddress(id) {
+                    const saved = this.savedAddresses.find(item => item.id === id);
+                    if (! saved) return;
+
+                    this.selectedAddressId = saved.id;
+                    this.form.recipient_name = saved.recipient_name || this.form.recipient_name;
+                    this.form.recipient_phone = saved.recipient_phone || '';
+
+                    this.address.province_code = saved.province_code || '';
+                    this.address.province_name = saved.province_name || '';
+                    this.address.regency_code = saved.regency_code || '';
+                    this.address.regency_name = saved.regency_name || '';
+                    this.address.district_code = saved.district_code || '';
+                    this.address.district_name = saved.district_name || '';
+                    this.address.village_code = saved.village_code || '';
+                    this.address.village_name = saved.village_name || '';
+                    this.address.postal_code = saved.postal_code || '';
+                    this.address.rt = saved.rt || '';
+                    this.address.rw = saved.rw || '';
+                    this.address.street = saved.street || '';
+
+                    await this.fetchProvinces();
+                    await this.loadRegencies();
+                    await this.loadDistricts();
+                    await this.loadVillages();
+                    await this.$nextTick();
+
+                    this.address.province_code = saved.province_code || '';
+                    this.address.regency_code = saved.regency_code || '';
+                    this.address.district_code = saved.district_code || '';
+                    this.address.village_code = saved.village_code || '';
+
                     this.updateShippingAddress();
                 },
 
