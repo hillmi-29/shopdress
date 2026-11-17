@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Gambar contoh memakai placeholder lokal di disk public (tanpa
+        // Gambar contoh disalin dari public/images ke disk public (tanpa
         // koneksi internet). Tiap record dibuatkan salinan file sendiri
         // agar penghapusan satu record tidak memutus gambar record lain.
         $placeholder = function (string $directory, string $filename, string $source): string {
@@ -124,7 +124,8 @@ class DatabaseSeeder extends Seeder
                 'price' => 349000,
                 'featured' => true,
                 'images' => [
-                    $placeholder('products', 'placeholder-aurelia-silk-gamis-dress.svg', 'placeholder-product.svg'),
+                    $placeholder('products', 'demo-1-1.png', 'products/demo-1-1.png'),
+                    $placeholder('products', 'demo-1-2.png', 'products/demo-1-2.png'),
                 ],
                 'variants' => [
                     ['size' => 'S', 'color' => 'Sage Green', 'stock' => 15, 'additional_price' => 0],
@@ -143,7 +144,8 @@ class DatabaseSeeder extends Seeder
                 'price' => 279000,
                 'featured' => true,
                 'images' => [
-                    $placeholder('products', 'placeholder-ji-woo-floral-ruffle-midi-dress.svg', 'placeholder-product.svg'),
+                    $placeholder('products', 'demo-2-3.png', 'products/demo-2-3.png'),
+                    $placeholder('products', 'demo-2-4.png', 'products/demo-2-4.png'),
                 ],
                 'variants' => [
                     ['size' => 'S', 'color' => 'Dusty Pink', 'stock' => 25, 'additional_price' => 0],
@@ -161,7 +163,8 @@ class DatabaseSeeder extends Seeder
                 'price' => 225000,
                 'featured' => true,
                 'images' => [
-                    $placeholder('products', 'placeholder-luna-linen-button-down-shirt-dress.svg', 'placeholder-product.svg'),
+                    $placeholder('products', 'demo-3-5.png', 'products/demo-3-5.png'),
+                    $placeholder('products', 'demo-3-6.png', 'products/demo-3-6.png'),
                 ],
                 'variants' => [
                     ['size' => 'All Size', 'color' => 'Terracotta', 'stock' => 35, 'additional_price' => 0],
@@ -177,7 +180,8 @@ class DatabaseSeeder extends Seeder
                 'price' => 589000,
                 'featured' => true,
                 'images' => [
-                    $placeholder('products', 'placeholder-seraphina-velvet-evening-gown.svg', 'placeholder-product.svg'),
+                    $placeholder('products', 'demo-4-6.png', 'products/demo-4-6.png'),
+                    $placeholder('products', 'demo-4-7.png', 'products/demo-4-7.png'),
                 ],
                 'variants' => [
                     ['size' => 'S', 'color' => 'Emerald Green', 'stock' => 8, 'additional_price' => 0],
@@ -195,7 +199,8 @@ class DatabaseSeeder extends Seeder
                 'price' => 310000,
                 'featured' => false,
                 'images' => [
-                    $placeholder('products', 'placeholder-boho-tiered-chiffon-maxi-dress.svg', 'placeholder-product.svg'),
+                    $placeholder('products', 'demo-5-7.png', 'products/demo-5-7.png'),
+                    $placeholder('products', 'demo-5-8.png', 'products/demo-5-8.png'),
                 ],
                 'variants' => [
                     ['size' => 'S', 'color' => 'Caramel Beige', 'stock' => 12, 'additional_price' => 0],
@@ -211,7 +216,8 @@ class DatabaseSeeder extends Seeder
                 'price' => 289000,
                 'featured' => false,
                 'images' => [
-                    $placeholder('products', 'placeholder-nadia-pleated-abaya.svg', 'placeholder-product.svg'),
+                    $placeholder('products', 'nadia-pleated-abaya-1.jpg', 'products/nadia-pleated-abaya-1.jpg'),
+                    $placeholder('products', 'nadia-pleated-abaya-2.jpg', 'products/nadia-pleated-abaya-2.jpg'),
                 ],
                 'variants' => [
                     ['size' => 'S', 'color' => 'Dusty Lilac', 'stock' => 14, 'additional_price' => 0],
@@ -227,7 +233,8 @@ class DatabaseSeeder extends Seeder
                 'price' => 329000,
                 'featured' => false,
                 'images' => [
-                    $placeholder('products', 'placeholder-zahra-embroidered-gamis.svg', 'placeholder-product.svg'),
+                    $placeholder('products', 'zahra-embroidered-gamis-1.jpg', 'products/zahra-embroidered-gamis-1.jpg'),
+                    $placeholder('products', 'zahra-embroidered-gamis-2.jpg', 'products/zahra-embroidered-gamis-2.jpg'),
                 ],
                 'variants' => [
                     ['size' => 'M', 'color' => 'Navy', 'stock' => 16, 'additional_price' => 0],
@@ -243,7 +250,8 @@ class DatabaseSeeder extends Seeder
                 'price' => 215000,
                 'featured' => false,
                 'images' => [
-                    $placeholder('products', 'placeholder-ayla-cotton-midi-wrap-dress.svg', 'placeholder-product.svg'),
+                    $placeholder('products', 'ayla-cotton-midi-wrap-dress-1.jpg', 'products/ayla-cotton-midi-wrap-dress-1.jpg'),
+                    $placeholder('products', 'ayla-cotton-midi-wrap-dress-2.jpg', 'products/ayla-cotton-midi-wrap-dress-2.jpg'),
                 ],
                 'variants' => [
                     ['size' => 'S', 'color' => 'Sage', 'stock' => 20, 'additional_price' => 0],
@@ -259,7 +267,8 @@ class DatabaseSeeder extends Seeder
                 'price' => 249000,
                 'featured' => false,
                 'images' => [
-                    $placeholder('products', 'placeholder-mira-smocked-tiered-sundress.svg', 'placeholder-product.svg'),
+                    $placeholder('products', 'mira-smocked-tiered-sundress-1.jpg', 'products/mira-smocked-tiered-sundress-1.jpg'),
+                    $placeholder('products', 'mira-smocked-tiered-sundress-2.jpg', 'products/mira-smocked-tiered-sundress-2.jpg'),
                 ],
                 'variants' => [
                     ['size' => 'All Size', 'color' => 'Butter Yellow', 'stock' => 28, 'additional_price' => 0],
@@ -274,7 +283,8 @@ class DatabaseSeeder extends Seeder
                 'price' => 259000,
                 'featured' => false,
                 'images' => [
-                    $placeholder('products', 'placeholder-seoyeon-puff-sleeve-mini-dress.svg', 'placeholder-product.svg'),
+                    $placeholder('products', 'seoyeon-puff-sleeve-mini-dress-1.jpg', 'products/seoyeon-puff-sleeve-mini-dress-1.jpg'),
+                    $placeholder('products', 'seoyeon-puff-sleeve-mini-dress-2.jpg', 'products/seoyeon-puff-sleeve-mini-dress-2.jpg'),
                 ],
                 'variants' => [
                     ['size' => 'S', 'color' => 'Ivory', 'stock' => 18, 'additional_price' => 0],
@@ -290,7 +300,8 @@ class DatabaseSeeder extends Seeder
                 'price' => 289000,
                 'featured' => false,
                 'images' => [
-                    $placeholder('products', 'placeholder-hana-eyelet-lace-midi-dress.svg', 'placeholder-product.svg'),
+                    $placeholder('products', 'hana-eyelet-lace-midi-dress-1.jpg', 'products/hana-eyelet-lace-midi-dress-1.jpg'),
+                    $placeholder('products', 'hana-eyelet-lace-midi-dress-2.jpg', 'products/hana-eyelet-lace-midi-dress-2.jpg'),
                 ],
                 'variants' => [
                     ['size' => 'S', 'color' => 'White', 'stock' => 14, 'additional_price' => 0],
@@ -306,7 +317,8 @@ class DatabaseSeeder extends Seeder
                 'price' => 339000,
                 'featured' => false,
                 'images' => [
-                    $placeholder('products', 'placeholder-amara-satin-slip-maxi-dress.svg', 'placeholder-product.svg'),
+                    $placeholder('products', 'amara-satin-slip-maxi-dress-1.jpg', 'products/amara-satin-slip-maxi-dress-1.jpg'),
+                    $placeholder('products', 'amara-satin-slip-maxi-dress-2.jpg', 'products/amara-satin-slip-maxi-dress-2.jpg'),
                 ],
                 'variants' => [
                     ['size' => 'S', 'color' => 'Champagne', 'stock' => 13, 'additional_price' => 0],
@@ -322,7 +334,8 @@ class DatabaseSeeder extends Seeder
                 'price' => 299000,
                 'featured' => false,
                 'images' => [
-                    $placeholder('products', 'placeholder-livia-floral-print-maxi-dress.svg', 'placeholder-product.svg'),
+                    $placeholder('products', 'livia-floral-print-maxi-dress-1.jpg', 'products/livia-floral-print-maxi-dress-1.jpg'),
+                    $placeholder('products', 'livia-floral-print-maxi-dress-2.jpg', 'products/livia-floral-print-maxi-dress-2.jpg'),
                 ],
                 'variants' => [
                     ['size' => 'S', 'color' => 'Rose', 'stock' => 15, 'additional_price' => 0],
@@ -338,7 +351,8 @@ class DatabaseSeeder extends Seeder
                 'price' => 459000,
                 'featured' => false,
                 'images' => [
-                    $placeholder('products', 'placeholder-isabella-sequin-party-dress.svg', 'placeholder-product.svg'),
+                    $placeholder('products', 'isabella-sequin-party-dress-1.jpg', 'products/isabella-sequin-party-dress-1.jpg'),
+                    $placeholder('products', 'isabella-sequin-party-dress-2.jpg', 'products/isabella-sequin-party-dress-2.jpg'),
                 ],
                 'variants' => [
                     ['size' => 'S', 'color' => 'Gold', 'stock' => 7, 'additional_price' => 0],
@@ -354,7 +368,8 @@ class DatabaseSeeder extends Seeder
                 'price' => 499000,
                 'featured' => false,
                 'images' => [
-                    $placeholder('products', 'placeholder-clara-off-shoulder-satin-gown.svg', 'placeholder-product.svg'),
+                    $placeholder('products', 'clara-off-shoulder-satin-gown-1.jpg', 'products/clara-off-shoulder-satin-gown-1.jpg'),
+                    $placeholder('products', 'clara-off-shoulder-satin-gown-2.jpg', 'products/clara-off-shoulder-satin-gown-2.jpg'),
                 ],
                 'variants' => [
                     ['size' => 'S', 'color' => 'Burgundy', 'stock' => 8, 'additional_price' => 0],
@@ -370,7 +385,8 @@ class DatabaseSeeder extends Seeder
                 'price' => 389000,
                 'featured' => false,
                 'images' => [
-                    $placeholder('products', 'placeholder-dahlia-a-line-cocktail-dress.svg', 'placeholder-product.svg'),
+                    $placeholder('products', 'dahlia-a-line-cocktail-dress-1.jpg', 'products/dahlia-a-line-cocktail-dress-1.jpg'),
+                    $placeholder('products', 'dahlia-a-line-cocktail-dress-2.jpg', 'products/dahlia-a-line-cocktail-dress-2.jpg'),
                 ],
                 'variants' => [
                     ['size' => 'S', 'color' => 'Blush', 'stock' => 12, 'additional_price' => 0],
