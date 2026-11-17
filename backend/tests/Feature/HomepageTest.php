@@ -31,6 +31,14 @@ class HomepageTest extends TestCase
         $response->assertSee('Koleksi unggulan');
     }
 
+    public function test_homepage_displays_customer_favorites_section(): void
+    {
+        $response = $this->get('/');
+
+        $response->assertSee('Kesukaan Pelanggan');
+        $response->assertSee('Paling dicari');
+    }
+
     public function test_homepage_displays_value_props_section(): void
     {
         $response = $this->get('/');

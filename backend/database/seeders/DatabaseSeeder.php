@@ -203,6 +203,181 @@ class DatabaseSeeder extends Seeder
                     ['size' => 'L', 'color' => 'Caramel Beige', 'stock' => 9, 'additional_price' => 0],
                 ],
             ],
+            [
+                'category_slug' => 'gamis-abaya-modern',
+                'name' => 'Nadia Pleated Abaya',
+                'slug' => 'nadia-pleated-abaya',
+                'description' => 'Abaya berpotongan longgar dengan lipit pleats rapi di bagian lengan dan rok. Bahan wolfis premium yang adem, jatuh, dan nyaman untuk aktivitas seharian.',
+                'price' => 289000,
+                'featured' => false,
+                'images' => [
+                    $placeholder('products', 'placeholder-nadia-pleated-abaya.svg', 'placeholder-product.svg'),
+                ],
+                'variants' => [
+                    ['size' => 'S', 'color' => 'Dusty Lilac', 'stock' => 14, 'additional_price' => 0],
+                    ['size' => 'M', 'color' => 'Dusty Lilac', 'stock' => 18, 'additional_price' => 0],
+                    ['size' => 'L', 'color' => 'Hitam Elegan', 'stock' => 11, 'additional_price' => 0],
+                ],
+            ],
+            [
+                'category_slug' => 'gamis-abaya-modern',
+                'name' => 'Zahra Embroidered Gamis',
+                'slug' => 'zahra-embroidered-gamis',
+                'description' => 'Gamis brokat dengan sulaman bunga halus di bagian dada dan lengan. Dilengkapi furing penuh serta tali pinggang sehingga siluetnya tetap ramping dan anggun.',
+                'price' => 329000,
+                'featured' => false,
+                'images' => [
+                    $placeholder('products', 'placeholder-zahra-embroidered-gamis.svg', 'placeholder-product.svg'),
+                ],
+                'variants' => [
+                    ['size' => 'M', 'color' => 'Navy', 'stock' => 16, 'additional_price' => 0],
+                    ['size' => 'L', 'color' => 'Navy', 'stock' => 12, 'additional_price' => 0],
+                    ['size' => 'XL', 'color' => 'Maroon', 'stock' => 9, 'additional_price' => 15000],
+                ],
+            ],
+            [
+                'category_slug' => 'casual-daily-dress',
+                'name' => 'Ayla Cotton Midi Wrap Dress',
+                'slug' => 'ayla-cotton-midi-wrap-dress',
+                'description' => 'Dress midi model wrap dengan ikatan pinggang yang membentuk siluet tubuh. Bahan katun poplin lembut dan breathable, cocok untuk kegiatan harian.',
+                'price' => 215000,
+                'featured' => false,
+                'images' => [
+                    $placeholder('products', 'placeholder-ayla-cotton-midi-wrap-dress.svg', 'placeholder-product.svg'),
+                ],
+                'variants' => [
+                    ['size' => 'S', 'color' => 'Sage', 'stock' => 20, 'additional_price' => 0],
+                    ['size' => 'M', 'color' => 'Sage', 'stock' => 24, 'additional_price' => 0],
+                    ['size' => 'L', 'color' => 'Terracotta', 'stock' => 15, 'additional_price' => 0],
+                ],
+            ],
+            [
+                'category_slug' => 'casual-daily-dress',
+                'name' => 'Mira Smocked Tiered Sundress',
+                'slug' => 'mira-smocked-tiered-sundress',
+                'description' => 'Sundress dengan karet smocked elastis di bagian dada dan rok bertingkat yang flowy. Ringan, tidak panas, dan pas dipakai untuk liburan maupun jalan santai.',
+                'price' => 249000,
+                'featured' => false,
+                'images' => [
+                    $placeholder('products', 'placeholder-mira-smocked-tiered-sundress.svg', 'placeholder-product.svg'),
+                ],
+                'variants' => [
+                    ['size' => 'All Size', 'color' => 'Butter Yellow', 'stock' => 28, 'additional_price' => 0],
+                    ['size' => 'All Size', 'color' => 'Sky Blue', 'stock' => 22, 'additional_price' => 0],
+                ],
+            ],
+            [
+                'category_slug' => 'korean-style-dress',
+                'name' => 'Seoyeon Puff Sleeve Mini Dress',
+                'slug' => 'seoyeon-puff-sleeve-mini-dress',
+                'description' => 'Mini dress ala Korea dengan lengan puff dan kerah persegi yang manis. Bahan scuba stretch tebal sehingga bentuknya tetap rapi sepanjang hari.',
+                'price' => 259000,
+                'featured' => false,
+                'images' => [
+                    $placeholder('products', 'placeholder-seoyeon-puff-sleeve-mini-dress.svg', 'placeholder-product.svg'),
+                ],
+                'variants' => [
+                    ['size' => 'S', 'color' => 'Ivory', 'stock' => 18, 'additional_price' => 0],
+                    ['size' => 'M', 'color' => 'Ivory', 'stock' => 21, 'additional_price' => 0],
+                    ['size' => 'M', 'color' => 'Lavender', 'stock' => 16, 'additional_price' => 0],
+                ],
+            ],
+            [
+                'category_slug' => 'korean-style-dress',
+                'name' => 'Hana Eyelet Lace Midi Dress',
+                'slug' => 'hana-eyelet-lace-midi-dress',
+                'description' => 'Dress midi dengan detail eyelet lace di seluruh permukaan dan lining lembut di dalamnya. Potongan A-line yang jatuh membuat penampilan terlihat lembut dan feminin.',
+                'price' => 289000,
+                'featured' => false,
+                'images' => [
+                    $placeholder('products', 'placeholder-hana-eyelet-lace-midi-dress.svg', 'placeholder-product.svg'),
+                ],
+                'variants' => [
+                    ['size' => 'S', 'color' => 'White', 'stock' => 14, 'additional_price' => 0],
+                    ['size' => 'M', 'color' => 'White', 'stock' => 17, 'additional_price' => 0],
+                    ['size' => 'L', 'color' => 'Pink', 'stock' => 10, 'additional_price' => 0],
+                ],
+            ],
+            [
+                'category_slug' => 'maxi-long-dress',
+                'name' => 'Amara Satin Slip Maxi Dress',
+                'slug' => 'amara-satin-slip-maxi-dress',
+                'description' => 'Maxi dress satin dengan tali spageti tipis dan potongan bias cut yang mengikuti lekuk tubuh. Kilau halusnya membuatnya cocok untuk acara malam maupun dinner formal.',
+                'price' => 339000,
+                'featured' => false,
+                'images' => [
+                    $placeholder('products', 'placeholder-amara-satin-slip-maxi-dress.svg', 'placeholder-product.svg'),
+                ],
+                'variants' => [
+                    ['size' => 'S', 'color' => 'Champagne', 'stock' => 13, 'additional_price' => 0],
+                    ['size' => 'M', 'color' => 'Champagne', 'stock' => 16, 'additional_price' => 0],
+                    ['size' => 'L', 'color' => 'Emerald', 'stock' => 8, 'additional_price' => 0],
+                ],
+            ],
+            [
+                'category_slug' => 'maxi-long-dress',
+                'name' => 'Livia Floral Print Maxi Dress',
+                'slug' => 'livia-floral-print-maxi-dress',
+                'description' => 'Gaun maxi dengan motif floral pastel dan potongan longgar yang nyaman. Bahan rayon viscose dingin di kulit, ideal untuk cuaca tropis dan foto outdoor.',
+                'price' => 299000,
+                'featured' => false,
+                'images' => [
+                    $placeholder('products', 'placeholder-livia-floral-print-maxi-dress.svg', 'placeholder-product.svg'),
+                ],
+                'variants' => [
+                    ['size' => 'S', 'color' => 'Rose', 'stock' => 15, 'additional_price' => 0],
+                    ['size' => 'M', 'color' => 'Rose', 'stock' => 19, 'additional_price' => 0],
+                    ['size' => 'L', 'color' => 'Blue', 'stock' => 12, 'additional_price' => 0],
+                ],
+            ],
+            [
+                'category_slug' => 'party-formal-dress',
+                'name' => 'Isabella Sequin Party Dress',
+                'slug' => 'isabella-sequin-party-dress',
+                'description' => 'Dress pesta penuh payet berkilau dengan lining lembut agar tidak perih di kulit. Potongan fitted dengan ritsleting belakang tersembunyi untuk tampilan panggung yang memukau.',
+                'price' => 459000,
+                'featured' => false,
+                'images' => [
+                    $placeholder('products', 'placeholder-isabella-sequin-party-dress.svg', 'placeholder-product.svg'),
+                ],
+                'variants' => [
+                    ['size' => 'S', 'color' => 'Gold', 'stock' => 7, 'additional_price' => 0],
+                    ['size' => 'M', 'color' => 'Gold', 'stock' => 9, 'additional_price' => 0],
+                    ['size' => 'M', 'color' => 'Black', 'stock' => 10, 'additional_price' => 0],
+                ],
+            ],
+            [
+                'category_slug' => 'party-formal-dress',
+                'name' => 'Clara Off-Shoulder Satin Gown',
+                'slug' => 'clara-off-shoulder-satin-gown',
+                'description' => 'Gaun satin off-shoulder dengan draperi lembut dan celah tersembunyi di bagian belakang. Siluetnya elegan untuk resepsi, gala, maupun acara formal lainnya.',
+                'price' => 499000,
+                'featured' => false,
+                'images' => [
+                    $placeholder('products', 'placeholder-clara-off-shoulder-satin-gown.svg', 'placeholder-product.svg'),
+                ],
+                'variants' => [
+                    ['size' => 'S', 'color' => 'Burgundy', 'stock' => 8, 'additional_price' => 0],
+                    ['size' => 'M', 'color' => 'Burgundy', 'stock' => 11, 'additional_price' => 0],
+                    ['size' => 'L', 'color' => 'Navy', 'stock' => 6, 'additional_price' => 0],
+                ],
+            ],
+            [
+                'category_slug' => 'party-formal-dress',
+                'name' => 'Dahlia A-Line Cocktail Dress',
+                'slug' => 'dahlia-a-line-cocktail-dress',
+                'description' => 'Cocktail dress A-line sepaha dengan aksen lipit diagonal dan bahan crepe premium. Nyaman dipakai berdiri lama, pas untuk acara kantor hingga pesta malam.',
+                'price' => 389000,
+                'featured' => false,
+                'images' => [
+                    $placeholder('products', 'placeholder-dahlia-a-line-cocktail-dress.svg', 'placeholder-product.svg'),
+                ],
+                'variants' => [
+                    ['size' => 'S', 'color' => 'Blush', 'stock' => 12, 'additional_price' => 0],
+                    ['size' => 'M', 'color' => 'Blush', 'stock' => 15, 'additional_price' => 0],
+                    ['size' => 'L', 'color' => 'Black', 'stock' => 9, 'additional_price' => 0],
+                ],
+            ],
         ];
 
         $createdProducts = [];

@@ -35,18 +35,25 @@
         'catalogUrl' => $catalogUrl,
     ])
 
-    {{-- 5. Feature tabs --}}
+    {{-- 5. Customer favorites --}}
+    @include('frontend.home.customer-favorites', [
+        'customerFavorites' => $customerFavorites,
+        'wishlistProductIds' => $wishlistProductIds,
+        'catalogUrl' => $catalogUrl,
+    ])
+
+    {{-- 6. Feature tabs --}}
     @include('frontend.home.features-tabs')
 
-    {{-- 6. Promo + coupon --}}
+    {{-- 7. Promo + coupon --}}
     @include('frontend.home.promo-banner', [
         'catalogUrl' => $catalogUrl,
     ])
 
-    {{-- 7. FAQ --}}
+    {{-- 8. FAQ --}}
     @include('frontend.home.faq')
 
-    {{-- 8. Reviews --}}
+    {{-- 9. Reviews --}}
     @if ($testimonials->isNotEmpty())
         @include('frontend.home.testimonials', [
             'testimonials' => $testimonials,
