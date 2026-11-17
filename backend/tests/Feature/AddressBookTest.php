@@ -11,6 +11,8 @@ use App\Models\ProductVariant;
 use App\Models\User;
 use App\Services\MidtransService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class AddressBookTest extends TestCase
@@ -113,7 +115,11 @@ class AddressBookTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $first = $this->actingAs($user)->postJson(route('profile.addresses.store'), $this->addressPayload());
+        $first = $this->actingAs($user)->postJson(route('profile.addresses.store'), $this->addressPayload([
+            'village_code' => '11.01.01.2001',
+            'district_code' => '11.01.01',
+            'regency_code' => '11.01',
+        ]));
         $first->assertCreated();
 
         $second = $this->actingAs($user)->postJson(route('profile.addresses.store'), $this->addressPayload([
@@ -222,5 +228,57 @@ class AddressBookTest extends TestCase
         $this->assertSame('Jl. Melati No. 1', $address->street);
         $this->assertSame('Kota Bandung', $address->regency_name);
         $this->assertTrue($address->is_default);
+    }
+
+    public function test_user_can_upload_and_delete_landmark_photo_on_address(): void
+    {
+        Storage::fake('public');
+        $user = User::factory()->create();
+
+        $photo = UploadedFile::fake()->image('patokan.jpg');
+        $res = $this->actingAs($user)->post(route('profile.addresses.store'), [
+            ...$this->addressPayload(),
+            'landmark_photo' => $photo,
+        ]);
+        $res->assertCreated();
+
+        $address = $user->addresses()->firstOrFail();
+        $this->assertNotNull($address->landmark_photo);
+        Storage::disk('public')->assertExists($address->landmark_photo);
+
+        $updateRes = $this->actingAs($user)->put(route('profile.addresses.update', $address), [
+            ...$this->addressPayload(),
+            'remove_landmark_photo' => 1,
+        ]);
+        $updateRes->assertOk();
+
+        $address->refresh();
+        $this->assertNull($address->landmark_photo);
+    }
+
+    public function test_checkout_can_use_saved_landmark_photo(): void
+    {
+        Storage::fake('public');
+        $user = User::factory()->create();
+        $this->makeCart($user);
+        $savedAddress = $this->makeAddress($user, [
+            'is_default' => true,
+            'landmark_photo' => 'landmarks/test_patokan.jpg',
+        ]);
+
+        $this->mock(MidtransService::class, function ($mock) {
+            $mock->shouldReceive('generateSnapToken')->once()->andReturn('snap-landmark-test');
+        });
+
+        $response = $this->actingAs($user)->post(route('checkout.process'), [
+            'shipping_address' => 'Jl. Melati No. 1, Kota Bandung, Jawa Barat',
+            'recipient_name' => 'Siti Nurhaliza',
+            'recipient_phone' => '081298765432',
+            'saved_landmark_photo' => $savedAddress->landmark_photo,
+        ]);
+
+        $order = Order::firstOrFail();
+        $response->assertRedirect(route('checkout.payment', ['order' => $order->id]));
+        $this->assertSame('landmarks/test_patokan.jpg', $order->landmark_photo);
     }
 }

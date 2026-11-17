@@ -196,6 +196,12 @@
                                         @endif
                                     </span>
                                     <span class="mt-2 block text-[9px] leading-4 text-[var(--text-muted)]">{{ $savedAddress->full_address }}</span>
+                                    @if ($savedAddress->landmark_photo)
+                                        <span class="mt-2 inline-flex items-center gap-1 rounded-md bg-[var(--brand-soft)] px-1.5 py-0.5 text-[8px] font-bold text-[var(--brand-dark)]">
+                                            <svg class="h-3 w-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>
+                                            Foto patokan terlampir
+                                        </span>
+                                    @endif
                                 </button>
                             @endforeach
                         </div>
@@ -398,38 +404,44 @@
                     <input type="hidden" name="street" :value="address.street">
 
                     {{-- Upload Foto Patokan (Opsional) --}}
-                    <div class="sm:col-span-2" x-data="{ previewUrl: null, fileName: '' }">
+                    <div class="sm:col-span-2">
                         <label for="landmark_photo" class="mb-1.5 flex items-center justify-between text-[11px] font-bold text-[var(--text)]">
                             <span>Foto Patokan Lokasi <span class="font-normal text-[var(--text-subtle)]">(opsional)</span></span>
                             <span class="text-[9px] font-normal text-[var(--text-subtle)]">Maks. 2MB (JPG, PNG, WebP)</span>
                         </label>
+                        <input type="hidden" name="saved_landmark_photo" :value="savedLandmarkPhoto || ''">
                         <div class="flex flex-wrap items-center gap-3">
                             <label class="flex h-11 cursor-pointer items-center gap-2 rounded-xl border border-dashed border-[var(--border)] bg-[var(--bg)] px-4 text-xs font-medium text-[var(--text-muted)] transition hover:border-[var(--brand)] hover:text-[var(--brand)]">
                                 <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
                                 </svg>
-                                <span x-text="fileName ? 'Ganti Foto' : 'Pilih Foto Patokan'">Pilih Foto Patokan</span>
+                                <span x-text="landmarkFileName ? 'Ganti Foto' : (landmarkPreviewUrl ? 'Ganti Foto Patokan' : 'Pilih Foto Patokan')">Pilih Foto Patokan</span>
                                 <input type="file"
                                        id="landmark_photo"
                                        name="landmark_photo"
                                        accept="image/jpeg,image/png,image/webp,image/jpg"
                                        class="hidden"
-                                       @change="const file = $event.target.files[0]; if (file) { fileName = file.name; previewUrl = URL.createObjectURL(file); } else { fileName = ''; previewUrl = null; }">
+                                       @change="onLandmarkChange($event)">
                             </label>
-                            <template x-if="previewUrl">
+                            <template x-if="landmarkPreviewUrl">
                                 <div class="flex items-center gap-2 rounded-xl border border-[var(--border-light)] bg-[var(--surface-2)]/60 px-3 py-1.5">
-                                    <img :src="previewUrl" alt="Preview Patokan" class="h-8 w-8 rounded-lg object-cover border border-[var(--border)]">
-                                    <span class="max-w-[150px] truncate text-[11px] font-medium text-[var(--text)]" x-text="fileName"></span>
+                                    <img :src="landmarkPreviewUrl" alt="Preview Patokan" class="h-8 w-8 rounded-lg object-cover border border-[var(--border)]">
+                                    <span class="max-w-[170px] truncate text-[11px] font-medium text-[var(--text)]" x-text="landmarkFileName || 'Foto patokan terlampir'"></span>
                                     <button type="button"
-                                            @click="previewUrl = null; fileName = ''; document.getElementById('landmark_photo').value = ''"
+                                            @click="removeLandmark()"
                                             class="ml-1 text-[10px] font-bold text-[var(--error)] transition hover:underline">
                                         Hapus
                                     </button>
                                 </div>
                             </template>
                         </div>
-                        <p class="mt-1 text-[9px] text-[var(--text-subtle)]">Unggah foto pagar, rumah, ruko, atau patokan visual terdekat untuk memudahkan kurir mengantar pesanan.</p>
+                        <p class="mt-1 text-[9px] text-[var(--brand)] font-medium" x-show="savedLandmarkPhoto">
+                            Foto patokan otomatis terisi dari alamat tersimpan. Anda dapat mengganti atau menghapusnya jika perlu.
+                        </p>
+                        <p class="mt-1 text-[9px] text-[var(--text-subtle)]" x-show="! savedLandmarkPhoto">
+                            Unggah foto pagar, rumah, ruko, atau patokan visual terdekat untuk memudahkan kurir mengantar pesanan.
+                        </p>
                     </div>
 
                     <label class="flex cursor-pointer items-start gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)] p-3.5 sm:col-span-2">
@@ -607,6 +619,9 @@
                 },
                 savedAddresses: @js($savedAddresses),
                 selectedAddressId: null,
+                landmarkPreviewUrl: null,
+                landmarkFileName: '',
+                savedLandmarkPhoto: null,
                 provinces: [],
                 regencies: [],
                 districts: [],
@@ -632,7 +647,7 @@
                         && address.regency_code
                         && address.district_code
                         && address.village_code
-                    );
+                    ) || this.savedAddresses.find(address => address.is_default);
 
                     if (preferred) {
                         this.applySavedAddress(preferred.id);
@@ -759,6 +774,23 @@
                     this.updateShippingAddress();
                 },
 
+                onLandmarkChange(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        this.landmarkFileName = file.name;
+                        this.landmarkPreviewUrl = URL.createObjectURL(file);
+                        this.savedLandmarkPhoto = null;
+                    }
+                },
+
+                removeLandmark() {
+                    this.landmarkPreviewUrl = null;
+                    this.landmarkFileName = '';
+                    this.savedLandmarkPhoto = null;
+                    const input = document.getElementById('landmark_photo');
+                    if (input) input.value = '';
+                },
+
                 async applySavedAddress(id) {
                     const saved = this.savedAddresses.find(item => item.id === id);
                     if (! saved) return;
@@ -779,6 +811,18 @@
                     this.address.rt = saved.rt || '';
                     this.address.rw = saved.rw || '';
                     this.address.street = saved.street || '';
+
+                    if (saved.landmark_photo && saved.landmark_photo_url) {
+                        this.savedLandmarkPhoto = saved.landmark_photo;
+                        this.landmarkPreviewUrl = saved.landmark_photo_url;
+                        this.landmarkFileName = 'Foto patokan terlampir';
+                    } else {
+                        this.savedLandmarkPhoto = null;
+                        this.landmarkPreviewUrl = null;
+                        this.landmarkFileName = '';
+                    }
+                    const fileInput = document.getElementById('landmark_photo');
+                    if (fileInput) fileInput.value = '';
 
                     await this.fetchProvinces();
                     await this.loadRegencies();

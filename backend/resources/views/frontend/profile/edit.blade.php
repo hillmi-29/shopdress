@@ -134,7 +134,7 @@
     </div>
 
     <section class="reveal mt-6 overflow-hidden rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)]"
-             x-data='addressBook({ addresses: @js($addresses), defaults: { recipient_name: @js($user->name), recipient_phone: @js($user->phone ?? "") } })'>
+             x-data="addressBook()">
         <div class="flex flex-col gap-4 border-b border-[var(--border-light)] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <div>
                 <p class="text-[9px] font-black uppercase tracking-[0.14em] text-[var(--text-subtle)]">Alamat tersimpan</p>
@@ -185,6 +185,12 @@
                             <span x-show="address.is_default" class="shrink-0 rounded-full bg-[var(--brand)] px-2 py-0.5 text-[8px] font-bold uppercase tracking-[0.08em] text-white">Utama</span>
                         </div>
                         <p class="mt-3 flex-1 text-[10px] leading-5 text-[var(--text-muted)]" x-text="address.full_address"></p>
+                        <template x-if="address.landmark_photo_url">
+                            <div class="mt-2.5 flex items-center gap-2 rounded-xl border border-[var(--border-light)] bg-[var(--surface-2)]/40 p-1.5">
+                                <img :src="address.landmark_photo_url" alt="Patokan" class="h-8 w-8 rounded-lg object-cover border border-[var(--border)]">
+                                <span class="text-[9px] font-medium text-[var(--text-subtle)]">Foto patokan terlampir</span>
+                            </div>
+                        </template>
                         <div class="mt-4 flex flex-wrap gap-1.5">
                             <button type="button" @click="openEdit(address)" class="inline-flex h-8 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 text-[9px] font-bold text-[var(--text)] transition hover:border-[var(--brand)] hover:text-[var(--brand)]">
                                 Ubah
@@ -323,6 +329,40 @@
                         <p class="mt-1.5 text-[11px] font-medium text-[var(--error)]" x-show="errors.street" x-text="errors.street"></p>
                     </div>
 
+                    <div class="sm:col-span-2">
+                        <label for="address_landmark_photo" class="mb-1.5 flex items-center justify-between text-[11px] font-bold text-[var(--text)]">
+                            <span>Foto Patokan Lokasi <span class="font-normal text-[var(--text-subtle)]">(opsional)</span></span>
+                            <span class="text-[9px] font-normal text-[var(--text-subtle)]">Maks. 2MB (JPG, PNG, WebP)</span>
+                        </label>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <label class="flex h-11 cursor-pointer items-center gap-2 rounded-xl border border-dashed border-[var(--border)] bg-[var(--surface)] px-4 text-xs font-medium text-[var(--text-muted)] transition hover:border-[var(--brand)] hover:text-[var(--brand)]">
+                                <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
+                                </svg>
+                                <span x-text="landmarkFileName ? 'Ganti Foto' : (landmarkPreviewUrl ? 'Ganti Foto Patokan' : 'Pilih Foto Patokan')">Pilih Foto Patokan</span>
+                                <input type="file"
+                                       id="address_landmark_photo"
+                                       accept="image/jpeg,image/png,image/webp,image/jpg"
+                                       class="hidden"
+                                       @change="onLandmarkPhotoChange($event)">
+                            </label>
+                            <template x-if="landmarkPreviewUrl">
+                                <div class="flex items-center gap-2 rounded-xl border border-[var(--border-light)] bg-[var(--surface-2)]/60 px-3 py-1.5">
+                                    <img :src="landmarkPreviewUrl" alt="Preview Patokan" class="h-8 w-8 rounded-lg object-cover border border-[var(--border)]">
+                                    <span class="max-w-[150px] truncate text-[11px] font-medium text-[var(--text)]" x-text="landmarkFileName || 'Foto patokan'"></span>
+                                    <button type="button"
+                                            @click="removeLandmarkPhoto()"
+                                            class="ml-1 text-[10px] font-bold text-[var(--error)] transition hover:underline">
+                                        Hapus
+                                    </button>
+                                </div>
+                            </template>
+                        </div>
+                        <p class="mt-1.5 text-[11px] font-medium text-[var(--error)]" x-show="errors.landmark_photo" x-text="errors.landmark_photo"></p>
+                        <p class="mt-1 text-[9px] text-[var(--text-subtle)]">Unggah foto pagar, rumah, ruko, atau patokan visual terdekat untuk memudahkan kurir mengantar pesanan.</p>
+                    </div>
+
                     <label class="flex cursor-pointer items-start gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3.5 sm:col-span-2">
                         <input type="checkbox" x-model="form.is_default" class="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-[var(--brand)] focus:ring-[var(--brand)]/20">
                         <span>
@@ -402,8 +442,12 @@
                 },
             }));
 
-            Alpine.data('addressBook', (config) => ({
-                addresses: config.addresses || [],
+            Alpine.data('addressBook', () => ({
+                addresses: @js($addresses),
+                defaults: {
+                    recipient_name: @js($user->name),
+                    recipient_phone: @js($user->phone ?? ''),
+                },
                 provinces: [],
                 regencies: [],
                 districts: [],
@@ -419,10 +463,14 @@
                 status: 'success',
                 message: '',
                 errors: {},
+                landmarkFile: null,
+                landmarkFileName: '',
+                landmarkPreviewUrl: null,
+                removeLandmarkPhotoFlag: false,
                 form: {
                     label: '',
-                    recipient_name: config.defaults?.recipient_name || '',
-                    recipient_phone: config.defaults?.recipient_phone || '',
+                    recipient_name: @js($user->name),
+                    recipient_phone: @js($user->phone ?? ''),
                     province_code: '',
                     province_name: '',
                     regency_code: '',
@@ -441,8 +489,8 @@
                 resetForm() {
                     this.form = {
                         label: '',
-                        recipient_name: config.defaults?.recipient_name || '',
-                        recipient_phone: config.defaults?.recipient_phone || '',
+                        recipient_name: this.defaults.recipient_name,
+                        recipient_phone: this.defaults.recipient_phone,
                         province_code: '',
                         province_name: '',
                         regency_code: '',
@@ -466,6 +514,12 @@
                     this.editingId = null;
                     this.errors = {};
                     this.message = '';
+                    this.landmarkFile = null;
+                    this.landmarkFileName = '';
+                    this.landmarkPreviewUrl = null;
+                    this.removeLandmarkPhotoFlag = false;
+                    const input = document.getElementById('address_landmark_photo');
+                    if (input) input.value = '';
                     this.resetForm();
                     this.showForm = true;
                     this.fetchProvinces();
@@ -475,12 +529,22 @@
                     this.showForm = false;
                     this.editingId = null;
                     this.errors = {};
+                    this.landmarkFile = null;
+                    this.landmarkFileName = '';
+                    this.landmarkPreviewUrl = null;
+                    this.removeLandmarkPhotoFlag = false;
                 },
 
                 async openEdit(address) {
                     this.editingId = address.id;
                     this.errors = {};
                     this.message = '';
+                    this.landmarkFile = null;
+                    this.landmarkFileName = '';
+                    this.landmarkPreviewUrl = address.landmark_photo_url || null;
+                    this.removeLandmarkPhotoFlag = false;
+                    const input = document.getElementById('address_landmark_photo');
+                    if (input) input.value = '';
                     this.showForm = true;
                     this.form = {
                         label: address.label || '',
@@ -632,25 +696,59 @@
                     this.form.postal_code = village?.postal_code || '';
                 },
 
+                onLandmarkPhotoChange(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        this.landmarkFile = file;
+                        this.landmarkFileName = file.name;
+                        this.landmarkPreviewUrl = URL.createObjectURL(file);
+                        this.removeLandmarkPhotoFlag = false;
+                    }
+                },
+
+                removeLandmarkPhoto() {
+                    this.landmarkFile = null;
+                    this.landmarkFileName = '';
+                    this.landmarkPreviewUrl = null;
+                    this.removeLandmarkPhotoFlag = true;
+                    const input = document.getElementById('address_landmark_photo');
+                    if (input) input.value = '';
+                },
+
                 async save() {
                     this.errors = {};
                     this.message = '';
                     this.saving = true;
 
                     try {
+                        const formData = new FormData();
+                        for (const [key, value] of Object.entries(this.form)) {
+                            if (value !== null && value !== undefined) {
+                                formData.append(key, typeof value === 'boolean' ? (value ? '1' : '0') : value);
+                            }
+                        }
+                        if (this.landmarkFile) {
+                            formData.append('landmark_photo', this.landmarkFile);
+                        }
+                        if (this.removeLandmarkPhotoFlag) {
+                            formData.append('remove_landmark_photo', '1');
+                        }
+                        if (this.editingId) {
+                            formData.append('_method', 'PUT');
+                        }
+
                         const endpoint = this.editingId
                             ? `{{ url('/profil/alamat') }}/${this.editingId}`
                             : '{{ url('/profil/alamat') }}';
 
                         const response = await fetch(endpoint, {
-                            method: this.editingId ? 'PUT' : 'POST',
+                            method: 'POST',
                             headers: {
-                                'Content-Type': 'application/json',
                                 'Accept': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
                             },
                             credentials: 'same-origin',
-                            body: JSON.stringify(this.form),
+                            body: formData,
                         });
 
                         const data = await response.json().catch(() => ({}));

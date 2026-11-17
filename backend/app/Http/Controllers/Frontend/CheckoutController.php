@@ -68,6 +68,11 @@ class CheckoutController extends Controller
             $data = $request->validated();
             if ($request->hasFile('landmark_photo')) {
                 $data['landmark_photo'] = $request->file('landmark_photo')->store('landmarks', 'public');
+            } elseif ($request->filled('saved_landmark_photo')) {
+                $savedPhoto = $request->string('saved_landmark_photo')->value();
+                if ($user->addresses()->where('landmark_photo', $savedPhoto)->exists()) {
+                    $data['landmark_photo'] = $savedPhoto;
+                }
             }
 
             $order = $this->checkoutService->checkout($user, $data);
@@ -165,6 +170,7 @@ class CheckoutController extends Controller
                 'rt' => $data['rt'] ?? null,
                 'rw' => $data['rw'] ?? null,
                 'street' => $street,
+                'landmark_photo' => $data['landmark_photo'] ?? null,
                 'is_default' => ! $user->addresses()->exists(),
             ]);
         } catch (\Throwable $e) {

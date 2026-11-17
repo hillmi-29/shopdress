@@ -27,6 +27,7 @@ class Address extends Model
         'rt',
         'rw',
         'street',
+        'landmark_photo',
         'is_default',
     ];
 
@@ -36,11 +37,20 @@ class Address extends Model
 
     protected $appends = [
         'full_address',
+        'landmark_photo_url',
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the public URL for landmark photo if present.
+     */
+    public function getLandmarkPhotoUrlAttribute(): ?string
+    {
+        return $this->landmark_photo ? asset('storage/'.$this->landmark_photo) : null;
     }
 
     /**

@@ -8,6 +8,7 @@ use App\Models\Address;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class AddressController extends Controller
 {
@@ -19,6 +20,10 @@ class AddressController extends Controller
         $user = $request->user();
         $data = $request->validated();
         $makeDefault = $request->boolean('is_default') || ! $user->addresses()->exists();
+
+        if ($request->hasFile('landmark_photo')) {
+            $data['landmark_photo'] = $request->file('landmark_photo')->store('landmarks', 'public');
+        }
 
         $address = DB::transaction(function () use ($user, $data, $makeDefault) {
             if ($makeDefault) {
@@ -47,6 +52,18 @@ class AddressController extends Controller
 
         $data = $request->validated();
         $makeDefault = $request->boolean('is_default');
+
+        if ($request->hasFile('landmark_photo')) {
+            if ($address->landmark_photo) {
+                Storage::disk('public')->delete($address->landmark_photo);
+            }
+            $data['landmark_photo'] = $request->file('landmark_photo')->store('landmarks', 'public');
+        } elseif ($request->boolean('remove_landmark_photo')) {
+            if ($address->landmark_photo) {
+                Storage::disk('public')->delete($address->landmark_photo);
+            }
+            $data['landmark_photo'] = null;
+        }
 
         DB::transaction(function () use ($request, $address, $data, $makeDefault) {
             if ($makeDefault) {

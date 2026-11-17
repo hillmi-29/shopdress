@@ -18,13 +18,13 @@ return new class extends Migration
             $table->string('label')->nullable();
             $table->string('recipient_name');
             $table->string('recipient_phone', 20)->nullable();
-            $table->string('province_code', 10)->nullable();
+            $table->string('province_code', 20)->nullable();
             $table->string('province_name')->nullable();
-            $table->string('regency_code', 10)->nullable();
+            $table->string('regency_code', 20)->nullable();
             $table->string('regency_name')->nullable();
-            $table->string('district_code', 10)->nullable();
+            $table->string('district_code', 20)->nullable();
             $table->string('district_name')->nullable();
-            $table->string('village_code', 10)->nullable();
+            $table->string('village_code', 20)->nullable();
             $table->string('village_name')->nullable();
             $table->string('postal_code', 10)->nullable();
             $table->string('rt', 6)->nullable();
