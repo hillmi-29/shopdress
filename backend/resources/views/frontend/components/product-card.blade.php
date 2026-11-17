@@ -54,7 +54,7 @@
          class="product-card group relative flex h-full flex-col overflow-hidden border border-[var(--border)] bg-[var(--surface)] shadow-[0_1px_0_rgba(36,29,46,0.02)] {{ $compact ? 'rounded-[1rem] p-1.5 sm:p-2' : 'rounded-[1.4rem] p-2.5 sm:p-3' }}">
 
     {{-- Media --}}
-    <div class="product-media relative w-full overflow-hidden bg-[var(--surface-2)] {{ $compact ? 'aspect-[4/5] rounded-[0.8rem]' : 'aspect-[3/4] rounded-[1.05rem]' }}">
+    <div class="product-media relative w-full overflow-hidden bg-[var(--surface-2)] {{ $compact ? 'aspect-square rounded-[0.8rem]' : 'aspect-[3/4] rounded-[1.05rem]' }}">
         <a href="{{ $productUrl }}"
            class="block h-full w-full focus:outline-none"
            aria-label="Lihat {{ $product->name }}">
