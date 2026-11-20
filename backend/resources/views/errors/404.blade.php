@@ -1,6 +1,6 @@
 @extends('frontend.layouts.app')
 
-@section('title', '404 — Halaman Tidak Ditemukan | ShopDress')
+@section('title', '404 — Halaman Tidak Ditemukan | '.\App\Models\SiteSetting::storeName())
 
 @section('content')
     <div class="flex flex-1 items-center justify-center px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
@@ -126,13 +126,13 @@
 
                     {{-- PAGE NOT FOUND --}}
                     <h2 class="mt-2 text-lg font-bold tracking-widest text-[var(--text)] uppercase sm:text-xl">
-                        PAGE NOT FOUND
+                        HALAMAN TIDAK DITEMUKAN
                     </h2>
 
                     {{-- Explanation --}}
                     <div class="mt-3 space-y-0.5 text-xs text-[var(--text-muted)] leading-relaxed sm:text-sm max-w-md">
-                        <p>We are sorry. But the page you are looking for is not available.</p>
-                        <p>Here are some helpful links instead:</p>
+                        <p>Maaf, halaman yang Anda cari tidak tersedia.</p>
+                        <p>Coba kunjungi tautan berikut:</p>
                     </div>
 
                     {{-- 3 Action Buttons --}}
@@ -140,7 +140,7 @@
                         {{-- 1. Home Page --}}
                         <a href="{{ route('home') }}"
                            class="inline-flex items-center justify-center rounded-lg bg-[var(--brand)] px-5 py-2.5 text-xs font-bold tracking-wider text-white uppercase shadow-xs transition-all duration-200 hover:bg-[var(--brand-dark)] hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:ring-offset-2">
-                            HOME PAGE
+                            BERANDA
                         </a>
 
                         {{-- 2. Products / Style Catalog --}}

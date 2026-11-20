@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Frontend;
 use App\Exceptions\CheckoutException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CheckoutRequest;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\User;
+use App\Services\BuyNowService;
 use App\Services\CartService;
 use App\Services\CheckoutService;
 use App\Services\MidtransService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
@@ -19,15 +22,27 @@ class CheckoutController extends Controller
     public function __construct(
         protected CartService $cartService,
         protected CheckoutService $checkoutService,
-        protected MidtransService $midtransService
+        protected MidtransService $midtransService,
+        protected BuyNowService $buyNowService,
     ) {}
 
     /**
      * Display checkout page.
+     *
+     * When a Buy Now draft exists, checkout shows only that product so the
+     * customer's cart is never carried into the order.
      */
-    public function index(): View|RedirectResponse
+    public function index(Request $request): View|RedirectResponse
     {
-        $cart = $this->cartService->getCart(auth()->user());
+        // Checkout yang dibuka dari keranjang/mini-cart selalu memakai isi
+        // keranjang, bukan draft Beli Sekarang yang mungkin masih tersisa.
+        if ($request->query('mode') === 'cart') {
+            $this->buyNowService->forget();
+        }
+
+        $buyNowCart = $this->buyNowService->cart();
+        $checkoutMode = $buyNowCart ? 'buy_now' : 'cart';
+        $cart = $buyNowCart ?? $this->cartService->getCart(auth()->user());
 
         if ($cart->items->isEmpty()) {
             return redirect()->route('cart.index')
@@ -35,8 +50,9 @@ class CheckoutController extends Controller
         }
 
         $totalAmount = $cart->total_amount;
-        $shippingCost = 20000;
+        $shippingCost = $this->checkoutService->shippingCost();
         $grandTotal = $totalAmount + $shippingCost;
+        $featuredCoupon = Coupon::firstActive();
 
         $savedAddresses = auth()->user()->addresses()
             ->orderByDesc('is_default')
@@ -45,10 +61,12 @@ class CheckoutController extends Controller
 
         return view('frontend.checkout.index', compact(
             'cart',
+            'checkoutMode',
             'totalAmount',
             'shippingCost',
             'grandTotal',
             'savedAddresses',
+            'featuredCoupon',
         ));
     }
 
@@ -58,7 +76,20 @@ class CheckoutController extends Controller
     public function process(CheckoutRequest $request): RedirectResponse
     {
         $user = $request->user();
-        $cart = $this->cartService->getCart($user);
+        $checkoutMode = $request->input('checkout_mode', 'cart');
+
+        if ($checkoutMode === 'buy_now') {
+            $cart = $this->buyNowService->cart();
+
+            if (! $cart) {
+                return back()->with('error', 'Sesi Beli Sekarang sudah berakhir. Silakan pilih produk kembali.');
+            }
+        } else {
+            // Checkout lewat keranjang membatalkan draft Beli Sekarang yang
+            // mungkin masih tersisa agar dua alur tidak tercampur.
+            $this->buyNowService->forget();
+            $cart = $this->cartService->getCart($user);
+        }
 
         if ($cart->items->isEmpty()) {
             return back()->with('error', 'Keranjang belanja Anda kosong.');
@@ -66,16 +97,48 @@ class CheckoutController extends Controller
 
         try {
             $data = $request->validated();
+            $landmarkPhotos = [];
+
             if ($request->hasFile('landmark_photo')) {
-                $data['landmark_photo'] = $request->file('landmark_photo')->store('landmarks', 'public');
+                $files = is_array($request->file('landmark_photo'))
+                    ? $request->file('landmark_photo')
+                    : [$request->file('landmark_photo')];
+
+                foreach (array_slice($files, 0, 2) as $file) {
+                    $landmarkPhotos[] = $file->store('landmarks', 'public');
+                }
             } elseif ($request->filled('saved_landmark_photo')) {
-                $savedPhoto = $request->string('saved_landmark_photo')->value();
-                if ($user->addresses()->where('landmark_photo', $savedPhoto)->exists()) {
-                    $data['landmark_photo'] = $savedPhoto;
+                $raw = $request->input('saved_landmark_photo');
+                if (is_string($raw)) {
+                    $decoded = json_decode($raw, true);
+                    $candidates = is_array($decoded) ? $decoded : [$raw];
+                } elseif (is_array($raw)) {
+                    $candidates = $raw;
+                } else {
+                    $candidates = [];
+                }
+
+                $userLandmarkPhotos = $user->addresses()->get()->flatMap->landmark_photos->all();
+                foreach (array_slice($candidates, 0, 2) as $candidate) {
+                    if (in_array($candidate, $userLandmarkPhotos, true)) {
+                        $landmarkPhotos[] = $candidate;
+                    }
                 }
             }
 
-            $order = $this->checkoutService->checkout($user, $data);
+            if (count($landmarkPhotos) === 0) {
+                $data['landmark_photo'] = null;
+            } elseif (count($landmarkPhotos) === 1) {
+                $data['landmark_photo'] = $landmarkPhotos[0];
+            } else {
+                $data['landmark_photo'] = json_encode(array_slice($landmarkPhotos, 0, 2));
+            }
+
+            $order = $this->checkoutService->checkout($user, $data, $cart);
+
+            if ($checkoutMode === 'buy_now') {
+                $this->buyNowService->forget();
+            }
 
             if ($request->boolean('save_address')) {
                 $this->saveCheckoutAddress($user, $data);

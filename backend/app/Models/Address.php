@@ -38,6 +38,8 @@ class Address extends Model
     protected $appends = [
         'full_address',
         'landmark_photo_url',
+        'landmark_photo_urls',
+        'landmark_photos',
     ];
 
     public function user(): BelongsTo
@@ -46,11 +48,40 @@ class Address extends Model
     }
 
     /**
-     * Get the public URL for landmark photo if present.
+     * Get list of storage paths for landmark photos (supports single path or JSON array).
+     */
+    public function getLandmarkPhotosAttribute(): array
+    {
+        if (empty($this->landmark_photo)) {
+            return [];
+        }
+
+        if (is_array($this->landmark_photo)) {
+            return $this->landmark_photo;
+        }
+
+        $decoded = json_decode((string) $this->landmark_photo, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            return array_values(array_filter($decoded, 'is_string'));
+        }
+
+        return [$this->landmark_photo];
+    }
+
+    /**
+     * Get list of public URLs for all landmark photos.
+     */
+    public function getLandmarkPhotoUrlsAttribute(): array
+    {
+        return array_values(array_map(fn ($path) => asset('storage/'.$path), $this->landmark_photos));
+    }
+
+    /**
+     * Get the public URL for the first landmark photo if present.
      */
     public function getLandmarkPhotoUrlAttribute(): ?string
     {
-        return $this->landmark_photo ? asset('storage/'.$this->landmark_photo) : null;
+        return $this->landmark_photo_urls[0] ?? null;
     }
 
     /**

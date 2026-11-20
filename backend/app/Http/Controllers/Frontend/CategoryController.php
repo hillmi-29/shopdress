@@ -28,12 +28,21 @@ class CategoryController extends Controller
     {
         $category = Category::where('slug', $slug)->firstOrFail();
 
-        $products = Product::query()
+        $query = Product::query()
             ->where('is_active', true)
             ->where('category_id', $category->id)
-            ->with(['primaryImage', 'variants'])
-            ->orderByPopularity()
-            ->paginate(12);
+            ->with(['primaryImage', 'variants']);
+
+        match (request('sort', 'popular')) {
+            'latest'     => $query->latest(),
+            'price_asc'  => $query->orderBy('price', 'asc'),
+            'price_desc' => $query->orderBy('price', 'desc'),
+            'name_asc'   => $query->orderBy('name', 'asc'),
+            'name_desc'  => $query->orderBy('name', 'desc'),
+            default      => $query->orderByPopularity(),
+        };
+
+        $products = $query->paginate(12)->withQueryString();
 
         $categories = Category::withActiveProductCount()
             ->orderByPopularity()

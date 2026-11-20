@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Order;
+use App\Models\SiteSetting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -14,14 +15,12 @@ class PaymentSuccessMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public Order $order)
-    {
-    }
+    public function __construct(public Order $order) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "Pembayaran Dikonfirmasi untuk Pesanan #{$this->order->order_number} - ShopDress",
+            subject: "Pembayaran Dikonfirmasi untuk Pesanan #{$this->order->order_number} - ".SiteSetting::storeName(),
         );
     }
 
@@ -29,6 +28,9 @@ class PaymentSuccessMail extends Mailable implements ShouldQueue
     {
         return new Content(
             view: 'emails.payment-success',
+            with: [
+                'siteSettings' => SiteSetting::values(),
+            ],
         );
     }
 

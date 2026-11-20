@@ -1,7 +1,7 @@
 @extends('frontend.layouts.app')
 
-@section('title', 'Pembayaran Pesanan #'.$order->order_number.' — ShopDress')
-@section('meta_description', 'Selesaikan pembayaran pesanan ShopDress Anda melalui Midtrans yang aman.')
+@section('title', 'Pembayaran Pesanan #'.$order->order_number.' — '.\App\Models\SiteSetting::storeName())
+@section('meta_description', 'Selesaikan pembayaran pesanan '.\App\Models\SiteSetting::storeName().' Anda melalui Midtrans yang aman.')
 
 @section('content')
     @php

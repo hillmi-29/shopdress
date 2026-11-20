@@ -1,4 +1,8 @@
-{{-- Why ShopDress — tabs with a sliding highlight --}}
+@php
+    $storeName = \App\Models\SiteSetting::storeName();
+@endphp
+
+{{-- Why us — tabs with a sliding highlight --}}
 <section class="reveal mt-16 overflow-hidden rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] p-5 sm:mt-20 sm:p-9 lg:p-11"
          x-data="{
             activeTab: 0,
@@ -31,7 +35,7 @@
         <div class="max-w-xl">
             <p class="section-kicker">Keunggulan kami</p>
             <h2 class="mt-2 font-display text-3xl font-semibold tracking-[-0.03em] text-[var(--text)] sm:text-4xl">
-                Kenapa harus belanja di ShopDress?
+                Kenapa harus belanja di {{ $storeName }}?
             </h2>
             <p class="mt-2 text-xs leading-6 text-[var(--text-muted)] sm:text-sm">
                 Komitmen kami menghadirkan pengalaman belanja busana terbaik — dari bahan hingga layanan purnajual.
@@ -77,7 +81,19 @@
              x-transition:enter-start="opacity-0 translate-y-2"
              x-transition:enter-end="opacity-100 translate-y-0"
              class="grid gap-6 lg:min-h-[21rem] lg:grid-cols-[1.08fr_0.92fr] lg:items-stretch">
-            <div class="flex flex-col rounded-[1.5rem] bg-[var(--brand-soft)]/60 p-5 sm:p-7">
+            <div class="relative min-h-[15rem] overflow-hidden rounded-[1.5rem] bg-[var(--surface-2)] lg:col-start-2 lg:row-start-1">
+                <img src="{{ asset('images/editorial/hero-1.jpg') }}" alt="Detail bahan dress satin {{ $storeName }}" loading="lazy" class="absolute inset-0 h-full w-full object-cover object-[50%_10%]">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#241d2e]/45 via-transparent to-transparent"></div>
+                <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3">
+                    <div>
+                        <p class="text-[9px] font-bold uppercase tracking-[0.16em] text-white/65">Material story</p>
+                        <p class="mt-1 font-display text-lg font-semibold text-white">Satin yang mengalir</p>
+                    </div>
+                    <span class="rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold text-white backdrop-blur">01 / 04</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col rounded-[1.5rem] bg-[var(--brand-soft)]/60 p-5 sm:p-7 lg:col-start-1 lg:row-start-1">
                 <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--surface)] text-[var(--brand)] shadow-sm">
                     <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m18.5 15 .9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9.9-2.6Z"/></svg>
                 </span>
@@ -99,18 +115,6 @@
                     @endforeach
                 </ul>
             </div>
-
-            <div class="relative min-h-[15rem] overflow-hidden rounded-[1.5rem] bg-[var(--surface-2)]">
-                <img src="{{ asset('images/editorial/hero-1.jpg') }}" alt="Detail bahan dress satin ShopDress" loading="lazy" class="absolute inset-0 h-full w-full object-cover object-[50%_10%]">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#241d2e]/45 via-transparent to-transparent"></div>
-                <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3">
-                    <div>
-                        <p class="text-[9px] font-bold uppercase tracking-[0.16em] text-white/65">Material story</p>
-                        <p class="mt-1 font-display text-lg font-semibold text-white">Satin yang mengalir</p>
-                    </div>
-                    <span class="rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold text-white backdrop-blur">01 / 04</span>
-                </div>
-            </div>
         </div>
 
         {{-- Panel 2 --}}
@@ -119,7 +123,19 @@
              x-transition:enter-start="opacity-0 translate-y-2"
              x-transition:enter-end="opacity-100 translate-y-0"
              class="grid gap-6 lg:min-h-[21rem] lg:grid-cols-[1.08fr_0.92fr] lg:items-stretch">
-            <div class="flex flex-col rounded-[1.5rem] bg-[var(--surface-2)]/70 p-5 sm:p-7">
+            <div class="relative min-h-[15rem] overflow-hidden rounded-[1.5rem] bg-[var(--surface-2)] lg:col-start-2 lg:row-start-1">
+                <img src="{{ asset('images/editorial/about.jpg') }}" alt="Proses kurasi busana {{ $storeName }}" loading="lazy" class="absolute inset-0 h-full w-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#241d2e]/45 via-transparent to-transparent"></div>
+                <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3">
+                    <div>
+                        <p class="text-[9px] font-bold uppercase tracking-[0.16em] text-white/65">Atelier note</p>
+                        <p class="mt-1 font-display text-lg font-semibold text-white">Rapi di setiap detail</p>
+                    </div>
+                    <span class="rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold text-white backdrop-blur">02 / 04</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col rounded-[1.5rem] bg-[var(--surface-2)]/70 p-5 sm:p-7 lg:col-start-1 lg:row-start-1">
                 <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--surface)] text-[var(--brand)] shadow-sm">
                     <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path stroke-linecap="round" stroke-linejoin="round" d="m8 8 11 11M8 16 19 5"/></svg>
                 </span>
@@ -141,18 +157,6 @@
                     @endforeach
                 </ul>
             </div>
-
-            <div class="relative min-h-[15rem] overflow-hidden rounded-[1.5rem] bg-[var(--surface-2)]">
-                <img src="{{ asset('images/editorial/about.jpg') }}" alt="Proses kurasi busana ShopDress" loading="lazy" class="absolute inset-0 h-full w-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#241d2e]/45 via-transparent to-transparent"></div>
-                <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3">
-                    <div>
-                        <p class="text-[9px] font-bold uppercase tracking-[0.16em] text-white/65">Atelier note</p>
-                        <p class="mt-1 font-display text-lg font-semibold text-white">Rapi di setiap detail</p>
-                    </div>
-                    <span class="rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold text-white backdrop-blur">02 / 04</span>
-                </div>
-            </div>
         </div>
 
         {{-- Panel 3 --}}
@@ -161,7 +165,19 @@
              x-transition:enter-start="opacity-0 translate-y-2"
              x-transition:enter-end="opacity-100 translate-y-0"
              class="grid gap-6 lg:min-h-[21rem] lg:grid-cols-[1.08fr_0.92fr] lg:items-stretch">
-            <div class="flex flex-col rounded-[1.5rem] bg-[var(--accent-soft)]/70 p-5 sm:p-7">
+            <div class="relative min-h-[15rem] overflow-hidden rounded-[1.5rem] bg-[var(--surface-2)] lg:col-start-2 lg:row-start-1">
+                <img src="{{ asset('images/editorial/promo.jpg') }}" alt="Pengemasan pesanan {{ $storeName }}" loading="lazy" class="absolute inset-0 h-full w-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#241d2e]/45 via-transparent to-transparent"></div>
+                <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3">
+                    <div>
+                        <p class="text-[9px] font-bold uppercase tracking-[0.16em] text-white/65">Delivery note</p>
+                        <p class="mt-1 font-display text-lg font-semibold text-white">Sampai dengan aman</p>
+                    </div>
+                    <span class="rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold text-white backdrop-blur">03 / 04</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col rounded-[1.5rem] bg-[var(--accent-soft)]/70 p-5 sm:p-7 lg:col-start-1 lg:row-start-1">
                 <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--surface)] text-[#8a6420] shadow-sm">
                     <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6h11v11H3zM14 9h4l3 3v5h-7"/><circle cx="7" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></svg>
                 </span>
@@ -183,18 +199,6 @@
                     @endforeach
                 </ul>
             </div>
-
-            <div class="relative min-h-[15rem] overflow-hidden rounded-[1.5rem] bg-[var(--surface-2)]">
-                <img src="{{ asset('images/editorial/promo.jpg') }}" alt="Pengemasan pesanan ShopDress" loading="lazy" class="absolute inset-0 h-full w-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#241d2e]/45 via-transparent to-transparent"></div>
-                <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3">
-                    <div>
-                        <p class="text-[9px] font-bold uppercase tracking-[0.16em] text-white/65">Delivery note</p>
-                        <p class="mt-1 font-display text-lg font-semibold text-white">Sampai dengan aman</p>
-                    </div>
-                    <span class="rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold text-white backdrop-blur">03 / 04</span>
-                </div>
-            </div>
         </div>
 
         {{-- Panel 4 --}}
@@ -203,7 +207,19 @@
              x-transition:enter-start="opacity-0 translate-y-2"
              x-transition:enter-end="opacity-100 translate-y-0"
              class="grid gap-6 lg:min-h-[21rem] lg:grid-cols-[1.08fr_0.92fr] lg:items-stretch">
-            <div class="flex flex-col rounded-[1.5rem] bg-[var(--brand-soft)]/60 p-5 sm:p-7">
+            <div class="relative min-h-[15rem] overflow-hidden rounded-[1.5rem] bg-[var(--surface-2)] lg:col-start-2 lg:row-start-1">
+                <img src="{{ asset('images/editorial/hero-3.jpg') }}" alt="Koleksi dress floral {{ $storeName }}" loading="lazy" class="absolute inset-0 h-full w-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#241d2e]/45 via-transparent to-transparent"></div>
+                <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3">
+                    <div>
+                        <p class="text-[9px] font-bold uppercase tracking-[0.16em] text-white/65">Service note</p>
+                        <p class="mt-1 font-display text-lg font-semibold text-white">7 hari untuk memastikan</p>
+                    </div>
+                    <span class="rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold text-white backdrop-blur">04 / 04</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col rounded-[1.5rem] bg-[var(--brand-soft)]/60 p-5 sm:p-7 lg:col-start-1 lg:row-start-1">
                 <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--surface)] text-[var(--brand)] shadow-sm">
                     <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3 19 6v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 12 2 2 4-4"/></svg>
                 </span>
@@ -224,18 +240,6 @@
                         </li>
                     @endforeach
                 </ul>
-            </div>
-
-            <div class="relative min-h-[15rem] overflow-hidden rounded-[1.5rem] bg-[var(--surface-2)]">
-                <img src="{{ asset('images/editorial/hero-3.jpg') }}" alt="Koleksi dress floral ShopDress" loading="lazy" class="absolute inset-0 h-full w-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#241d2e]/45 via-transparent to-transparent"></div>
-                <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3">
-                    <div>
-                        <p class="text-[9px] font-bold uppercase tracking-[0.16em] text-white/65">Service note</p>
-                        <p class="mt-1 font-display text-lg font-semibold text-white">7 hari untuk memastikan</p>
-                    </div>
-                    <span class="rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold text-white backdrop-blur">04 / 04</span>
-                </div>
             </div>
         </div>
     </div>

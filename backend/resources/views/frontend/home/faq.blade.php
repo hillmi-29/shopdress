@@ -1,3 +1,15 @@
+@php
+    $siteSettings = $siteSettings ?? \App\Models\SiteSetting::values();
+
+    $items = collect($homeFaqs ?? [])
+        ->map(fn ($faq) => ['q' => $faq->question, 'a' => $faq->answer])
+        ->all();
+
+    if ($items === []) {
+        $items = \App\Models\Faq::defaultsFor(\App\Models\Faq::PAGE_HOME);
+    }
+@endphp
+
 {{-- FAQ accordion, animated with grid-template-rows --}}
 <section class="mt-16 sm:mt-20">
     <div class="grid gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:gap-14">
@@ -17,47 +29,24 @@
                     </span>
                     <div>
                         <p class="text-xs font-bold text-[var(--text)]">Masih ada pertanyaan?</p>
-                        <p class="mt-1 text-[11px] leading-5 text-[var(--text-muted)]">Tim kami siap membantu setiap hari, 09.00–21.00 WIB.</p>
+                        <p class="mt-1 text-[11px] leading-5 text-[var(--text-muted)]">Tim kami siap membantu {{ $siteSettings['operational_days'] }}, {{ $siteSettings['operational_hours'] }}.</p>
                     </div>
                 </div>
-                <a href="https://wa.me/6281234567890?text=Halo%20ShopDress,%20saya%20ingin%20bertanya"
-                   target="_blank" rel="noopener noreferrer"
-                   class="mt-4 inline-flex items-center gap-1.5 text-[11px] font-bold text-[var(--brand)] transition hover:text-[var(--brand-dark)]">
-                    Chat customer care
-                    <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 0 1 1.414 0l6 6a1 1 0 0 1 0 1.414l-6 6a1 1 0 0 1-1.414-1.414L14.586 11H3a1 1 0 1 1 0-2h11.586l-4.293-4.293a1 1 0 0 1 0-1.414Z" clip-rule="evenodd"/></svg>
-                </a>
+                @if (filled($siteSettings['whatsapp_help_url'] ?? null))
+                    <a href="{{ $siteSettings['whatsapp_help_url'] }}"
+                       target="_blank" rel="noopener noreferrer"
+                       class="mt-4 inline-flex items-center gap-1.5 text-[11px] font-bold text-[var(--brand)] transition hover:text-[var(--brand-dark)]">
+                        Chat customer care
+                        <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 0 1 1.414 0l6 6a1 1 0 0 1 0 1.414l-6 6a1 1 0 0 1-1.414-1.414L14.586 11H3a1 1 0 1 1 0-2h11.586l-4.293-4.293a1 1 0 0 1 0-1.414Z" clip-rule="evenodd"/></svg>
+                    </a>
+                @endif
             </div>
         </div>
-
-        @php
-            $faqs = [
-                [
-                    'q' => 'Bagaimana cara memilih ukuran yang tepat?',
-                    'a' => 'Setiap produk dilengkapi panduan ukuran (lingkar dada, panjang baju, panjang lengan) di halaman detail. Jika ragu di antara dua ukuran, pilih yang lebih longgar atau hubungi customer care kami untuk konsultasi gratis.',
-                ],
-                [
-                    'q' => 'Apakah bahannya menerawang?',
-                    'a' => 'Tidak. Kain satin silk, linen, dan rayon premium yang kami gunakan memiliki kerapatan serat tinggi. Warna cerah seperti putih dan cream juga dilapisi furing lembut agar tetap nyaman dan aman.',
-                ],
-                [
-                    'q' => 'Berapa lama estimasi pengiriman?',
-                    'a' => 'Pesanan sebelum pukul 15.00 WIB diproses di hari yang sama. Jabodetabek 1–2 hari kerja, Pulau Jawa 2–3 hari kerja, dan luar Pulau Jawa 3–5 hari kerja.',
-                ],
-                [
-                    'q' => 'Metode pembayaran apa saja yang tersedia?',
-                    'a' => 'Pembayaran diproses aman melalui Midtrans: virtual account BCA, Mandiri, BNI, BRI, QRIS (GoPay, OVO, ShopeePay, Dana), serta kartu kredit/debit Visa dan Mastercard.',
-                ],
-                [
-                    'q' => 'Bagaimana jika ukuran tidak pas atau produk cacat?',
-                    'a' => 'Kami memberikan garansi tukar ukuran atau pengembalian produk cacat maksimal 7 hari sejak paket diterima. Sertakan foto unboxing dan hubungi WhatsApp customer care untuk diproses tanpa biaya admin.',
-                ],
-            ];
-        @endphp
 
         <div class="reveal divide-y divide-[var(--border)] border-y border-[var(--border)]"
              x-data="{ activeFaq: 0 }"
              style="--reveal-delay: 80ms">
-            @foreach ($faqs as $index => $faq)
+            @foreach ($items as $index => $faq)
                 <div>
                     <h3>
                         <button type="button"

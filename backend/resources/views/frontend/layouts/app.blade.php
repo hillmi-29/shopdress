@@ -1,10 +1,19 @@
+@php
+    $siteSettings = $siteSettings ?? \App\Models\SiteSetting::values();
+    $storeName = $siteSettings['store_name'] ?? \App\Models\SiteSetting::storeName();
+    $brandColor = $siteSettings['brand_color'] ?? \App\Models\SiteSetting::brandColor();
+    $nameParts = preg_split('/(?<=[a-z])(?=[A-Z])/', $storeName, 2) ?: [$storeName];
+    $brandLead = $nameParts[0];
+    $brandTail = $nameParts[1] ?? '';
+    $monogram = \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr(preg_replace('/\s+/', '', $storeName), 0, 2));
+@endphp
 <!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="theme-color" content="#7c3aed">
+    <meta name="theme-color" content="{{ $brandColor }}">
 
     {{-- Show the branded loader before first paint: on direct entry and on internal navigation. --}}
     <script>
@@ -25,8 +34,8 @@
         })();
     </script>
 
-    <title>@yield('title', $title ?? 'ShopDress — Busana & Dress Wanita Modern')</title>
-    <meta name="description" content="@yield('meta_description', $metaDescription ?? 'ShopDress menghadirkan koleksi dress, gamis, abaya, dan busana wanita modern dengan bahan premium.')">
+    <title>@yield('title', $title ?? $storeName.' — Busana & Dress Wanita Modern')</title>
+    <meta name="description" content="@yield('meta_description', $metaDescription ?? $storeName.' menghadirkan koleksi dress, gamis, abaya, dan busana wanita modern dengan bahan premium.')">
 
     {{-- Plus Jakarta Sans (body) + Fraunces (display) --}}
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -34,6 +43,16 @@
     <link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|plus-jakarta-sans:400,500,600,700,800" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        :root {
+            --brand: {{ $brandColor }};
+            --brand-dark: color-mix(in srgb, {{ $brandColor }} 78%, #000);
+            --brand-deep: color-mix(in srgb, {{ $brandColor }} 42%, #000);
+            --brand-soft: color-mix(in srgb, {{ $brandColor }} 9%, #fff);
+            --brand-light: color-mix(in srgb, {{ $brandColor }} 18%, #fff);
+        }
+    </style>
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
 
@@ -50,9 +69,9 @@
         <div class="page-loader__inner" aria-hidden="true">
             <div class="page-loader__mark">
                 <span class="page-loader__ring"></span>
-                <span class="page-loader__monogram">SD</span>
+                <span class="page-loader__monogram">{{ $monogram }}</span>
             </div>
-            <p class="page-loader__wordmark">Shop<span>Dress</span></p>
+            <p class="page-loader__wordmark">{{ $brandLead }}<span>{{ $brandTail }}</span></p>
             <p class="page-loader__caption">Menyiapkan halaman</p>
             <span class="page-loader__line"><span></span></span>
         </div>
@@ -78,6 +97,12 @@
 
     {{-- Mini Cart Drawer --}}
     @include('frontend.layouts.partials.mini-cart')
+
+    {{-- Variant picker (dipakai card produk di beranda) --}}
+    @include('frontend.layouts.partials.variant-picker')
+
+    {{-- Dialog masuk untuk aksi yang membutuhkan akun --}}
+    @include('frontend.layouts.partials.auth-required-modal')
 
     {{-- Main Content --}}
     <main id="main-content" tabindex="-1" class="flex-1">

@@ -1,7 +1,7 @@
 ﻿@extends('frontend.layouts.app')
 
-@section('title', $category->name.' — ShopDress')
-@section('meta_description', Str::limit(strip_tags($category->description ?? "Koleksi {$category->name} terbaru dari ShopDress."), 160))
+@section('title', $category->name.' — '.\App\Models\SiteSetting::storeName())
+@section('meta_description', Str::limit(strip_tags($category->description ?? 'Koleksi '.$category->name.' terbaru dari '.\App\Models\SiteSetting::storeName().'.'), 160))
 
 @section('content')
     @php
@@ -9,7 +9,6 @@
         $categoryIndexUrl = \App\Support\FrontendUrls::categoryIndex();
         $productUrl = fn ($product) => \App\Support\FrontendUrls::product($product);
         $categoryUrl = fn ($category) => \App\Support\FrontendUrls::category($category);
-        $resultLabel = $products->total() === 1 ? '1 produk' : $products->total().' produk';
     @endphp
 
     <nav class="mb-5 flex flex-wrap items-center gap-2 text-[10px] font-semibold text-[var(--text-subtle)]" aria-label="Breadcrumb">
@@ -45,73 +44,35 @@
         </div>
     </header>
 
-    <div class="mt-5 grid items-start gap-5 lg:grid-cols-[0.27fr_0.73fr] lg:gap-7">
-        {{-- Category navigation --}}
-        <aside class="rounded-[1.4rem] border border-[var(--border)] bg-[var(--surface)] p-3.5 lg:sticky lg:top-24">
-            <div class="flex items-center justify-between gap-3 px-1.5 pb-2">
-                <p class="text-[9px] font-black uppercase tracking-[0.14em] text-[var(--text-subtle)]">Kategori</p>
-                <span class="rounded-full bg-[var(--surface-2)] px-2 py-0.5 text-[9px] font-bold text-[var(--text-muted)]">{{ $categories->count() }}</span>
-            </div>
+    <div class="mt-5">
+        @include('frontend.products.partials.filter-bar', [
+            'filterAction' => $categoryUrl($category),
+            'categoryMode' => 'page',
+            'activeCatSlug' => $category->slug,
+            'activeSort' => request('sort', 'popular'),
+            'categories' => $categories,
+            'totalCount' => $products->total(),
+            'visibleCount' => $products->count(),
+            'allProductsUrl' => $catalogUrl,
+        ])
 
-            <ul class="space-y-1" role="list">
-                <li>
-                    <a href="{{ $catalogUrl }}"
-                       class="flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-[11px] font-semibold text-[var(--text-muted)] transition hover:bg-[var(--surface-2)] hover:text-[var(--text)]">
-                        Semua produk
-                        <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.168 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
-                </li>
+        @include('frontend.products.partials.size-guide')
 
-                @foreach ($categories as $cat)
-                    <li>
-                        <a href="{{ $categoryUrl($cat) }}"
-                           @if ($cat->id === $category->id) aria-current="page" @endif
-                           class="flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-[11px] transition {{ $cat->id === $category->id ? 'bg-[var(--brand)] font-bold text-white shadow-[0_8px_18px_-14px_rgba(124,58,237,0.9)]' : 'font-semibold text-[var(--text-muted)] hover:bg-[var(--surface-2)] hover:text-[var(--text)]' }}">
-                            <span class="truncate">{{ $cat->name }}</span>
-                            <span class="shrink-0 text-[9px] {{ $cat->id === $category->id ? 'text-white/60' : 'text-[var(--text-subtle)]' }}">{{ $cat->products_count }}</span>
-                        </a>
-                    </li>
-                @endforeach
-            </ul>
-
-            <div class="mt-3 border-t border-[var(--border-light)] px-1.5 pt-3">
-                <p class="text-[9px] leading-4 text-[var(--text-subtle)]">Butuh bantuan memilih ukuran?</p>
-                <a href="{{ \App\Support\FrontendUrls::help() }}" class="mt-1 inline-flex items-center gap-1 text-[10px] font-bold text-[var(--brand)] transition hover:text-[var(--brand-dark)]">
-                    Baca panduan
-                    <svg class="h-2.5 w-2.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 0 1 1.414 0l6 6a1 1 0 0 1 0 1.414l-6 6a1 1 0 0 1-1.414-1.414L14.586 11H3a1 1 0 1 1 0-2h11.586l-4.293-4.293a1 1 0 0 1 0-1.414Z" clip-rule="evenodd" />
-                    </svg>
-                </a>
-            </div>
-        </aside>
-
-        {{-- Products --}}
-        <main>
+        <section class="mt-7" aria-label="Produk kategori {{ $category->name }}">
             @if ($products->isNotEmpty())
-                <div class="flex flex-col gap-2 pb-3 sm:flex-row sm:items-center sm:justify-between">
-                    <p class="text-[11px] text-[var(--text-muted)]">
-                        Menampilkan <span class="font-bold text-[var(--text)]">{{ $products->firstItem() }}–{{ $products->lastItem() }}</span>
-                        dari <span class="font-bold text-[var(--text)]">{{ $resultLabel }}</span>
-                    </p>
-                    <span class="inline-flex w-fit items-center gap-1.5 rounded-full bg-[var(--surface-2)] px-3 py-1.5 text-[9px] font-bold text-[var(--text-muted)]">
-                        <span class="h-1 w-1 rounded-full bg-[var(--brand)]"></span>
-                        Koleksi {{ $category->name }}
-                    </span>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3">
+                <div class="grid grid-cols-2 gap-3.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
                     @foreach ($products as $product)
-                        <x-product-card
-                            :product="$product"
-                            :wishlisted="in_array($product->id, $wishlistProductIds, true)"
-                            :productUrl="$productUrl($product)"
-                        />
+                        <div class="reveal" style="--reveal-delay: {{ ($loop->index % 4) * 55 }}ms">
+                            <x-product-card
+                                :product="$product"
+                                :wishlisted="in_array($product->id, $wishlistProductIds, true)"
+                                :productUrl="$productUrl($product)"
+                            />
+                        </div>
                     @endforeach
                 </div>
 
-                <x-pagination :paginator="$products" class="mt-7" />
+                <x-pagination :paginator="$products" class="mt-10" />
             @else
                 <div class="overflow-hidden rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] px-6 py-16 text-center">
                     <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[var(--brand-soft)] text-[var(--brand)]">
@@ -127,6 +88,6 @@
                     </div>
                 </div>
             @endif
-        </main>
+        </section>
     </div>
 @endsection

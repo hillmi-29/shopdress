@@ -1,12 +1,24 @@
 @extends('frontend.layouts.app')
 
-@section('title', 'Tentang Kami — ShopDress')
-@section('meta_description', 'Kenali ShopDress: brand busana wanita modern Indonesia dengan bahan premium, potongan nyaman, dan detail yang dikerjakan teliti.')
+@php
+    $page = $page ?? null;
+    $featuredCoupon = $featuredCoupon ?? null;
+    $storeName = \App\Models\SiteSetting::storeName();
+@endphp
+
+@section('title', 'Tentang Kami — '.$storeName)
+@section('meta_description', $page?->meta_description ?: 'Kenali '.$storeName.': brand busana wanita modern Indonesia dengan bahan premium, potongan nyaman, dan detail yang dikerjakan teliti.')
 
 @section('content')
     @php
         $catalogUrl = \App\Support\FrontendUrls::catalog();
         $promoUrl = \App\Support\FrontendUrls::promo();
+        $kicker = $page?->kicker ?: 'Cerita '.$storeName;
+        $heading = $page?->title ?: 'Busana yang tumbuh';
+        $highlight = $page?->highlight ?: 'bersama ceritamu.';
+        $intro = $page?->subtitle ?: $storeName.' lahir dari satu keyakinan sederhana: perempuan Indonesia berhak tampil anggun tanpa mengorbankan kenyamanan. Kami memilih bahan yang jatuh lembut, memotong pola untuk tubuh yang nyata, dan menyelesaikan setiap detail dengan sabar.';
+        $heroImage = $page?->image_url ?: asset('images/editorial/about.jpg');
+        $heroImageAlt = $page?->image_alt ?: 'Deretan busana '.$storeName.' dengan bahan lembut dan warna netral';
     @endphp
 
     <nav class="mb-5 flex flex-wrap items-center gap-2 text-[10px] font-semibold text-[var(--text-subtle)]" aria-label="Breadcrumb">
@@ -22,13 +34,13 @@
             <div class="pointer-events-none absolute bottom-0 right-10 h-28 w-28 rounded-full bg-[var(--accent-soft)]/90 blur-2xl"></div>
 
             <div class="relative max-w-xl">
-                <p class="section-kicker">Cerita ShopDress</p>
+                <p class="section-kicker">{{ $kicker }}</p>
                 <h1 class="mt-3 font-display text-[2.7rem] font-semibold leading-[0.98] tracking-[-0.045em] text-[var(--text)] sm:text-6xl">
-                    Busana yang tumbuh
-                    <span class="block italic text-[var(--brand)]">bersama ceritamu.</span>
+                    {{ $heading }}
+                    <span class="block italic text-[var(--brand)]">{{ $highlight }}</span>
                 </h1>
                 <p class="mt-5 text-xs leading-6 text-[var(--text-muted)] sm:text-sm">
-                    ShopDress lahir dari satu keyakinan sederhana: perempuan Indonesia berhak tampil anggun tanpa mengorbankan kenyamanan. Kami memilih bahan yang jatuh lembut, memotong pola untuk tubuh yang nyata, dan menyelesaikan setiap detail dengan sabar.
+                    {{ $intro }}
                 </p>
 
                 <div class="mt-6 flex flex-wrap items-center gap-2.5">
@@ -48,8 +60,8 @@
         </div>
 
         <div class="relative overflow-hidden rounded-[1.75rem] border border-[var(--border)] bg-[var(--surface-2)]">
-            <img src="{{ asset('images/editorial/about.jpg') }}"
-                 alt="Deretan busana ShopDress dengan bahan lembut dan warna netral"
+            <img src="{{ $heroImage }}"
+                 alt="{{ $heroImageAlt }}"
                  class="h-full min-h-[19rem] w-full object-cover sm:min-h-[24rem]">
             <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#241d2e]/55 via-transparent to-transparent"></div>
 
@@ -69,11 +81,17 @@
         </div>
     </section>
 
+    @if ($page?->content)
+        <section class="reveal mt-5 rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-7">
+            <div class="sd-rich-text">{!! $page->content !!}</div>
+        </section>
+    @endif
+
     {{-- Stats --}}
     <section class="reveal mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-[1.5rem] border border-[var(--border)] bg-[var(--border)] sm:grid-cols-4" style="--reveal-delay: 70ms">
-        @foreach ([
-            ['value' => '10.000+', 'label' => 'Pelanggan bahagia'],
-            ['value' => '4,9/5', 'label' => 'Rating pelanggan'],
+        @foreach ($aboutStats ?? [
+            ['value' => '—', 'label' => 'Pelanggan bahagia'],
+            ['value' => '—', 'label' => 'Rating pelanggan'],
             ['value' => '100%', 'label' => 'Bahan dikurasi'],
             ['value' => '7 hari', 'label' => 'Garansi tukar ukuran'],
         ] as $stat)
@@ -123,36 +141,36 @@
         <div class="grid lg:grid-cols-[0.88fr_1.12fr]">
             <div class="relative min-h-[17rem] overflow-hidden bg-[var(--surface-2)]">
                 <img src="{{ asset('images/editorial/hero-2.jpg') }}"
-                     alt="Model mengenakan dress ShopDress berwarna lembut"
+                     alt="Model mengenakan dress {{ $storeName }} berwarna lembut"
                      loading="lazy"
                      class="h-full w-full object-cover object-top">
                 <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#32135f]/45 via-transparent to-transparent"></div>
-                <div class="absolute bottom-5 left-5 right-5">
-                    <p class="text-[9px] font-black uppercase tracking-[0.16em] text-white/60">ShopDress atelier</p>
-                    <p class="mt-1 font-display text-xl font-semibold leading-tight text-white">Detail kecil yang membuat perbedaan besar.</p>
+                <div class="absolute bottom-5 left-5 right-5 sm:bottom-7 sm:left-7 sm:right-7">
+                    <p class="text-[10px] font-black uppercase tracking-[0.16em] text-white/70 sm:text-[11px]">{{ $storeName }} atelier</p>
+                    <p class="mt-1.5 font-display text-xl font-semibold leading-tight text-white sm:text-2xl">Detail kecil yang membuat perbedaan besar.</p>
                 </div>
             </div>
 
-            <div class="px-6 py-8 sm:px-9 sm:py-10">
+            <div class="flex flex-col justify-center px-6 py-9 sm:px-10 sm:py-12 lg:px-12 lg:py-14">
                 <p class="section-kicker">Dari bahan ke lemari</p>
-                <h2 class="mt-2 max-w-md font-display text-3xl font-semibold leading-[1.05] tracking-[-0.03em] text-[var(--text)] sm:text-4xl">
+                <h2 class="mt-3 max-w-xl font-display text-2xl font-semibold leading-tight tracking-[-0.03em] text-[var(--text)] sm:text-3xl lg:text-[2.35rem] lg:leading-[1.15]">
                     Proses yang kami tempuh sebelum dress sampai di tanganmu
                 </h2>
 
-                <ol class="mt-7 space-y-5">
+                <ol class="mt-8 space-y-6 sm:space-y-7">
                     @foreach ([
                         ['title' => 'Kurasi bahan', 'desc' => 'Kami menguji tekstur, ketebalan, dan jatuhnya kain sebelum masuk koleksi.'],
                         ['title' => 'Pola & sampel', 'desc' => 'Setiap potongan disesuaikan dengan proporsi tubuh wanita Indonesia melalui beberapa kali sampel.'],
                         ['title' => 'Jahit & periksa', 'desc' => 'Penjahit berpengalaman menyelesaikan tiap detail, lalu tim QC memeriksa jahitan dan lining.'],
                         ['title' => 'Dikemas & dikirim', 'desc' => 'Busana dilipat rapi, dilindungi, dan dikirim dengan opsi pengiriman yang bisa dilacak.'],
                     ] as $process)
-                        <li class="flex gap-3.5">
-                            <span class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg)] text-[9px] font-black text-[var(--brand)]">
+                        <li class="flex items-start gap-4 sm:gap-4.5">
+                            <span class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface-2)] text-xs font-black text-[var(--brand)] shadow-sm sm:h-10 sm:w-10 sm:text-sm">
                                 {{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}
                             </span>
-                            <div>
-                                <p class="text-[12px] font-bold text-[var(--text)]">{{ $process['title'] }}</p>
-                                <p class="mt-0.5 text-[10px] leading-5 text-[var(--text-muted)]">{{ $process['desc'] }}</p>
+                            <div class="pt-0.5">
+                                <p class="text-sm font-bold text-[var(--text)] sm:text-base">{{ $process['title'] }}</p>
+                                <p class="mt-1 text-xs leading-relaxed text-[var(--text-muted)] sm:text-sm">{{ $process['desc'] }}</p>
                             </div>
                         </li>
                     @endforeach
@@ -173,14 +191,18 @@
                     Kami tidak ingin perempuan harus memilih antara terlihat cantik dan merasa nyaman. Keduanya bisa dimiliki.
                 </blockquote>
                 <figcaption class="mt-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/55">
-                    Tim ShopDress
+                    Tim {{ $storeName }}
                 </figcaption>
             </figure>
 
             <div class="rounded-[1.35rem] border border-white/15 bg-white/[0.06] p-5 backdrop-blur-sm">
                 <p class="text-[10px] font-bold uppercase tracking-[0.14em] text-white/50">Siap menemukan favoritmu?</p>
                 <p class="mt-2 text-xs leading-6 text-white/70">
-                    Mulai dari koleksi paling dicari, atau gunakan kode <span class="font-mono font-bold text-white">SHOPDRESSNEW</span> untuk potongan 20% di pesanan pertamamu.
+                    @if ($featuredCoupon)
+                        Mulai dari koleksi paling dicari, atau gunakan kode <span class="font-mono font-bold text-white">{{ $featuredCoupon->code }}</span> dan dapatkan {{ lcfirst($featuredCoupon->discountLabel()) }} di pesananmu.
+                    @else
+                        Mulai dari koleksi paling dicari dan temukan penawaran terbaru di halaman promo.
+                    @endif
                 </p>
                 <a href="{{ $catalogUrl }}"
                    class="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-full bg-white px-5 text-[11px] font-bold text-[var(--brand-deep)] transition hover:bg-[var(--brand-soft)]">

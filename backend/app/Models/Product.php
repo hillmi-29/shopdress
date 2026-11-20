@@ -104,6 +104,6 @@ class Product extends Model
 
     public function getAverageRatingAttribute(): float
     {
-        return (float) ($this->reviews()->avg('rating') ?? 0);
+        return (float) ($this->reviews()->where('is_visible', true)->avg('rating') ?? 0);
     }
 }

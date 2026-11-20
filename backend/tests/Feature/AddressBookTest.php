@@ -279,6 +279,6 @@ class AddressBookTest extends TestCase
 
         $order = Order::firstOrFail();
         $response->assertRedirect(route('checkout.payment', ['order' => $order->id]));
-        $this->assertSame('landmarks/test_patokan.jpg', $order->landmark_photo);
+        $this->assertSame(['landmarks/test_patokan.jpg'], $order->landmark_photos);
     }
 }

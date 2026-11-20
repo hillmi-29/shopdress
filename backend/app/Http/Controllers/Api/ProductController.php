@@ -104,7 +104,7 @@ class ProductController extends Controller
             'category',
             'images',
             'variants',
-            'reviews.user:id,name',
+            'reviews' => fn ($q) => $q->where('is_visible', true)->with('user:id,name')->latest(),
         ])
             ->where('slug', $slug)
             ->where('is_active', true)

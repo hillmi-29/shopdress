@@ -1,11 +1,14 @@
 ﻿@extends('frontend.layouts.app')
 
-@section('title', 'Profil Saya — ShopDress')
-@section('meta_description', 'Kelola profil akun Anda di ShopDress. Ubah nama, email, nomor telepon, dan alamat.')
+@section('title', 'Profil Saya — '.\App\Models\SiteSetting::storeName())
+@section('meta_description', 'Kelola profil akun Anda di '.\App\Models\SiteSetting::storeName().'. Ubah nama, email, nomor telepon, dan alamat.')
 
 @section('content')
     @php
         $user = auth()->user();
+        $siteSettings = $siteSettings ?? \App\Models\SiteSetting::values();
+        $storeName = $siteSettings['store_name'] ?? \App\Models\SiteSetting::storeName();
+        $supportEmailUrl = ($siteSettings['email_url'] ?? null) ?: 'mailto:halo@shopdress.com';
         $inputClass = 'h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg)] px-4 text-xs text-[var(--text)] transition placeholder:text-[var(--text-subtle)] focus:border-[var(--brand)] focus:bg-[var(--surface)] focus:outline-none focus:ring-2 focus:ring-[var(--brand)]/15';
         $selectClass = 'h-11 w-full appearance-none rounded-xl border border-[var(--border)] bg-[var(--bg)] px-4 pr-10 text-xs font-medium text-[var(--text)] transition focus:border-[var(--brand)] focus:bg-[var(--surface)] focus:outline-none focus:ring-2 focus:ring-[var(--brand)]/15 disabled:cursor-not-allowed disabled:opacity-60';
     @endphp
@@ -22,7 +25,7 @@
 
         <div class="relative mt-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div class="max-w-xl">
-                <p class="section-kicker">Akun ShopDress</p>
+                <p class="section-kicker">Akun {{ $storeName }}</p>
                 <h1 class="mt-2 font-display text-[2.6rem] font-semibold leading-[0.95] tracking-[-0.045em] text-[var(--text)] sm:text-6xl">
                     Profil Saya
                 </h1>
@@ -107,7 +110,7 @@
                     Untuk mengganti kata sandi, hubungi customer care kami melalui email. Tim akan memverifikasi akunmu dan mengirimkan tautan pengaturan ulang.
                 </p>
 
-                <a href="mailto:halo@shopdress.com?subject=Ubah%20Kata%20Sandi%20ShopDress"
+                <a href="{{ $supportEmailUrl }}?subject={{ rawurlencode('Ubah Kata Sandi '.$storeName) }}"
                    class="mt-4 inline-flex h-10 items-center justify-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 text-[10px] font-bold text-[var(--text)] transition hover:border-[var(--brand)] hover:text-[var(--brand)]">
                     Hubungi Customer Care
                 </a>
@@ -185,10 +188,14 @@
                             <span x-show="address.is_default" class="shrink-0 rounded-full bg-[var(--brand)] px-2 py-0.5 text-[8px] font-bold uppercase tracking-[0.08em] text-white">Utama</span>
                         </div>
                         <p class="mt-3 flex-1 text-[10px] leading-5 text-[var(--text-muted)]" x-text="address.full_address"></p>
-                        <template x-if="address.landmark_photo_url">
+                        <template x-if="address.landmark_photo_urls && address.landmark_photo_urls.length > 0">
                             <div class="mt-2.5 flex items-center gap-2 rounded-xl border border-[var(--border-light)] bg-[var(--surface-2)]/40 p-1.5">
-                                <img :src="address.landmark_photo_url" alt="Patokan" class="h-8 w-8 rounded-lg object-cover border border-[var(--border)]">
-                                <span class="text-[9px] font-medium text-[var(--text-subtle)]">Foto patokan terlampir</span>
+                                <div class="flex items-center gap-1.5">
+                                    <template x-for="(url, idx) in address.landmark_photo_urls" :key="idx">
+                                        <img :src="url" alt="Patokan" class="h-8 w-8 rounded-lg object-cover border border-[var(--border)]">
+                                    </template>
+                                </div>
+                                <span class="text-[9px] font-medium text-[var(--text-subtle)]" x-text="address.landmark_photo_urls.length + ' foto patokan terlampir'"></span>
                             </div>
                         </template>
                         <div class="mt-4 flex flex-wrap gap-1.5">
@@ -331,28 +338,31 @@
 
                     <div class="sm:col-span-2">
                         <label for="address_landmark_photo" class="mb-1.5 flex items-center justify-between text-[11px] font-bold text-[var(--text)]">
-                            <span>Foto Patokan Lokasi <span class="font-normal text-[var(--text-subtle)]">(opsional)</span></span>
-                            <span class="text-[9px] font-normal text-[var(--text-subtle)]">Maks. 2MB (JPG, PNG, WebP)</span>
+                            <span>Foto Patokan Lokasi <span class="font-normal text-[var(--text-subtle)]">(opsional, maks. 2 foto)</span></span>
+                            <span class="text-[9px] font-normal text-[var(--text-subtle)]">Maks. 2MB/foto (JPG, PNG, WebP)</span>
                         </label>
                         <div class="flex flex-wrap items-center gap-3">
-                            <label class="flex h-11 cursor-pointer items-center gap-2 rounded-xl border border-dashed border-[var(--border)] bg-[var(--surface)] px-4 text-xs font-medium text-[var(--text-muted)] transition hover:border-[var(--brand)] hover:text-[var(--brand)]">
+                            <label x-show="landmarkPhotos.length < 2"
+                                   class="flex h-11 cursor-pointer items-center gap-2 rounded-xl border border-dashed border-[var(--border)] bg-[var(--surface)] px-4 text-xs font-medium text-[var(--text-muted)] transition hover:border-[var(--brand)] hover:text-[var(--brand)]">
                                 <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
                                 </svg>
-                                <span x-text="landmarkFileName ? 'Ganti Foto' : (landmarkPreviewUrl ? 'Ganti Foto Patokan' : 'Pilih Foto Patokan')">Pilih Foto Patokan</span>
+                                <span x-text="landmarkPhotos.length === 0 ? 'Pilih Foto Patokan (Maks. 2)' : 'Tambah Foto Patokan (' + landmarkPhotos.length + '/2)'"></span>
                                 <input type="file"
                                        id="address_landmark_photo"
                                        accept="image/jpeg,image/png,image/webp,image/jpg"
+                                       multiple
                                        class="hidden"
                                        @change="onLandmarkPhotoChange($event)">
                             </label>
-                            <template x-if="landmarkPreviewUrl">
+
+                            <template x-for="(photo, index) in landmarkPhotos" :key="photo.url || index">
                                 <div class="flex items-center gap-2 rounded-xl border border-[var(--border-light)] bg-[var(--surface-2)]/60 px-3 py-1.5">
-                                    <img :src="landmarkPreviewUrl" alt="Preview Patokan" class="h-8 w-8 rounded-lg object-cover border border-[var(--border)]">
-                                    <span class="max-w-[150px] truncate text-[11px] font-medium text-[var(--text)]" x-text="landmarkFileName || 'Foto patokan'"></span>
+                                    <img :src="photo.url" alt="Preview Patokan" class="h-8 w-8 rounded-lg object-cover border border-[var(--border)]">
+                                    <span class="max-w-[130px] truncate text-[11px] font-medium text-[var(--text)]" x-text="photo.name || ('Foto ' + (index + 1))"></span>
                                     <button type="button"
-                                            @click="removeLandmarkPhoto()"
+                                            @click="removeLandmarkPhoto(index)"
                                             class="ml-1 text-[10px] font-bold text-[var(--error)] transition hover:underline">
                                         Hapus
                                     </button>
@@ -360,7 +370,7 @@
                             </template>
                         </div>
                         <p class="mt-1.5 text-[11px] font-medium text-[var(--error)]" x-show="errors.landmark_photo" x-text="errors.landmark_photo"></p>
-                        <p class="mt-1 text-[9px] text-[var(--text-subtle)]">Unggah foto pagar, rumah, ruko, atau patokan visual terdekat untuk memudahkan kurir mengantar pesanan.</p>
+                        <p class="mt-1 text-[9px] text-[var(--text-subtle)]">Unggah hingga 2 foto pagar, rumah, ruko, atau patokan visual terdekat untuk memudahkan kurir mengantar pesanan.</p>
                     </div>
 
                     <label class="flex cursor-pointer items-start gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3.5 sm:col-span-2">
@@ -463,10 +473,7 @@
                 status: 'success',
                 message: '',
                 errors: {},
-                landmarkFile: null,
-                landmarkFileName: '',
-                landmarkPreviewUrl: null,
-                removeLandmarkPhotoFlag: false,
+                landmarkPhotos: [],
                 form: {
                     label: '',
                     recipient_name: @js($user->name),
@@ -514,10 +521,7 @@
                     this.editingId = null;
                     this.errors = {};
                     this.message = '';
-                    this.landmarkFile = null;
-                    this.landmarkFileName = '';
-                    this.landmarkPreviewUrl = null;
-                    this.removeLandmarkPhotoFlag = false;
+                    this.landmarkPhotos = [];
                     const input = document.getElementById('address_landmark_photo');
                     if (input) input.value = '';
                     this.resetForm();
@@ -529,20 +533,38 @@
                     this.showForm = false;
                     this.editingId = null;
                     this.errors = {};
-                    this.landmarkFile = null;
-                    this.landmarkFileName = '';
-                    this.landmarkPreviewUrl = null;
-                    this.removeLandmarkPhotoFlag = false;
+                    this.landmarkPhotos.forEach(p => {
+                        if (p.type === 'new' && p.url) URL.revokeObjectURL(p.url);
+                    });
+                    this.landmarkPhotos = [];
                 },
 
                 async openEdit(address) {
                     this.editingId = address.id;
                     this.errors = {};
                     this.message = '';
-                    this.landmarkFile = null;
-                    this.landmarkFileName = '';
-                    this.landmarkPreviewUrl = address.landmark_photo_url || null;
-                    this.removeLandmarkPhotoFlag = false;
+                    this.landmarkPhotos = [];
+                    const paths = address.landmark_photos || [];
+                    const urls = address.landmark_photo_urls || [];
+                    paths.forEach((path, idx) => {
+                        const url = urls[idx] || (address.landmark_photo_url && idx === 0 ? address.landmark_photo_url : null);
+                        if (url) {
+                            this.landmarkPhotos.push({
+                                type: 'existing',
+                                path: path,
+                                url: url,
+                                name: 'Foto patokan ' + (idx + 1)
+                            });
+                        }
+                    });
+                    if (this.landmarkPhotos.length === 0 && address.landmark_photo_url && address.landmark_photo) {
+                        this.landmarkPhotos.push({
+                            type: 'existing',
+                            path: address.landmark_photo,
+                            url: address.landmark_photo_url,
+                            name: 'Foto patokan 1'
+                        });
+                    }
                     const input = document.getElementById('address_landmark_photo');
                     if (input) input.value = '';
                     this.showForm = true;
@@ -697,20 +719,30 @@
                 },
 
                 onLandmarkPhotoChange(event) {
-                    const file = event.target.files[0];
-                    if (file) {
-                        this.landmarkFile = file;
-                        this.landmarkFileName = file.name;
-                        this.landmarkPreviewUrl = URL.createObjectURL(file);
-                        this.removeLandmarkPhotoFlag = false;
-                    }
+                    const files = Array.from(event.target.files || []);
+                    if (! files.length) return;
+
+                    const available = 2 - this.landmarkPhotos.length;
+                    const toAdd = files.slice(0, available);
+
+                    toAdd.forEach(file => {
+                        this.landmarkPhotos.push({
+                            type: 'new',
+                            file: file,
+                            url: URL.createObjectURL(file),
+                            name: file.name,
+                        });
+                    });
+
+                    event.target.value = '';
                 },
 
-                removeLandmarkPhoto() {
-                    this.landmarkFile = null;
-                    this.landmarkFileName = '';
-                    this.landmarkPreviewUrl = null;
-                    this.removeLandmarkPhotoFlag = true;
+                removeLandmarkPhoto(index) {
+                    const removed = this.landmarkPhotos[index];
+                    if (removed && removed.type === 'new' && removed.url) {
+                        URL.revokeObjectURL(removed.url);
+                    }
+                    this.landmarkPhotos.splice(index, 1);
                     const input = document.getElementById('address_landmark_photo');
                     if (input) input.value = '';
                 },
@@ -727,12 +759,21 @@
                                 formData.append(key, typeof value === 'boolean' ? (value ? '1' : '0') : value);
                             }
                         }
-                        if (this.landmarkFile) {
-                            formData.append('landmark_photo', this.landmarkFile);
-                        }
-                        if (this.removeLandmarkPhotoFlag) {
+
+                        const keptExisting = this.landmarkPhotos
+                            .filter(p => p.type === 'existing')
+                            .map(p => p.path);
+                        formData.append('existing_landmark_photos', JSON.stringify(keptExisting));
+
+                        const newFiles = this.landmarkPhotos.filter(p => p.type === 'new' && p.file);
+                        newFiles.forEach(p => {
+                            formData.append('landmark_photo[]', p.file);
+                        });
+
+                        if (this.landmarkPhotos.length === 0) {
                             formData.append('remove_landmark_photo', '1');
                         }
+
                         if (this.editingId) {
                             formData.append('_method', 'PUT');
                         }

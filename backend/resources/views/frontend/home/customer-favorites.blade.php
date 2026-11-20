@@ -1,3 +1,7 @@
+@php
+    $storeName = \App\Models\SiteSetting::storeName();
+@endphp
+
 {{-- Customer favorites --}}
 <section class="mt-12 sm:mt-16">
     <div class="reveal flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -7,7 +11,7 @@
                 Kesukaan Pelanggan
             </h2>
             <p class="mt-2 text-xs leading-6 text-[var(--text-muted)] sm:text-sm">
-                Produk yang paling sering dipesan dan paling dicari pelanggan ShopDress.
+                Produk yang paling sering dipesan dan paling dicari pelanggan {{ $storeName }}.
             </p>
         </div>
 
@@ -29,6 +33,7 @@
                     <x-product-card
                         :product="$product"
                         :wishlisted="in_array($product->id, $wishlistProductIds, true)"
+                        :pick-variant-on-add="true"
                         compact
                     />
                 </div>

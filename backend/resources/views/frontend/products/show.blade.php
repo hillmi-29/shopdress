@@ -1,6 +1,6 @@
 @extends('frontend.layouts.app')
 
-@section('title', $product->name.' — ShopDress')
+@section('title', $product->name.' — '.\App\Models\SiteSetting::storeName())
 @section('meta_description', Str::limit(strip_tags($product->description ?? ''), 160))
 
 @section('content')
@@ -11,6 +11,7 @@
             ? \App\Support\FrontendUrls::category($product->category)
             : $catalogUrl;
         $productUrl = fn ($item) => \App\Support\FrontendUrls::product($item);
+        $storeName = \App\Models\SiteSetting::storeName();
 
         $imageUrl = function (?string $path): ?string {
             if (! $path) return null;
@@ -32,7 +33,7 @@
         }
 
         if ($galleryImages->isEmpty()) {
-            $galleryImages->push('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" fill="%23f5f3ff"><rect width="600" height="800"/><text x="300" y="400" font-size="28" fill="%237c3aed" text-anchor="middle" font-family="sans-serif">ShopDress Premium</text></svg>');
+            $galleryImages->push('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" fill="%23f5f3ff"><rect width="600" height="800"/><text x="300" y="400" font-size="28" fill="%237c3aed" text-anchor="middle" font-family="sans-serif">'.$storeName.' Premium</text></svg>');
         }
 
         $defaultVariant = $product->variants->firstWhere(fn ($variant) => $variant->stock > 0)
@@ -184,7 +185,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12 18 18.75 12 18.75 2.25 12 2.25 12Z" />
                                 <circle cx="12" cy="12" r="2.25" />
                             </svg>
-                            Foto asli koleksi ShopDress
+                            Foto asli koleksi {{ $storeName }}
                         </span>
                         <span class="hidden sm:inline">Geser untuk melihat detail</span>
                     </div>
@@ -317,25 +318,43 @@
 
                     {{-- Actions --}}
                     <div class="mt-5 flex gap-2.5">
-                        <button type="button"
-                                @click="addToCart()"
-                                :disabled="!available || adding"
-                                class="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full px-5 text-[11px] font-bold text-white shadow-[0_12px_26px_-16px_rgba(124,58,237,0.9)] transition-all duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-45"
-                                :class="added ? 'bg-[var(--success)]' : 'bg-[var(--brand)] hover:bg-[var(--brand-dark)]'">
-                            <svg x-show="!adding && !added" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 0 0-8 0v4M5 9h14l1 12H4L5 9Z" />
-                            </svg>
-                            <svg x-show="adding" x-cloak class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                            </svg>
-                            <svg x-show="added" x-cloak class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                            </svg>
-                            <span x-show="!adding && !added">Tambah ke Keranjang</span>
-                            <span x-show="adding" x-cloak>Menambahkan…</span>
-                            <span x-show="added" x-cloak>Ditambahkan</span>
-                        </button>
+                        <div class="flex flex-1 flex-col gap-2">
+                            {{-- Buy now: langsung ke checkout dengan varian & jumlah terpilih. --}}
+                            <button type="button"
+                                    @click="buyNow()"
+                                    :disabled="!available || buying"
+                                    class="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[var(--brand)] px-5 text-[11px] font-bold text-white shadow-[0_12px_26px_-16px_rgba(124,58,237,0.9)] transition-all duration-200 ease-out hover:bg-[var(--brand-dark)] disabled:cursor-not-allowed disabled:opacity-45">
+                                <svg x-show="!buying" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+                                </svg>
+                                <svg x-show="buying" x-cloak class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                </svg>
+                                <span x-show="!buying">Beli Sekarang</span>
+                                <span x-show="buying" x-cloak>Mengalihkan…</span>
+                            </button>
+
+                            <button type="button"
+                                    @click="addToCart()"
+                                    :disabled="!available || adding"
+                                    class="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border px-5 text-[11px] font-bold transition-all duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-45"
+                                    :class="added ? 'border-[var(--success)] bg-[var(--success)] text-white' : 'border-[var(--brand)]/30 bg-[var(--surface)] text-[var(--brand-dark)] hover:border-[var(--brand)] hover:bg-[var(--brand-soft)]'">
+                                <svg x-show="!adding && !added" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 0 0-8 0v4M5 9h14l1 12H4L5 9Z" />
+                                </svg>
+                                <svg x-show="adding" x-cloak class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                </svg>
+                                <svg x-show="added" x-cloak class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                </svg>
+                                <span x-show="!adding && !added">Tambah ke Keranjang</span>
+                                <span x-show="adding" x-cloak>Menambahkan…</span>
+                                <span x-show="added" x-cloak>Ditambahkan</span>
+                            </button>
+                        </div>
 
                         <button type="button"
                                 @click="$dispatch('wishlist-toggle', { productId: {{ $product->id }} })"
@@ -376,12 +395,18 @@
         </div>
 
         {{-- Description and reviews --}}
-        <section class="border-t border-[var(--border)] pt-10" x-data="{ tab: 'deskripsi' }">
+        @php
+            $initialTab = session('review_submitted') || $errors->any() ? 'ulasan' : 'deskripsi';
+        @endphp
+        <section class="border-t border-[var(--border)] pt-10" x-data="{ tab: @js($initialTab) }">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <p class="section-kicker">Detail koleksi</p>
-                    <h2 class="mt-2 font-display text-3xl font-semibold tracking-[-0.03em] text-[var(--text)] sm:text-4xl">
-                        Kenali potongannya
+                    <p class="section-kicker" x-text="tab === 'deskripsi' ? 'Detail koleksi' : 'Ulasan pembeli'">
+                        {{ $initialTab === 'deskripsi' ? 'Detail koleksi' : 'Ulasan pembeli' }}
+                    </p>
+                    <h2 class="mt-2 font-display text-3xl font-semibold tracking-[-0.03em] text-[var(--text)] sm:text-4xl"
+                        x-text="tab === 'deskripsi' ? 'Kenali potongannya' : 'Apa kata pembeli'">
+                        {{ $initialTab === 'deskripsi' ? 'Kenali potongannya' : 'Apa kata pembeli' }}
                     </h2>
                 </div>
 
@@ -462,6 +487,177 @@
                      x-transition:enter="transition ease-out duration-300"
                      x-transition:enter-start="opacity-0 translate-y-2"
                      x-transition:enter-end="opacity-100 translate-y-0">
+
+                    {{-- Form ulasan / status kelayakan --}}
+                    <div class="mb-6">
+                        @guest
+                            <div class="flex flex-col gap-4 rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+                                <div class="flex items-start gap-4">
+                                    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--brand-soft)] text-[var(--brand)]">
+                                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h6m-8 8 2.5-2.5H18a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h1v3Z" />
+                                        </svg>
+                                    </span>
+                                    <div>
+                                        <p class="font-display text-lg font-semibold tracking-[-0.02em] text-[var(--text)]">Ingin menulis ulasan?</p>
+                                        <p class="mt-1 max-w-xl text-[10px] leading-5 text-[var(--text-muted)]">
+                                            Masuk dengan akun yang sudah membeli produk ini untuk memberi rating bintang, komentar, foto, dan video.
+                                        </p>
+                                    </div>
+                                </div>
+                                <a href="{{ route('login') }}"
+                                   class="inline-flex h-10 shrink-0 items-center justify-center rounded-full bg-[var(--brand)] px-5 text-[10px] font-bold text-white transition hover:bg-[var(--brand-dark)]">
+                                    Masuk untuk mengulas
+                                </a>
+                            </div>
+                        @else
+                            @if ($hasPurchased)
+                                <div x-data="{
+                                        rating: {{ (int) old('rating', $userReview?->rating ?? 0) }},
+                                        photoNames: [],
+                                        videoName: '',
+                                     }"
+                                     class="rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-8">
+                                    <div class="flex flex-wrap items-start justify-between gap-3">
+                                        <div>
+                                            <p class="section-kicker">Ulasan Anda</p>
+                                            <h3 class="mt-2 font-display text-2xl font-semibold tracking-[-0.03em] text-[var(--text)]">
+                                                {{ $userReview ? 'Perbarui ulasanmu' : 'Bagikan pengalamanmu' }}
+                                            </h3>
+                                            <p class="mt-1.5 max-w-xl text-[10px] leading-5 text-[var(--text-muted)]">
+                                                Beri rating bintang, tulis komentar, dan lampirkan foto atau video produk yang sudah kamu terima.
+                                            </p>
+                                        </div>
+
+                                        @if ($userReview)
+                                            @if ($userReview->is_visible)
+                                                <span class="inline-flex items-center gap-1.5 rounded-full bg-[var(--success-soft)] px-3 py-1.5 text-[9px] font-bold text-[var(--success)]">
+                                                    <span class="h-1.5 w-1.5 rounded-full bg-[var(--success)]"></span>
+                                                    Sudah dipublikasikan
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface-2)] px-3 py-1.5 text-[9px] font-bold text-[var(--text-muted)]">
+                                                    <span class="h-1.5 w-1.5 rounded-full bg-[var(--text-subtle)]"></span>
+                                                    Menunggu moderasi
+                                                </span>
+                                            @endif
+                                        @endif
+                                    </div>
+
+                                    @if ($errors->any())
+                                        <div class="mt-4 rounded-xl border border-[var(--error)]/25 bg-[var(--error-soft)] px-4 py-3">
+                                            <ul class="list-disc space-y-1 pl-4 text-[10px] leading-5 text-[var(--error)]">
+                                                @foreach ($errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
+
+                                    <form method="POST"
+                                          action="{{ route('products.reviews.store', $product->slug) }}"
+                                          enctype="multipart/form-data"
+                                          class="mt-5 space-y-5">
+                                        @csrf
+
+                                        {{-- Rating bintang --}}
+                                        <div>
+                                            <p class="text-[10px] font-bold text-[var(--text)]">Rating bintang</p>
+                                            <div class="mt-2 flex flex-wrap items-center gap-2">
+                                                <div class="flex items-center gap-0.5" role="group" aria-label="Pilih rating bintang">
+                                                    <template x-for="star in 5" :key="star">
+                                                        <button type="button"
+                                                                @click="rating = star"
+                                                                class="rounded-full p-1 text-[var(--accent)] transition hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
+                                                                :aria-label="`Beri ${star} bintang`">
+                                                            <svg class="h-7 w-7 transition" viewBox="0 0 20 20" :class="star <= rating ? 'fill-current' : 'fill-[var(--border)]'" aria-hidden="true">
+                                                                <path d="M9.05 2.93c.3-.92 1.6-.92 1.9 0l1.28 3.94a1 1 0 0 0 .95.69h4.15c.97 0 1.37 1.24.59 1.81l-3.36 2.44a1 1 0 0 0-.36 1.12l1.28 3.94c.3.92-.76 1.69-1.54 1.12l-3.36-2.44a1 1 0 0 0-1.18 0l-3.36 2.44c-.78.57-1.84-.2-1.54-1.12l1.28-3.94a1 1 0 0 0-.36-1.12L2.08 9.37c-.78-.57-.38-1.81.59-1.81h4.15a1 1 0 0 0 .95-.69l1.28-3.94Z" />
+                                                            </svg>
+                                                        </button>
+                                                    </template>
+                                                </div>
+                                                <span class="text-[10px] font-semibold text-[var(--text-muted)]"
+                                                      aria-live="polite"
+                                                      x-text="rating ? rating + ' dari 5 bintang' : 'Pilih rating'"></span>
+                                                <input type="hidden" name="rating" :value="rating">
+                                            </div>
+                                        </div>
+
+                                        {{-- Komentar --}}
+                                        <div>
+                                            <label for="review-comment" class="text-[10px] font-bold text-[var(--text)]">Komentar</label>
+                                            <textarea id="review-comment"
+                                                      name="comment"
+                                                      rows="4"
+                                                      maxlength="1000"
+                                                      placeholder="Ceritakan kualitas bahan, ukuran, kenyamanan, dan pengalamanmu memakai produk ini."
+                                                      class="mt-2 block w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3.5 py-3 text-[11px] leading-6 text-[var(--text)] outline-none transition placeholder:text-[var(--text-subtle)] focus:border-[var(--brand)] focus:ring-2 focus:ring-[var(--brand)]/15">{{ old('comment', $userReview?->comment) }}</textarea>
+                                        </div>
+
+                                        {{-- Foto & video --}}
+                                        <div class="grid gap-4 sm:grid-cols-2">
+                                            <div>
+                                                <label for="review-photos" class="text-[10px] font-bold text-[var(--text)]">Foto produk <span class="font-medium text-[var(--text-subtle)]">(opsional, maks. 4)</span></label>
+                                                <input id="review-photos"
+                                                       type="file"
+                                                       name="photos[]"
+                                                       accept="image/jpeg,image/png,image/webp"
+                                                       multiple
+                                                       @change="photoNames = [...$event.target.files].map((file) => file.name)"
+                                                       class="mt-2 block w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] p-2 text-[10px] text-[var(--text-muted)] outline-none transition file:mr-3 file:rounded-full file:border-0 file:bg-[var(--brand-soft)] file:px-3.5 file:py-2 file:text-[10px] file:font-bold file:text-[var(--brand)] hover:file:bg-[var(--brand)]/10 focus:border-[var(--brand)]">
+                                                <template x-if="photoNames.length">
+                                                    <ul class="mt-2 space-y-1">
+                                                        <template x-for="name in photoNames" :key="name">
+                                                            <li class="truncate text-[9px] text-[var(--text-muted)]" x-text="name"></li>
+                                                        </template>
+                                                    </ul>
+                                                </template>
+                                            </div>
+
+                                            <div>
+                                                <label for="review-video" class="text-[10px] font-bold text-[var(--text)]">Video produk <span class="font-medium text-[var(--text-subtle)]">(opsional, maks. 20 MB)</span></label>
+                                                <input id="review-video"
+                                                       type="file"
+                                                       name="video"
+                                                       accept="video/mp4,video/quicktime,video/webm"
+                                                       @change="videoName = $event.target.files[0]?.name || ''"
+                                                       class="mt-2 block w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] p-2 text-[10px] text-[var(--text-muted)] outline-none transition file:mr-3 file:rounded-full file:border-0 file:bg-[var(--brand-soft)] file:px-3.5 file:py-2 file:text-[10px] file:font-bold file:text-[var(--brand)] hover:file:bg-[var(--brand)]/10 focus:border-[var(--brand)]">
+                                                <p x-show="videoName" x-text="videoName" class="mt-2 truncate text-[9px] text-[var(--text-muted)]"></p>
+                                            </div>
+                                        </div>
+
+                                        @if ($userReview && (! empty($userReview->photo_urls) || $userReview->video_url))
+                                            <div class="rounded-2xl border border-[var(--border-light)] bg-[var(--bg)]/60 p-3">
+                                                <p class="text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--text-subtle)]">Media tersimpan</p>
+                                                <div class="mt-2 flex flex-wrap items-center gap-2">
+                                                    @foreach ($userReview->photo_urls as $photoUrl)
+                                                        <a href="{{ $photoUrl }}" target="_blank" rel="noopener" class="block h-14 w-14 overflow-hidden rounded-xl border border-[var(--border)]">
+                                                            <img src="{{ $photoUrl }}" alt="Foto ulasan" class="h-full w-full object-cover">
+                                                        </a>
+                                                    @endforeach
+                                                    @if ($userReview->video_url)
+                                                        <video src="{{ $userReview->video_url }}" controls preload="metadata" class="h-14 max-w-[10rem] rounded-xl border border-[var(--border)] object-cover"></video>
+                                                    @endif
+                                                </div>
+                                                <p class="mt-2 text-[9px] leading-4 text-[var(--text-subtle)]">Foto baru akan ditambahkan (maksimal 4 total). Video baru akan menggantikan video lama.</p>
+                                            </div>
+                                        @endif
+
+                                        <button type="submit"
+                                                class="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[var(--brand)] px-5 text-[10px] font-bold text-white shadow-[0_12px_26px_-16px_rgba(124,58,237,0.9)] transition hover:bg-[var(--brand-dark)] sm:w-auto sm:px-8">
+                                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.27 3.13a.5.5 0 0 1 .66-.6l17 7.5a.5.5 0 0 1 0 .92l-17 7.5a.5.5 0 0 1-.66-.6L6 12Zm0 0h7" />
+                                            </svg>
+                                            {{ $userReview ? 'Perbarui Ulasan' : 'Kirim Ulasan' }}
+                                        </button>
+                                    </form>
+                                </div>
+                            @else
+                                <span class="sr-only">Ulasan khusus pembeli</span>
+                            @endif
+                        @endguest
+                    </div>
+
                     @if ($reviewCount > 0)
                         <div class="grid gap-6 lg:grid-cols-[0.72fr_1.28fr]">
                             <div class="rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-6 lg:sticky lg:top-24 lg:self-start">
@@ -522,6 +718,33 @@
                                         </div>
                                         @if ($rev->comment)
                                             <p class="mt-3 text-[11px] leading-6 text-[var(--text-muted)] sm:text-xs">{{ $rev->comment }}</p>
+                                        @endif
+
+                                        @if (! empty($rev->photo_urls) || $rev->video_url)
+                                            <div class="mt-3 space-y-2">
+                                                @if (! empty($rev->photo_urls))
+                                                    <div class="flex flex-wrap gap-2">
+                                                        @foreach ($rev->photo_urls as $photoUrl)
+                                                            <a href="{{ $photoUrl }}"
+                                                               target="_blank"
+                                                               rel="noopener"
+                                                               class="block h-20 w-20 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface-2)]">
+                                                                <img src="{{ $photoUrl }}"
+                                                                     alt="Foto ulasan {{ $rev->user?->name ?? 'pelanggan' }}"
+                                                                     loading="lazy"
+                                                                     class="h-full w-full object-cover">
+                                                            </a>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
+
+                                                @if ($rev->video_url)
+                                                    <video src="{{ $rev->video_url }}"
+                                                           controls
+                                                           preload="metadata"
+                                                           class="w-full max-w-sm rounded-xl border border-[var(--border)] bg-black/5"></video>
+                                                @endif
+                                            </div>
                                         @endif
                                     </article>
                                 @endforeach
@@ -593,6 +816,7 @@
                 images: config.images || [],
                 adding: false,
                 added: false,
+                buying: false,
 
                 init() {
                     const initial = this.variants.find((v) => v.id === config.initialVariantId)
@@ -662,6 +886,10 @@
 
                 addToCart() {
                     if (!this.available || this.adding) return;
+                    @guest
+                        this.$dispatch('login-required', { action: 'cart' });
+                        return;
+                    @endguest
                     this.adding = true;
                     this.$dispatch('add-to-cart', {
                         variantId: this.selectedVariant.id,
@@ -672,6 +900,22 @@
                         this.added = true;
                         setTimeout(() => { this.added = false; }, 1600);
                     }, 550);
+                },
+
+                buyNow() {
+                    if (!this.available || this.buying) return;
+                    @guest
+                        this.$dispatch('login-required', { action: 'buy-now' });
+                        return;
+                    @endguest
+                    this.buying = true;
+                    this.$dispatch('buy-now', {
+                        variantId: this.selectedVariant.id,
+                        quantity: this.quantity,
+                    });
+                    // Bila pengalihan ke checkout gagal (mis. jaringan putus),
+                    // tombol kembali aktif agar pembeli bisa mencoba lagi.
+                    setTimeout(() => { this.buying = false; }, 4000);
                 },
 
                 shareProduct() {

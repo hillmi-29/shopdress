@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Order;
+use App\Models\SiteSetting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -14,14 +15,12 @@ class OrderCreatedMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public Order $order)
-    {
-    }
+    public function __construct(public Order $order) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "Pesanan #{$this->order->order_number} Berhasil Dibuat - ShopDress",
+            subject: "Pesanan #{$this->order->order_number} Berhasil Dibuat - ".SiteSetting::storeName(),
         );
     }
 
@@ -29,6 +28,9 @@ class OrderCreatedMail extends Mailable implements ShouldQueue
     {
         return new Content(
             view: 'emails.order-created',
+            with: [
+                'siteSettings' => SiteSetting::values(),
+            ],
         );
     }
 

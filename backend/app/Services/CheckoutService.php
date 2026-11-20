@@ -9,19 +9,30 @@ use App\Models\Cart;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\SiteSetting;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class CheckoutService
 {
+    /**
+     * Nilai cadangan bila pengaturan toko belum pernah disimpan.
+     */
     public const SHIPPING_COST = 20000;
+
+    /**
+     * Ongkos kirim yang berlaku, diatur admin lewat Pengaturan Toko.
+     */
+    public function shippingCost(): float
+    {
+        return (float) SiteSetting::get('shipping_cost', self::SHIPPING_COST);
+    }
 
     public function __construct(
         protected CartService $cartService,
         protected InventoryService $inventoryService,
         protected MidtransService $midtransService,
-    ) {
-    }
+    ) {}
 
     /**
      * Place an order and generate its Midtrans Snap token.
@@ -32,10 +43,12 @@ class CheckoutService
      * cleanup are committed together in one local transaction.
      *
      * @param  array{shipping_address: string, recipient_name: string, recipient_phone: string, notes?: string|null, coupon_code?: string|null}  $checkoutData
+     * @param  Cart|null  $cart  Cart to order from. Defaults to the customer's real cart;
+     *                           the Buy Now flow passes a transient cart so the real cart stays intact.
      */
-    public function checkout(User $user, array $checkoutData): Order
+    public function checkout(User $user, array $checkoutData, ?Cart $cart = null): Order
     {
-        $cart = $this->cartService->getCart($user);
+        $cart ??= $this->cartService->getCart($user);
 
         if ($cart->items->isEmpty()) {
             throw new CheckoutException('Keranjang belanja Anda kosong.');
@@ -81,7 +94,10 @@ class CheckoutService
             // Re-check and decrement stock while holding row locks.
             $this->inventoryService->reserveStock($order->load('items'));
 
-            $cart->items()->delete();
+            // A Buy Now cart is transient and must not clear the real cart.
+            if ($cart->exists) {
+                $cart->items()->delete();
+            }
 
             return $order->load('items.variant.product');
         });
@@ -93,7 +109,7 @@ class CheckoutService
     private function buildDraft(User $user, Cart $cart, array $checkoutData): Order
     {
         $totalAmount = (float) $cart->total_amount;
-        $shippingCost = self::SHIPPING_COST;
+        $shippingCost = $this->shippingCost();
         $discountAmount = 0.0;
         $couponCode = $checkoutData['coupon_code'] ?? null;
 

@@ -1,7 +1,7 @@
 ﻿@extends('frontend.layouts.app')
 
-@section('title', 'Detail Pesanan #'.$order->order_number.' — ShopDress')
-@section('meta_description', 'Detail pesanan #'.$order->order_number.' Anda di ShopDress.')
+@section('title', 'Detail Pesanan #'.$order->order_number.' — '.\App\Models\SiteSetting::storeName())
+@section('meta_description', 'Detail pesanan #'.$order->order_number.' Anda di '.\App\Models\SiteSetting::storeName().'.')
 
 @section('content')
     @php

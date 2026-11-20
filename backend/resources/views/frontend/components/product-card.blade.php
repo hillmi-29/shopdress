@@ -5,6 +5,7 @@
     'wishlistUrl' => null,
     'cartUrl' => null,
     'compact' => false,
+    'pickVariantOnAdd' => true,
 ])
 
 @php
@@ -28,15 +29,45 @@
     $categoryName = $product->category?->name ?? 'Dress Modern';
     $formattedPrice = number_format((float) $product->price, 0, ',', '.');
     $totalStock = $product->variants->sum('stock');
+    $variantCount = $product->variants->count();
     $isAvailable = $defaultVariant && $totalStock > 0;
+
+    // Data varian untuk popup pemilih ukuran/warna di beranda.
+    $variantPayload = $product->variants
+        ->filter(fn ($variant) => $variant->stock > 0)
+        ->map(fn ($variant) => [
+            'id' => $variant->id,
+            'size' => $variant->size ?: 'All Size',
+            'color' => $variant->color ?: 'Standar',
+            'stock' => (int) $variant->stock,
+            'price' => (float) $product->price + (float) $variant->additional_price,
+        ])
+        ->values();
 @endphp
 
 <article x-data="{
             wishlisted: @js($wishlisted),
             adding: false,
             added: false,
+            pickVariantOnAdd: @js($pickVariantOnAdd),
+            @if ($pickVariantOnAdd)
+            openVariantPicker() {
+                this.$dispatch('open-variant-picker', {
+                    productId: {{ $product->id }},
+                    name: @js($product->name),
+                    image: @js($imageUrl),
+                    url: @js($productUrl),
+                    price: {{ (float) $product->price }},
+                    variants: @js($variantPayload),
+                });
+            },
+            @endif
             async addToCart() {
                 if (!@js($isAvailable) || this.adding || this.added) return;
+                @guest
+                    this.$dispatch('login-required', { action: 'cart' });
+                    return;
+                @endguest
                 this.adding = true;
                 try {
                     this.$dispatch('add-to-cart', {
@@ -138,7 +169,7 @@
 
             @if ($isAvailable)
                 <button type="button"
-                        @click="addToCart"
+                        @click="pickVariantOnAdd ? openVariantPicker() : addToCart()"
                         :disabled="adding"
                         class="card-add relative flex shrink-0 items-center justify-center rounded-full text-white shadow-[0_8px_18px_-10px_rgba(124,58,237,0.9)] focus:outline-none active:scale-95 {{ $compact ? 'h-7 w-7' : 'h-9 w-9' }}"
                         :class="added ? 'bg-[var(--success)]' : 'bg-[var(--brand)] hover:bg-[var(--brand-dark)]'"
@@ -168,5 +199,36 @@
                 </button>
             @endif
         </div>
+
+        {{-- Buy now: single variant goes straight to checkout, multi variant picks size/color first. --}}
+        @if ($isAvailable)
+            @if ($variantCount === 1)
+                <button type="button"
+                        @click="$dispatch('buy-now', { variantId: {{ $defaultVariant->id }}, quantity: 1 })"
+                        class="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-[var(--brand)]/25 bg-[var(--brand-soft)] font-bold text-[var(--brand-dark)] transition-colors duration-200 hover:border-[var(--brand)] hover:bg-[var(--brand)] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2 {{ $compact ? 'h-7 text-[9px]' : 'h-9 text-[10px]' }}"
+                        aria-label="Beli {{ $product->name }} sekarang">
+                    <svg class="{{ $compact ? 'h-2.5 w-2.5' : 'h-3 w-3' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+                    </svg>
+                    Beli Sekarang
+                </button>
+            @else
+                <a href="{{ $productUrl }}"
+                   class="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-[var(--brand)]/25 bg-[var(--brand-soft)] font-bold text-[var(--brand-dark)] transition-colors duration-200 hover:border-[var(--brand)] hover:bg-[var(--brand)] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2 {{ $compact ? 'h-7 text-[9px]' : 'h-9 text-[10px]' }}"
+                   title="Pilih ukuran dan warna terlebih dahulu"
+                   aria-label="Beli {{ $product->name }} sekarang, pilih ukuran dan warna terlebih dahulu">
+                    <svg class="{{ $compact ? 'h-2.5 w-2.5' : 'h-3 w-3' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                    </svg>
+                    Beli Sekarang
+                </a>
+            @endif
+        @else
+            <button type="button"
+                    disabled
+                    class="mt-2 inline-flex w-full cursor-not-allowed items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface-2)] font-bold text-[var(--text-subtle)] {{ $compact ? 'h-7 text-[9px]' : 'h-9 text-[10px]' }}">
+                Stok Habis
+            </button>
+        @endif
     </div>
 </article>

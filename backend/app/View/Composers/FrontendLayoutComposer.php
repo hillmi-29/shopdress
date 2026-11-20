@@ -4,6 +4,7 @@ namespace App\View\Composers;
 
 use App\Models\Cart;
 use App\Models\Category;
+use App\Models\SiteSetting;
 use App\Support\FrontendUrls;
 use Illuminate\View\View;
 
@@ -47,6 +48,7 @@ class FrontendLayoutComposer
             'wishlistCount' => $user ? $user->wishlists()->count() : 0,
             'cartCount' => $cart ? (int) $cart->items->sum('quantity') : 0,
             'cartDrawer' => $cart,
+            'siteSettings' => SiteSetting::values(),
         ]);
     }
 }

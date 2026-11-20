@@ -13,14 +13,14 @@ class CheckoutRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
+        $rules = [
             'shipping_address' => ['required', 'string', 'max:500'],
             'recipient_name' => ['required', 'string', 'max:255'],
             'recipient_phone' => ['required', 'string', 'max:20'],
             'notes' => ['nullable', 'string', 'max:500'],
+            'checkout_mode' => ['nullable', 'in:cart,buy_now'],
             'coupon_code' => ['nullable', 'string', 'exists:coupons,code'],
-            'landmark_photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
-            'saved_landmark_photo' => ['nullable', 'string', 'max:255'],
+            'saved_landmark_photo' => ['nullable'],
             'save_address' => ['nullable', 'boolean'],
             'province_code' => ['required_if:save_address,1', 'nullable', 'string', 'max:20'],
             'province_name' => ['required_if:save_address,1', 'nullable', 'string', 'max:100'],
@@ -35,6 +35,19 @@ class CheckoutRequest extends FormRequest
             'rw' => ['nullable', 'string', 'max:6'],
             'street' => ['required_if:save_address,1', 'nullable', 'string', 'max:500'],
         ];
+
+        if ($this->hasFile('landmark_photo')) {
+            if (is_array($this->file('landmark_photo'))) {
+                $rules['landmark_photo'] = ['array', 'max:2'];
+                $rules['landmark_photo.*'] = ['image', 'mimes:jpeg,png,jpg,webp', 'max:2048'];
+            } else {
+                $rules['landmark_photo'] = ['image', 'mimes:jpeg,png,jpg,webp', 'max:2048'];
+            }
+        } else {
+            $rules['landmark_photo'] = ['nullable'];
+        }
+
+        return $rules;
     }
 
     public function messages(): array

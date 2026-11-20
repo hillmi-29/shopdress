@@ -1,7 +1,7 @@
 ﻿@extends('frontend.layouts.app')
 
-@section('title', 'Kategori Produk — ShopDress')
-@section('meta_description', 'Jelajahi semua kategori busana wanita ShopDress: gamis, abaya, casual, Korean style, maxi dress, dan party dress.')
+@section('title', 'Kategori Produk — '.\App\Models\SiteSetting::storeName())
+@section('meta_description', 'Jelajahi semua kategori busana wanita '.\App\Models\SiteSetting::storeName().': gamis, abaya, casual, Korean style, maxi dress, dan party dress.')
 
 @section('content')
     @php

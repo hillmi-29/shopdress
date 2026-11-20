@@ -1,10 +1,10 @@
-{{-- Recommended products --}}
-<section class="mt-16 sm:mt-20">
+{{-- Featured / Koleksi Unggulan --}}
+<section class="mt-12 sm:mt-16">
     <div class="reveal flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div class="max-w-xl">
             <p class="section-kicker">Koleksi unggulan</p>
             <h2 class="mt-2 font-display text-3xl font-semibold tracking-[-0.03em] text-[var(--text)] sm:text-4xl">
-                Rekomendasi untukmu
+                Pilihan Terbaik Kami
             </h2>
             <p class="mt-2 text-xs leading-6 text-[var(--text-muted)] sm:text-sm">
                 Potongan favorit pelanggan dengan bahan premium yang nyaman dipakai dari pagi sampai malam.
@@ -29,6 +29,7 @@
                     <x-product-card
                         :product="$product"
                         :wishlisted="in_array($product->id, $wishlistProductIds, true)"
+                        :pick-variant-on-add="true"
                     />
                 </div>
             @endforeach

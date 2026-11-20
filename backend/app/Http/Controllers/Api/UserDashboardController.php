@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Enums\OrderStatus;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Models\Order;
 use App\Models\Review;
@@ -88,12 +87,7 @@ class UserDashboardController extends Controller
         $productId = $request->integer('product_id');
 
         // Check if user has bought this product in a paid or completed order
-        $hasPurchased = Order::where('user_id', $user->id)
-            ->whereIn('status', [OrderStatus::PAID, OrderStatus::PROCESSING, OrderStatus::SHIPPED, OrderStatus::COMPLETED])
-            ->whereHas('items.variant', function ($q) use ($productId) {
-                $q->where('product_id', $productId);
-            })
-            ->exists();
+        $hasPurchased = Review::hasVerifiedPurchase($user, $productId);
 
         if (! $hasPurchased) {
             return response()->json([
@@ -114,4 +108,3 @@ class UserDashboardController extends Controller
         ]);
     }
 }
-

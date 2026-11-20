@@ -5,10 +5,17 @@
 @endphp
 
 <header x-data="{ mobileOpen: false, scrolled: false }"
-        x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 8 }, { passive: true })"
+        x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 8 }, { passive: true }); window.addEventListener('resize', () => { if (window.innerWidth >= 1024) mobileOpen = false })"
+        x-effect="document.body.classList.toggle('overflow-hidden', mobileOpen)"
         @keydown.escape.window="mobileOpen = false"
         class="sticky top-0 z-50">
-    <div class="relative z-30 border-b bg-[var(--surface)]/95 backdrop-blur-md transition-all duration-200"
+    @if (! empty($siteSettings['announcement_enabled']) && filled($siteSettings['announcement_text'] ?? null))
+        <div class="relative z-40 bg-[var(--brand-deep)] px-4 py-2 text-center text-[10px] font-semibold leading-5 tracking-[0.05em] text-white/90 sm:text-[11px]">
+            {{ $siteSettings['announcement_text'] }}
+        </div>
+    @endif
+
+    <div class="relative z-40 border-b bg-[var(--surface)]/95 backdrop-blur-md transition-all duration-200"
          :class="scrolled || mobileOpen ? 'border-[var(--border)] shadow-[0_8px_30px_-24px_rgba(36,29,46,0.5)]' : 'border-transparent'">
         <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:h-[76px] lg:gap-6 lg:px-8 lg:py-0">
             <!-- Left: Brand -->

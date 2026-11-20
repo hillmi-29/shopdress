@@ -1,11 +1,15 @@
 ﻿@extends('frontend.layouts.app')
 
-@section('title', 'Daftar — ShopDress')
-@section('meta_description', 'Daftar akun ShopDress baru untuk mengakses wishlist, riwayat pesanan, dan kecepatan checkout.')
+@section('title', 'Daftar — '.\App\Models\SiteSetting::storeName())
+@section('meta_description', 'Daftar akun '.\App\Models\SiteSetting::storeName().' baru untuk mengakses wishlist, riwayat pesanan, dan kecepatan checkout.')
 
 @section('content')
     @php
-        $loginUrl = \App\Support\FrontendUrls::login();
+        $redirectTarget = request()->query('redirect');
+        $loginUrl = \App\Support\FrontendUrls::login()
+            . (is_string($redirectTarget) && $redirectTarget !== ''
+                ? '?'.http_build_query(['redirect' => $redirectTarget])
+                : '');
         $inputClass = 'h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg)] px-4 text-xs text-[var(--text)] transition placeholder:text-[var(--text-subtle)] focus:border-[var(--brand)] focus:bg-[var(--surface)] focus:outline-none focus:ring-2 focus:ring-[var(--brand)]/15';
     @endphp
 
@@ -15,7 +19,7 @@
                 <div class="pointer-events-none absolute -right-10 -top-14 h-40 w-40 rounded-full bg-[var(--brand)]/10 blur-2xl"></div>
                 <div class="pointer-events-none absolute -bottom-16 -left-10 h-36 w-36 rounded-full bg-[var(--accent-soft)]/70 blur-2xl"></div>
 
-                <p class="relative text-[9px] font-black uppercase tracking-[0.2em] text-[var(--brand)]">Bergabung dengan ShopDress</p>
+                <p class="relative text-[9px] font-black uppercase tracking-[0.2em] text-[var(--brand)]">Bergabung dengan {{ \App\Models\SiteSetting::storeName() }}</p>
                 <h1 class="relative mt-2 font-display text-[2.5rem] font-semibold leading-[1.02] tracking-[-0.04em] text-[var(--text)]">
                     Buat akun <span class="italic text-[var(--brand)]">barumu</span>
                 </h1>
@@ -124,7 +128,7 @@
                                    required
                                    class="mt-0.5 h-4 w-4 shrink-0 rounded border-[var(--border)] text-[var(--brand)] focus:ring-[var(--brand)]/20">
                             <label for="terms" class="text-[10px] leading-5 text-[var(--text-muted)]">
-                                Saya menyetujui <a href="#" class="font-semibold text-[var(--brand)] underline-offset-2 hover:underline">Syarat & Ketentuan</a> dan <a href="#" class="font-semibold text-[var(--brand)] underline-offset-2 hover:underline">Kebijakan Privasi</a> ShopDress.
+                                Saya menyetujui <a href="{{ \App\Support\FrontendUrls::terms() }}" class="font-semibold text-[var(--brand)] underline-offset-2 hover:underline">Syarat & Ketentuan</a> dan <a href="{{ \App\Support\FrontendUrls::privacy() }}" class="font-semibold text-[var(--brand)] underline-offset-2 hover:underline">Kebijakan Privasi</a> {{ \App\Models\SiteSetting::storeName() }}.
                             </label>
                         </div>
                         @error('terms')

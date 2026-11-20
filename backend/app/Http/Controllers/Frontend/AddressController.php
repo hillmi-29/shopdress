@@ -21,8 +21,23 @@ class AddressController extends Controller
         $data = $request->validated();
         $makeDefault = $request->boolean('is_default') || ! $user->addresses()->exists();
 
+        $photos = [];
         if ($request->hasFile('landmark_photo')) {
-            $data['landmark_photo'] = $request->file('landmark_photo')->store('landmarks', 'public');
+            $files = is_array($request->file('landmark_photo'))
+                ? $request->file('landmark_photo')
+                : [$request->file('landmark_photo')];
+
+            foreach (array_slice($files, 0, 2) as $file) {
+                $photos[] = $file->store('landmarks', 'public');
+            }
+        }
+
+        if (count($photos) === 0) {
+            $data['landmark_photo'] = null;
+        } elseif (count($photos) === 1) {
+            $data['landmark_photo'] = $photos[0];
+        } else {
+            $data['landmark_photo'] = json_encode(array_slice($photos, 0, 2));
         }
 
         $address = DB::transaction(function () use ($user, $data, $makeDefault) {
@@ -53,16 +68,44 @@ class AddressController extends Controller
         $data = $request->validated();
         $makeDefault = $request->boolean('is_default');
 
+        $existing = $address->landmark_photos;
+        $kept = [];
+
+        if ($request->has('existing_landmark_photos')) {
+            $rawKept = $request->input('existing_landmark_photos');
+            if (is_string($rawKept)) {
+                $rawKept = json_decode($rawKept, true) ?: [];
+            }
+            if (is_array($rawKept)) {
+                $kept = array_values(array_intersect($existing, $rawKept));
+            }
+        } elseif (! $request->boolean('remove_landmark_photo') && ! $request->hasFile('landmark_photo')) {
+            $kept = $existing;
+        }
+
+        foreach (array_diff($existing, $kept) as $removedPhoto) {
+            Storage::disk('public')->delete($removedPhoto);
+        }
+
+        $newPhotos = [];
         if ($request->hasFile('landmark_photo')) {
-            if ($address->landmark_photo) {
-                Storage::disk('public')->delete($address->landmark_photo);
+            $files = is_array($request->file('landmark_photo'))
+                ? $request->file('landmark_photo')
+                : [$request->file('landmark_photo')];
+
+            $slots = max(0, 2 - count($kept));
+            foreach (array_slice($files, 0, $slots) as $file) {
+                $newPhotos[] = $file->store('landmarks', 'public');
             }
-            $data['landmark_photo'] = $request->file('landmark_photo')->store('landmarks', 'public');
-        } elseif ($request->boolean('remove_landmark_photo')) {
-            if ($address->landmark_photo) {
-                Storage::disk('public')->delete($address->landmark_photo);
-            }
+        }
+
+        $allPhotos = array_merge($kept, $newPhotos);
+        if (count($allPhotos) === 0) {
             $data['landmark_photo'] = null;
+        } elseif (count($allPhotos) === 1) {
+            $data['landmark_photo'] = $allPhotos[0];
+        } else {
+            $data['landmark_photo'] = json_encode(array_slice($allPhotos, 0, 2));
         }
 
         DB::transaction(function () use ($request, $address, $data, $makeDefault) {
@@ -92,6 +135,10 @@ class AddressController extends Controller
     public function destroy(Request $request, Address $address): JsonResponse
     {
         $this->authorizeAddress($request, $address);
+
+        foreach ($address->landmark_photos as $photo) {
+            Storage::disk('public')->delete($photo);
+        }
 
         $wasDefault = $address->is_default;
         $address->delete();

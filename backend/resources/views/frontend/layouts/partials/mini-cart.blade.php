@@ -163,7 +163,7 @@
             </div>
 
             <div x-show="items.length > 0" class="mt-5 space-y-2.5">
-                <a href="{{ route('checkout.index') }}"
+                <a href="{{ route('checkout.index', ['mode' => 'cart']) }}"
                    @click="$store.shop.miniCartOpen = false"
                    class="flex w-full items-center justify-center gap-2 rounded-full bg-[var(--brand)] px-5 py-3.5 text-xs font-bold text-white shadow-[0_10px_24px_-14px_rgba(124,58,237,0.8)] transition-all duration-200 ease-out hover:bg-[var(--brand-dark)] hover:shadow-[0_14px_28px_-14px_rgba(124,58,237,0.9)]">
                     Checkout
@@ -229,7 +229,7 @@
                                 img = '{{ asset("storage") }}/' + img.replace(/^\//, '');
                             }
                             if (!img) {
-                                img = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="100" fill="%23f4edff"><rect width="80" height="100"/><text x="40" y="55" font-size="11" fill="%237c3aed" text-anchor="middle">ShopDress</text></svg>';
+                                img = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="100" fill="%23f4edff"><rect width="80" height="100"/><text x="40" y="55" font-size="11" fill="%237c3aed" text-anchor="middle">' + @json(\App\Models\SiteSetting::storeName()) + '</text></svg>';
                             }
                             const price = Number(variant.additional_price || 0) + Number(prod.price || 0);
                             return {

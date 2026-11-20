@@ -1,14 +1,36 @@
 ﻿@extends('frontend.layouts.app')
 
-@section('title', 'Bantuan — ShopDress')
-@section('meta_description', 'Panduan cara pemesanan, pengiriman, pengembalian, dan pertanyaan umum belanja di ShopDress.')
+@php
+    $page = $page ?? null;
+    $storeName = \App\Models\SiteSetting::storeName();
+@endphp
+
+@section('title', 'Bantuan — '.\App\Models\SiteSetting::storeName())
+@section('meta_description', $page?->meta_description ?: 'Panduan cara pemesanan, pengiriman, pengembalian, dan pertanyaan umum belanja di '.\App\Models\SiteSetting::storeName().'.')
 
 @section('content')
     @php
         $homeUrl = \App\Support\FrontendUrls::home();
         $catalogUrl = \App\Support\FrontendUrls::catalog();
         $cartUrl = \App\Support\FrontendUrls::cart();
-        $contactUrl = 'mailto:halo@shopdress.com';
+        $siteSettings = $siteSettings ?? \App\Models\SiteSetting::values();
+        $kicker = $page?->kicker ?: 'Pusat bantuan';
+        $heading = $page?->title ?: 'Ada yang bisa';
+        $highlight = $page?->highlight ?: 'kami bantu?';
+        $intro = $page?->subtitle ?: 'Temukan panduan belanja, informasi pengiriman, dan jawaban atas pertanyaan yang paling sering ditanyakan.';
+        $contactUrl = $siteSettings['email_url'] ?? null;
+
+        if (blank($contactUrl)) {
+            $contactUrl = $siteSettings['whatsapp_help_url'] ?? null;
+        }
+
+        $faqItems = collect($faqs ?? [])
+            ->map(fn ($faq) => ['q' => $faq->question, 'a' => $faq->answer])
+            ->all();
+
+        if ($faqItems === []) {
+            $faqItems = \App\Models\Faq::defaultsFor(\App\Models\Faq::PAGE_HELP);
+        }
     @endphp
 
     <header class="relative overflow-hidden rounded-[1.75rem] border border-[var(--border)] bg-[var(--surface)] px-5 py-7 sm:px-8 sm:py-9">
@@ -22,15 +44,21 @@
         </nav>
 
         <div class="relative mt-5 max-w-2xl">
-            <p class="section-kicker">Pusat bantuan</p>
+            <p class="section-kicker">{{ $kicker }}</p>
             <h1 class="mt-2 font-display text-[2.6rem] font-semibold leading-[0.95] tracking-[-0.045em] text-[var(--text)] sm:text-6xl">
-                Ada yang bisa <span class="italic text-[var(--brand)]">kami bantu?</span>
+                {{ $heading }} <span class="italic text-[var(--brand)]">{{ $highlight }}</span>
             </h1>
             <p class="mt-3 max-w-xl text-xs leading-6 text-[var(--text-muted)] sm:text-sm">
-                Temukan panduan belanja, informasi pengiriman, dan jawaban atas pertanyaan yang paling sering ditanyakan.
+                {{ $intro }}
             </p>
         </div>
     </header>
+
+    @if ($page?->content)
+        <section class="reveal mt-5 rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6">
+            <div class="sd-rich-text">{!! $page->content !!}</div>
+        </section>
+    @endif
 
     <div class="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
         @foreach ([
@@ -64,7 +92,7 @@
                 </span>
                 <div>
                     <h2 class="font-display text-xl font-semibold tracking-[-0.02em] text-[var(--text)]">Cara Pemesanan</h2>
-                    <p class="mt-0.5 text-[11px] text-[var(--text-muted)]">Belanja di ShopDress hanya butuh beberapa langkah.</p>
+                    <p class="mt-0.5 text-[11px] text-[var(--text-muted)]">Belanja di {{ $storeName }} hanya butuh beberapa langkah.</p>
                 </div>
             </div>
 
@@ -72,7 +100,7 @@
                 <ol class="grid gap-3 sm:grid-cols-2">
                     @foreach ([
                         ['step' => '01', 'title' => 'Pilih produk', 'desc' => 'Jelajahi katalog atau kategori, lalu buka detail produk untuk memilih warna dan ukuran.'],
-                        ['step' => '02', 'title' => 'Masukkan keranjang', 'desc' => 'Tentukan jumlah, lalu tekan tombol Tambah ke Keranjang. Kamu bisa mengubah jumlah di halaman keranjang.'],
+                        ['step' => '02', 'title' => 'Beli atau masukkan keranjang', 'desc' => 'Di halaman produk, pilih warna dan ukuran lalu tekan Beli Sekarang untuk langsung ke checkout. Hanya produk itu yang dibawa; isi keranjang tetap aman.'],
                         ['step' => '03', 'title' => 'Isi data pengiriman', 'desc' => 'Lanjut ke checkout, lengkapi nama penerima, nomor telepon, dan alamat pengiriman.'],
                         ['step' => '04', 'title' => 'Bayar pesanan', 'desc' => 'Pilih metode pembayaran melalui Midtrans, lalu selesaikan pembayaran sebelum batas waktu.'],
                     ] as $step)
@@ -114,7 +142,7 @@
             <dl class="grid gap-3 p-5 sm:grid-cols-2 sm:p-6">
                 @foreach ([
                     ['term' => 'Estimasi pengiriman', 'desc' => '1–2 hari kerja untuk area Jabodetabek dan 2–5 hari kerja untuk luar Jabodetabek.'],
-                    ['term' => 'Ongkos kirim', 'desc' => 'Dihitung otomatis saat checkout berdasarkan alamat dan kurir yang dipilih.'],
+                    ['term' => 'Ongkos kirim', 'desc' => 'Ongkos kirim tetap Rp'.number_format((float) ($siteSettings['shipping_cost'] ?? 20000), 0, ',', '.').' per pesanan, dihitung sekali saat checkout.'],
                     ['term' => 'Nomor resi', 'desc' => 'Resi akan tersedia di halaman Pesanan setelah pesanan dikirim.'],
                     ['term' => 'Pengemasan', 'desc' => 'Produk dilindungi kemasan ekstra agar tetap aman selama perjalanan.'],
                 ] as $item)
@@ -180,13 +208,7 @@
             </div>
 
             <div class="divide-y divide-[var(--border-light)]">
-                @foreach ([
-                    ['q' => 'Apakah bisa belanja tanpa membuat akun?', 'a' => 'Bisa. Kamu tetap dapat menambahkan produk ke keranjang dan checkout sebagai tamu. Namun, membuat akun memudahkanmu memantau pesanan dan menyimpan wishlist.'],
-                    ['q' => 'Bagaimana cara memilih ukuran yang tepat?', 'a' => 'Buka detail produk dan pilih ukuran yang tersedia. Jika ragu, bandingkan ukuran badanmu dengan panduan pada deskripsi produk atau hubungi kami sebelum membeli.'],
-                    ['q' => 'Metode pembayaran apa saja yang tersedia?', 'a' => 'Pembayaran diproses melalui Midtrans dan mendukung berbagai metode seperti transfer bank, virtual account, e-wallet, dan kartu.'],
-                    ['q' => 'Apakah pesanan bisa dibatalkan?', 'a' => 'Pesanan yang belum dibayar dapat dibatalkan melalui halaman Pesanan. Jika sudah dibayar, silakan hubungi kami untuk memeriksa kemungkinan pembatalan.'],
-                    ['q' => 'Bagaimana jika produk yang diterima rusak?', 'a' => 'Segera hubungi kami maksimal 7 hari setelah produk diterima dengan menyertakan foto kondisi produk dan nomor pesanan. Kami akan membantu proses penggantian.'],
-                ] as $faq)
+                @foreach ($faqItems as $faq)
                     <details class="group px-5 py-4 sm:px-6">
                         <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-[11px] font-bold text-[var(--text)] marker:hidden">
                             {{ $faq['q'] }}
@@ -205,15 +227,17 @@
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h2 class="font-display text-2xl font-semibold tracking-[-0.02em]">Masih butuh bantuan?</h2>
-                <p class="mt-1 text-[11px] text-white/60">Tim kami siap membantu setiap Senin–Sabtu, 09.00–18.00 WIB.</p>
+                <p class="mt-1 text-[11px] text-white/60">Tim kami siap membantu setiap {{ $siteSettings['help_operational_hours'] }}.</p>
             </div>
-            <a href="{{ $contactUrl }}" class="inline-flex h-11 shrink-0 items-center justify-center gap-2 self-start rounded-full bg-white px-5 text-[11px] font-bold text-[var(--brand-dark)] transition hover:bg-[var(--brand-soft)] sm:self-auto">
-                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16v12H4V6Z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m4 7 8 6 8-6" />
-                </svg>
-                Hubungi Kami
-            </a>
+            @if (filled($contactUrl))
+                <a href="{{ $contactUrl }}" class="inline-flex h-11 shrink-0 items-center justify-center gap-2 self-start rounded-full bg-white px-5 text-[11px] font-bold text-[var(--brand-dark)] transition hover:bg-[var(--brand-soft)] sm:self-auto">
+                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16v12H4V6Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m4 7 8 6 8-6" />
+                    </svg>
+                    Hubungi Kami
+                </a>
+            @endif
         </div>
     </section>
 @endsection

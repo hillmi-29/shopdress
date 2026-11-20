@@ -1,7 +1,7 @@
 @extends('frontend.layouts.app')
 
-@section('title', 'Checkout — ShopDress')
-@section('meta_description', 'Lengkapi alamat pengiriman dan selesaikan pembayaran pesanan ShopDress Anda dengan aman.')
+@section('title', 'Checkout — '.\App\Models\SiteSetting::storeName())
+@section('meta_description', 'Lengkapi alamat pengiriman dan selesaikan pembayaran pesanan '.\App\Models\SiteSetting::storeName().' Anda dengan aman.')
 
 @section('content')
     @php
@@ -10,12 +10,17 @@
         $helpUrl = \App\Support\FrontendUrls::help();
         $user = auth()->user();
         $itemCount = $cart->total_quantity;
+        $featuredCoupon = $featuredCoupon ?? null;
+        $checkoutMode = $checkoutMode ?? 'cart';
+        $isBuyNow = $checkoutMode === 'buy_now';
+        $buyNowProduct = $isBuyNow ? $cart->items->first()?->variant?->product : null;
+        $buyNowProductUrl = $buyNowProduct ? \App\Support\FrontendUrls::product($buyNowProduct) : $cartUrl;
     @endphp
 
     <nav class="mb-5 flex flex-wrap items-center gap-2 text-[10px] font-semibold text-[var(--text-subtle)]" aria-label="Breadcrumb">
         <a href="{{ \App\Support\FrontendUrls::home() }}" class="transition hover:text-[var(--brand)]">Beranda</a>
         <span aria-hidden="true">/</span>
-        <a href="{{ $cartUrl }}" class="transition hover:text-[var(--brand)]">Keranjang</a>
+        <a href="{{ $isBuyNow ? $buyNowProductUrl : $cartUrl }}" class="transition hover:text-[var(--brand)]">{{ $isBuyNow ? 'Produk' : 'Keranjang' }}</a>
         <span aria-hidden="true">/</span>
         <span class="text-[var(--text)]" aria-current="page">Checkout</span>
     </nav>
@@ -40,7 +45,7 @@
                     <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
                     </svg>
-                    Keranjang
+                    {{ $isBuyNow ? 'Produk' : 'Keranjang' }}
                 </li>
                 <li class="h-px w-4 bg-[var(--border)] sm:w-6" aria-hidden="true"></li>
                 <li class="rounded-full bg-[var(--brand)] px-2.5 py-1.5 text-white" aria-current="step">Checkout</li>
@@ -66,6 +71,7 @@
           enctype="multipart/form-data"
           class="mt-6 grid items-start gap-6 lg:grid-cols-[1.4fr_0.72fr] lg:gap-8">
         @csrf
+        <input type="hidden" name="checkout_mode" value="{{ $checkoutMode }}">
 
         <div class="space-y-5">
             {{-- Order card --}}
@@ -77,7 +83,7 @@
                     </div>
                     <div class="flex items-center gap-3">
                         <span class="rounded-full bg-[var(--surface-2)] px-3 py-1.5 text-[10px] font-bold text-[var(--text-muted)]">{{ $itemCount }} item</span>
-                        <a href="{{ $cartUrl }}" class="text-[10px] font-bold text-[var(--brand)] underline-offset-4 transition hover:underline">Ubah</a>
+                        <a href="{{ $isBuyNow ? $buyNowProductUrl : $cartUrl }}" class="text-[10px] font-bold text-[var(--brand)] underline-offset-4 transition hover:underline">Ubah</a>
                     </div>
                 </div>
 
@@ -122,7 +128,7 @@
                                     </div>
 
                                     <button type="button"
-                                            @click="deleteCartItem({{ $item->id }})"
+                                            @click="deleteCheckoutItem({{ $item->id ?? 'null' }})"
                                             class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[var(--text-subtle)] transition hover:bg-[var(--error-soft)] hover:text-[var(--error)]"
                                             aria-label="Hapus {{ $product->name }} dari pesanan">
                                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
@@ -134,13 +140,13 @@
                                 <div class="mt-auto flex flex-wrap items-end justify-between gap-2 pt-3">
                                     <div class="inline-flex h-8 items-center rounded-full border border-[var(--border)]">
                                         <button type="button"
-                                                @click="updateCartItem({{ $item->id }}, Math.max(1, itemQty - 1))"
+                                                @click="updateCheckoutItem({{ $item->id ?? 'null' }}, Math.max(1, itemQty - 1))"
                                                 :disabled="itemQty <= 1"
                                                 class="flex h-full w-8 items-center justify-center rounded-l-full text-[var(--text-muted)] transition hover:bg-[var(--surface-2)] hover:text-[var(--text)] disabled:cursor-not-allowed disabled:opacity-30"
                                                 aria-label="Kurangi jumlah">−</button>
                                         <span class="w-7 text-center text-[11px] font-bold text-[var(--text)]" x-text="itemQty">{{ $item->quantity }}</span>
                                         <button type="button"
-                                                @click="updateCartItem({{ $item->id }}, itemQty + 1)"
+                                                @click="updateCheckoutItem({{ $item->id ?? 'null' }}, itemQty + 1)"
                                                 class="flex h-full w-8 items-center justify-center rounded-r-full text-[var(--text-muted)] transition hover:bg-[var(--surface-2)] hover:text-[var(--text)]"
                                                 aria-label="Tambah jumlah">+</button>
                                     </div>
@@ -196,10 +202,10 @@
                                         @endif
                                     </span>
                                     <span class="mt-2 block text-[9px] leading-4 text-[var(--text-muted)]">{{ $savedAddress->full_address }}</span>
-                                    @if ($savedAddress->landmark_photo)
+                                    @if (!empty($savedAddress->landmark_photos))
                                         <span class="mt-2 inline-flex items-center gap-1 rounded-md bg-[var(--brand-soft)] px-1.5 py-0.5 text-[8px] font-bold text-[var(--brand-dark)]">
                                             <svg class="h-3 w-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>
-                                            Foto patokan terlampir
+                                            {{ count($savedAddress->landmark_photos) }} foto patokan terlampir
                                         </span>
                                     @endif
                                 </button>
@@ -406,41 +412,44 @@
                     {{-- Upload Foto Patokan (Opsional) --}}
                     <div class="sm:col-span-2">
                         <label for="landmark_photo" class="mb-1.5 flex items-center justify-between text-[11px] font-bold text-[var(--text)]">
-                            <span>Foto Patokan Lokasi <span class="font-normal text-[var(--text-subtle)]">(opsional)</span></span>
-                            <span class="text-[9px] font-normal text-[var(--text-subtle)]">Maks. 2MB (JPG, PNG, WebP)</span>
+                            <span>Foto Patokan Lokasi <span class="font-normal text-[var(--text-subtle)]">(opsional, maks. 2 foto)</span></span>
+                            <span class="text-[9px] font-normal text-[var(--text-subtle)]">Maks. 2MB/foto (JPG, PNG, WebP)</span>
                         </label>
-                        <input type="hidden" name="saved_landmark_photo" :value="savedLandmarkPhoto || ''">
+                        <input type="hidden" name="saved_landmark_photo" :value="JSON.stringify(landmarkPhotos.filter(p => p.type === 'saved').map(p => p.path))">
                         <div class="flex flex-wrap items-center gap-3">
-                            <label class="flex h-11 cursor-pointer items-center gap-2 rounded-xl border border-dashed border-[var(--border)] bg-[var(--bg)] px-4 text-xs font-medium text-[var(--text-muted)] transition hover:border-[var(--brand)] hover:text-[var(--brand)]">
+                            <label x-show="landmarkPhotos.length < 2"
+                                   class="flex h-11 cursor-pointer items-center gap-2 rounded-xl border border-dashed border-[var(--border)] bg-[var(--bg)] px-4 text-xs font-medium text-[var(--text-muted)] transition hover:border-[var(--brand)] hover:text-[var(--brand)]">
                                 <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
                                 </svg>
-                                <span x-text="landmarkFileName ? 'Ganti Foto' : (landmarkPreviewUrl ? 'Ganti Foto Patokan' : 'Pilih Foto Patokan')">Pilih Foto Patokan</span>
+                                <span x-text="landmarkPhotos.length === 0 ? 'Pilih Foto Patokan (Maks. 2)' : 'Tambah Foto Patokan (' + landmarkPhotos.length + '/2)'"></span>
                                 <input type="file"
                                        id="landmark_photo"
-                                       name="landmark_photo"
+                                       name="landmark_photo[]"
                                        accept="image/jpeg,image/png,image/webp,image/jpg"
+                                       multiple
                                        class="hidden"
                                        @change="onLandmarkChange($event)">
                             </label>
-                            <template x-if="landmarkPreviewUrl">
+
+                            <template x-for="(photo, index) in landmarkPhotos" :key="photo.url || index">
                                 <div class="flex items-center gap-2 rounded-xl border border-[var(--border-light)] bg-[var(--surface-2)]/60 px-3 py-1.5">
-                                    <img :src="landmarkPreviewUrl" alt="Preview Patokan" class="h-8 w-8 rounded-lg object-cover border border-[var(--border)]">
-                                    <span class="max-w-[170px] truncate text-[11px] font-medium text-[var(--text)]" x-text="landmarkFileName || 'Foto patokan terlampir'"></span>
+                                    <img :src="photo.url" alt="Preview Patokan" class="h-8 w-8 rounded-lg object-cover border border-[var(--border)]">
+                                    <span class="max-w-[150px] truncate text-[11px] font-medium text-[var(--text)]" x-text="photo.name || ('Foto ' + (index + 1))"></span>
                                     <button type="button"
-                                            @click="removeLandmark()"
+                                            @click="removeLandmark(index)"
                                             class="ml-1 text-[10px] font-bold text-[var(--error)] transition hover:underline">
                                         Hapus
                                     </button>
                                 </div>
                             </template>
                         </div>
-                        <p class="mt-1 text-[9px] text-[var(--brand)] font-medium" x-show="savedLandmarkPhoto">
-                            Foto patokan otomatis terisi dari alamat tersimpan. Anda dapat mengganti atau menghapusnya jika perlu.
+                        <p class="mt-1 text-[9px] text-[var(--brand)] font-medium" x-show="landmarkPhotos.some(p => p.type === 'saved')">
+                            Foto patokan otomatis terisi dari alamat tersimpan. Anda dapat menambah, mengganti, atau menghapusnya jika perlu.
                         </p>
-                        <p class="mt-1 text-[9px] text-[var(--text-subtle)]" x-show="! savedLandmarkPhoto">
-                            Unggah foto pagar, rumah, ruko, atau patokan visual terdekat untuk memudahkan kurir mengantar pesanan.
+                        <p class="mt-1 text-[9px] text-[var(--text-subtle)]" x-show="! landmarkPhotos.some(p => p.type === 'saved')">
+                            Unggah hingga 2 foto pagar, rumah, ruko, atau patokan visual terdekat untuk memudahkan kurir mengantar pesanan.
                         </p>
                     </div>
 
@@ -518,9 +527,11 @@
                             <button type="button" @click="removeCoupon()" class="shrink-0 text-[9px] font-bold underline underline-offset-2 transition hover:opacity-70">Hapus</button>
                         </div>
 
-                        <p x-show="!appliedCoupon" x-cloak class="mt-2 text-[9px] leading-4 text-[var(--text-subtle)]">
-                            Baru di sini? Pakai <a href="{{ $promoUrl }}" class="font-mono font-bold text-[var(--brand)] underline decoration-[var(--brand)]/30 underline-offset-2">SHOPDRESSNEW</a> dan hemat 20%.
-                        </p>
+                        @if ($featuredCoupon)
+                            <p x-show="!appliedCoupon" x-cloak class="mt-2 text-[9px] leading-4 text-[var(--text-subtle)]">
+                                Baru di sini? Pakai <a href="{{ $promoUrl }}" class="font-mono font-bold text-[var(--brand)] underline decoration-[var(--brand)]/30 underline-offset-2">{{ $featuredCoupon->code }}</a> dan dapatkan {{ lcfirst($featuredCoupon->discountLabel()) }}.
+                            </p>
+                        @endif
                     </div>
 
                     {{-- Totals --}}
@@ -619,9 +630,7 @@
                 },
                 savedAddresses: @js($savedAddresses),
                 selectedAddressId: null,
-                landmarkPreviewUrl: null,
-                landmarkFileName: '',
-                savedLandmarkPhoto: null,
+                landmarkPhotos: [],
                 provinces: [],
                 regencies: [],
                 districts: [],
@@ -639,6 +648,9 @@
                 shippingCost: {{ (float) $shippingCost }},
                 grandTotal: {{ (float) $grandTotal }},
                 submitting: false,
+                isBuyNow: @js($isBuyNow),
+                buyNowProductUrl: @js($buyNowProductUrl),
+                buyNowApiUrl: @js(url('api/buy-now')),
 
                 init() {
                     const preferred = this.savedAddresses.find(address =>
@@ -775,20 +787,46 @@
                 },
 
                 onLandmarkChange(event) {
-                    const file = event.target.files[0];
-                    if (file) {
-                        this.landmarkFileName = file.name;
-                        this.landmarkPreviewUrl = URL.createObjectURL(file);
-                        this.savedLandmarkPhoto = null;
-                    }
+                    const files = Array.from(event.target.files || []);
+                    if (! files.length) return;
+
+                    const available = 2 - this.landmarkPhotos.length;
+                    const toAdd = files.slice(0, available);
+
+                    toAdd.forEach(file => {
+                        this.landmarkPhotos.push({
+                            type: 'new',
+                            file: file,
+                            url: URL.createObjectURL(file),
+                            name: file.name,
+                        });
+                    });
+
+                    event.target.value = '';
+                    this.syncCheckoutFileInput();
                 },
 
-                removeLandmark() {
-                    this.landmarkPreviewUrl = null;
-                    this.landmarkFileName = '';
-                    this.savedLandmarkPhoto = null;
+                removeLandmark(index) {
+                    const removed = this.landmarkPhotos[index];
+                    if (removed && removed.type === 'new' && removed.url) {
+                        URL.revokeObjectURL(removed.url);
+                    }
+                    this.landmarkPhotos.splice(index, 1);
+                    this.syncCheckoutFileInput();
+                },
+
+                syncCheckoutFileInput() {
                     const input = document.getElementById('landmark_photo');
-                    if (input) input.value = '';
+                    if (! input) return;
+                    try {
+                        const dt = new DataTransfer();
+                        this.landmarkPhotos
+                            .filter(p => p.type === 'new' && p.file)
+                            .forEach(p => dt.items.add(p.file));
+                        input.files = dt.files;
+                    } catch (e) {
+                        // ignore DataTransfer fallback
+                    }
                 },
 
                 async applySavedAddress(id) {
@@ -812,17 +850,29 @@
                     this.address.rw = saved.rw || '';
                     this.address.street = saved.street || '';
 
-                    if (saved.landmark_photo && saved.landmark_photo_url) {
-                        this.savedLandmarkPhoto = saved.landmark_photo;
-                        this.landmarkPreviewUrl = saved.landmark_photo_url;
-                        this.landmarkFileName = 'Foto patokan terlampir';
-                    } else {
-                        this.savedLandmarkPhoto = null;
-                        this.landmarkPreviewUrl = null;
-                        this.landmarkFileName = '';
+                    this.landmarkPhotos = [];
+                    const paths = saved.landmark_photos || [];
+                    const urls = saved.landmark_photo_urls || [];
+                    paths.forEach((path, idx) => {
+                        const url = urls[idx] || (saved.landmark_photo_url && idx === 0 ? saved.landmark_photo_url : null);
+                        if (url) {
+                            this.landmarkPhotos.push({
+                                type: 'saved',
+                                path: path,
+                                url: url,
+                                name: 'Foto patokan ' + (idx + 1),
+                            });
+                        }
+                    });
+                    if (this.landmarkPhotos.length === 0 && saved.landmark_photo_url && saved.landmark_photo) {
+                        this.landmarkPhotos.push({
+                            type: 'saved',
+                            path: saved.landmark_photo,
+                            url: saved.landmark_photo_url,
+                            name: 'Foto patokan 1',
+                        });
                     }
-                    const fileInput = document.getElementById('landmark_photo');
-                    if (fileInput) fileInput.value = '';
+                    this.syncCheckoutFileInput();
 
                     await this.fetchProvinces();
                     await this.loadRegencies();
@@ -910,6 +960,64 @@
                     this.couponCode = '';
                     this.discountAmount = 0;
                     this.grandTotal = this.baseTotal + this.shippingCost;
+                },
+
+                updateCheckoutItem(id, qty) {
+                    if (this.isBuyNow) {
+                        this.updateBuyNowQuantity(qty);
+                        return;
+                    }
+
+                    this.updateCartItem(id, qty);
+                },
+
+                updateBuyNowQuantity(qty) {
+                    fetch(this.buyNowApiUrl, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                        },
+                        credentials: 'same-origin',
+                        body: JSON.stringify({ quantity: qty })
+                    })
+                    .then(async (res) => {
+                        const data = await res.json();
+                        if (!res.ok) throw new Error(data.message || 'Jumlah tidak dapat diperbarui.');
+                        window.location.reload();
+                    })
+                    .catch((err) => {
+                        this.$dispatch('toast', {
+                            type: 'error',
+                            title: 'Beli Sekarang',
+                            message: err.message
+                        });
+                    });
+                },
+
+                deleteCheckoutItem(id) {
+                    if (this.isBuyNow) {
+                        this.deleteBuyNowItem();
+                        return;
+                    }
+
+                    this.deleteCartItem(id);
+                },
+
+                deleteBuyNowItem() {
+                    if (!confirm('Batalkan Beli Sekarang untuk produk ini?')) return;
+
+                    fetch(this.buyNowApiUrl, {
+                        method: 'DELETE',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                        },
+                        credentials: 'same-origin'
+                    }).then(() => {
+                        window.location.href = this.buyNowProductUrl;
+                    });
                 },
 
                 updateCartItem(id, qty) {

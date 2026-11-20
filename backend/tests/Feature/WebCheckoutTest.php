@@ -13,6 +13,8 @@ use App\Models\ProductVariant;
 use App\Models\User;
 use App\Services\MidtransService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class WebCheckoutTest extends TestCase
@@ -237,7 +239,7 @@ class WebCheckoutTest extends TestCase
 
     public function test_web_checkout_can_upload_landmark_photo(): void
     {
-        \Illuminate\Support\Facades\Storage::fake('public');
+        Storage::fake('public');
 
         $user = User::factory()->create();
         $variant = $this->createProductVariant(price: 150000, stock: 3);
@@ -252,7 +254,7 @@ class WebCheckoutTest extends TestCase
             $mock->shouldReceive('generateSnapToken')->once()->andReturn('snap-landmark-test');
         });
 
-        $fakePhoto = \Illuminate\Http\UploadedFile::fake()->image('patokan_rumah.jpg', 600, 600);
+        $fakePhoto = UploadedFile::fake()->image('patokan_rumah.jpg', 600, 600);
 
         $response = $this->actingAs($user)->post(route('checkout.process'), [
             'shipping_address' => 'Jl. Braga No. 10, RT 001/RW 002, Desa/Kel. Braga, Kec. Sumur Bandung, Kota Bandung, Jawa Barat, 40111',
@@ -265,8 +267,8 @@ class WebCheckoutTest extends TestCase
         $order = Order::firstOrFail();
 
         $response->assertRedirect(route('checkout.payment', ['order' => $order->id]));
-        $this->assertNotNull($order->landmark_photo);
-        \Illuminate\Support\Facades\Storage::disk('public')->assertExists($order->landmark_photo);
+        $this->assertCount(1, $order->landmark_photos);
+        Storage::disk('public')->assertExists($order->landmark_photos[0]);
     }
 
     private function createProductVariant(int $price, int $stock): ProductVariant

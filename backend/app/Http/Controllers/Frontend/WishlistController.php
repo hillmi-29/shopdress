@@ -14,7 +14,7 @@ class WishlistController extends Controller
     public function index(): View
     {
         $wishlists = auth()->user()
-            ? Wishlist::with('product.primaryImage')
+            ? Wishlist::with(['product.primaryImage', 'product.variants'])
                 ->where('user_id', auth()->id())
                 ->latest()
                 ->get()

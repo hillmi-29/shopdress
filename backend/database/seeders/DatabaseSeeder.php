@@ -16,7 +16,6 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -68,6 +67,52 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make(env('SEED_CUSTOMER_PASSWORD', 'password')),
                 'phone' => '081377889900',
                 'address' => 'Jl. Diponegoro No. 12, Surabaya, Jawa Timur',
+                'role' => 'customer',
+            ]
+        );
+
+        // Additional customers so the seeded testimonial section has enough
+        // variety to demonstrate curation from the admin panel.
+        $dewi = User::firstOrCreate(
+            ['email' => 'dewi@shopdress.com'],
+            [
+                'name' => 'Dewi Lestari',
+                'password' => Hash::make(env('SEED_CUSTOMER_PASSWORD', 'password')),
+                'phone' => '081355667788',
+                'address' => 'Jl. Cendrawasih No. 8, Yogyakarta',
+                'role' => 'customer',
+            ]
+        );
+
+        $rina = User::firstOrCreate(
+            ['email' => 'rina@shopdress.com'],
+            [
+                'name' => 'Rina Kartika',
+                'password' => Hash::make(env('SEED_CUSTOMER_PASSWORD', 'password')),
+                'phone' => '081399887766',
+                'address' => 'Jl. Kenanga No. 21, Semarang, Jawa Tengah',
+                'role' => 'customer',
+            ]
+        );
+
+        $maya = User::firstOrCreate(
+            ['email' => 'maya@shopdress.com'],
+            [
+                'name' => 'Maya Putri',
+                'password' => Hash::make(env('SEED_CUSTOMER_PASSWORD', 'password')),
+                'phone' => '081344556677',
+                'address' => 'Jl. Anggrek No. 5, Denpasar, Bali',
+                'role' => 'customer',
+            ]
+        );
+
+        $fitri = User::firstOrCreate(
+            ['email' => 'fitri@shopdress.com'],
+            [
+                'name' => 'Fitri Handayani',
+                'password' => Hash::make(env('SEED_CUSTOMER_PASSWORD', 'password')),
+                'phone' => '081388776655',
+                'address' => 'Jl. Dahlia No. 17, Makassar, Sulawesi Selatan',
                 'role' => 'customer',
             ]
         );
@@ -428,7 +473,7 @@ class DatabaseSeeder extends Seeder
 
             // Variants
             foreach ($prodData['variants'] as $v) {
-                $sku = 'SD-' . strtoupper(substr($prodData['slug'], 0, 4)) . '-' . strtoupper(substr($v['color'], 0, 3)) . '-' . $v['size'];
+                $sku = 'SD-'.strtoupper(substr($prodData['slug'], 0, 4)).'-'.strtoupper(substr($v['color'], 0, 3)).'-'.$v['size'];
                 ProductVariant::firstOrCreate(
                     [
                         'product_id' => $product->id,
@@ -486,22 +531,76 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 5. Sample Reviews
-        Review::firstOrCreate(
-            ['user_id' => $customer->id, 'product_id' => $createdProducts[0]->id],
+        // 5. Sample Reviews & curated homepage testimonials
+        $sampleReviews = [
             [
+                'user' => $customer,
+                'product_index' => 0,
                 'rating' => 5,
                 'comment' => 'Bahan Aurelia Silk ini bagus banget! Lembut, dingin di kulit, dan warnanya persis seperti di foto. Pengiriman juga super kilat!',
-            ]
-        );
-
-        Review::firstOrCreate(
-            ['user_id' => $customer2->id, 'product_id' => $createdProducts[1]->id],
+                'is_featured' => true,
+                'sort_order' => 1,
+            ],
             [
+                'user' => $customer2,
+                'product_index' => 1,
                 'rating' => 5,
                 'comment' => 'Dress Ji-Woo ini lucu banget potongannya! Ruffle-nya rapi dan pas di badan. Suka sekali dengan packagingnya yang rapi.',
-            ]
-        );
+                'is_featured' => true,
+                'sort_order' => 2,
+            ],
+            [
+                'user' => $dewi,
+                'product_index' => 2,
+                'rating' => 5,
+                'comment' => 'Luna Linen ini benar-benar adem dipakai seharian. Jahitannya rapi dan saku sampingnya sangat membantu.',
+                'is_featured' => false,
+                'sort_order' => 0,
+            ],
+            [
+                'user' => $rina,
+                'product_index' => 3,
+                'rating' => 4,
+                'comment' => 'Velvet Seraphina jatuh di badan dan warnanya elegan. Sedikit berat, tapi nyaman untuk acara malam.',
+                'is_featured' => false,
+                'sort_order' => 0,
+            ],
+            [
+                'user' => $maya,
+                'product_index' => 4,
+                'rating' => 5,
+                'comment' => 'Sifonnya ringan dan flowy banget waktu dipakai berfoto. Furingnya membuatnya tetap aman dan nyaman.',
+                'is_featured' => false,
+                'sort_order' => 0,
+            ],
+            [
+                'user' => $fitri,
+                'product_index' => 5,
+                'rating' => 4,
+                'comment' => 'Abaya Nadia longgar dan sopan, lipitannya rapi. Bahan wolfisnya tidak gerah untuk aktivitas harian.',
+                'is_featured' => false,
+                'sort_order' => 0,
+            ],
+        ];
+
+        foreach ($sampleReviews as $sample) {
+            $review = Review::firstOrCreate(
+                [
+                    'user_id' => $sample['user']->id,
+                    'product_id' => $createdProducts[$sample['product_index']]->id,
+                ],
+                [
+                    'rating' => $sample['rating'],
+                    'comment' => $sample['comment'],
+                ]
+            );
+
+            $review->update([
+                'is_visible' => true,
+                'is_featured' => $sample['is_featured'],
+                'sort_order' => $sample['sort_order'],
+            ]);
+        }
 
         // 6. Sample Orders
         $firstProduct = $createdProducts[0];
@@ -541,5 +640,13 @@ class DatabaseSeeder extends Seeder
                 ]
             );
         }
+
+        // 7. Homepage banners (hero slider & promo)
+        $this->call(BannerSeeder::class);
+
+        // 8. Pengaturan toko, FAQ, dan halaman statis (CMS)
+        $this->call(SiteSettingSeeder::class);
+        $this->call(FaqSeeder::class);
+        $this->call(StaticPageSeeder::class);
     }
 }

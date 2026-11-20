@@ -1,7 +1,7 @@
 ﻿@extends('frontend.layouts.app')
 
-@section('title', 'Pesanan Saya — ShopDress')
-@section('meta_description', 'Lihat riwayat dan status pesanan Anda di ShopDress.')
+@section('title', 'Pesanan Saya — '.\App\Models\SiteSetting::storeName())
+@section('meta_description', 'Lihat riwayat dan status pesanan Anda di '.\App\Models\SiteSetting::storeName().'.')
 
 @section('content')
     @php
@@ -88,7 +88,7 @@
                                         </span>
                                     </div>
                                     <p class="mt-1.5 truncate font-display text-base font-semibold tracking-[-0.015em] text-[var(--text)]">
-                                        {{ $firstProduct?->name ?? 'Pesanan ShopDress' }}
+                                        {{ $firstProduct?->name ?? 'Pesanan '.\App\Models\SiteSetting::storeName() }}
                                         @if ($order->items->count() > 1)
                                             <span class="text-[var(--text-subtle)]">+{{ $order->items->count() - 1 }}</span>
                                         @endif

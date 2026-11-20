@@ -13,7 +13,7 @@ class AddressRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
+        $rules = [
             'label' => ['nullable', 'string', 'max:50'],
             'recipient_name' => ['required', 'string', 'max:255'],
             'recipient_phone' => ['required', 'string', 'max:20'],
@@ -29,9 +29,22 @@ class AddressRequest extends FormRequest
             'rt' => ['nullable', 'string', 'max:6'],
             'rw' => ['nullable', 'string', 'max:6'],
             'street' => ['required', 'string', 'max:500'],
-            'landmark_photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'existing_landmark_photos' => ['nullable'],
             'is_default' => ['sometimes', 'boolean'],
         ];
+
+        if ($this->hasFile('landmark_photo')) {
+            if (is_array($this->file('landmark_photo'))) {
+                $rules['landmark_photo'] = ['array', 'max:2'];
+                $rules['landmark_photo.*'] = ['image', 'mimes:jpeg,png,jpg,webp', 'max:2048'];
+            } else {
+                $rules['landmark_photo'] = ['image', 'mimes:jpeg,png,jpg,webp', 'max:2048'];
+            }
+        } else {
+            $rules['landmark_photo'] = ['nullable'];
+        }
+
+        return $rules;
     }
 
     public function messages(): array

@@ -1,7 +1,7 @@
 @extends('frontend.layouts.app')
 
-@section('title', 'Pesanan Diterima — ShopDress')
-@section('meta_description', 'Pesanan ShopDress Anda berhasil dibuat. Simpan nomor pesanan untuk melacak status pengiriman.')
+@section('title', 'Pesanan Diterima — '.\App\Models\SiteSetting::storeName())
+@section('meta_description', 'Pesanan '.\App\Models\SiteSetting::storeName().' Anda berhasil dibuat. Simpan nomor pesanan untuk melacak status pengiriman.')
 
 @section('content')
     @php

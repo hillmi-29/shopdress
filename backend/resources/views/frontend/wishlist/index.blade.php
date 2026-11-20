@@ -1,7 +1,7 @@
 @extends('frontend.layouts.app')
 
-@section('title', 'Wishlist — ShopDress')
-@section('meta_description', 'Kelola wishlist Anda di ShopDress. Simpan produk favorit dan beli kapan saja.')
+@section('title', 'Wishlist — '.\App\Models\SiteSetting::storeName())
+@section('meta_description', 'Kelola wishlist Anda di '.\App\Models\SiteSetting::storeName().'. Simpan produk favorit dan beli kapan saja.')
 
 @section('content')
     @php

@@ -20,8 +20,7 @@ class CheckoutController extends Controller
     public function __construct(
         protected CartService $cartService,
         protected CheckoutService $checkoutService
-    ) {
-    }
+    ) {}
 
     /**
      * Preview checkout details and calculations.
@@ -38,7 +37,7 @@ class CheckoutController extends Controller
         }
 
         $totalAmount = $cart->total_amount;
-        $shippingCost = CheckoutService::SHIPPING_COST;
+        $shippingCost = $this->checkoutService->shippingCost();
         $discountAmount = 0;
         $couponCode = $request->query('coupon_code');
 
@@ -115,7 +114,7 @@ class CheckoutController extends Controller
             try {
                 Mail::to($user->email)->queue(new OrderCreatedMail($order));
             } catch (Exception $e) {
-                Log::error('Failed to queue OrderCreatedMail: ' . $e->getMessage());
+                Log::error('Failed to queue OrderCreatedMail: '.$e->getMessage());
             }
 
             return response()->json([

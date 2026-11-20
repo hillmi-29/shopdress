@@ -1,5 +1,21 @@
 @php
     $helpUrl = \App\Support\FrontendUrls::help();
+    $termsUrl = \App\Support\FrontendUrls::terms();
+    $privacyUrl = \App\Support\FrontendUrls::privacy();
+    $siteSettings = $siteSettings ?? \App\Models\SiteSetting::values();
+    $storeName = $siteSettings['store_name'] ?? \App\Models\SiteSetting::storeName();
+    $nameParts = preg_split('/(?<=[a-z])(?=[A-Z])/', $storeName, 2) ?: [$storeName];
+    $brandLead = $nameParts[0];
+    $brandTail = $nameParts[1] ?? '';
+    $paymentMethods = collect(explode(',', (string) ($siteSettings['payment_methods'] ?? '')))
+        ->map(fn ($method) => trim($method))
+        ->filter()
+        ->values();
+    $socialLinks = array_filter([
+        'Instagram' => $siteSettings['social_instagram'] ?? null,
+        'TikTok' => $siteSettings['social_tiktok'] ?? null,
+        'Facebook' => $siteSettings['social_facebook'] ?? null,
+    ], fn ($url) => filled($url));
 @endphp
 
 <footer class="relative mt-6 overflow-hidden bg-[var(--brand-deep)] text-white">
@@ -11,35 +27,54 @@
         <div class="grid grid-cols-1 gap-10 md:grid-cols-3 lg:gap-14">
             {{-- Column 1 — Brand --}}
             <div>
-                <a href="{{ $homeUrl }}" class="inline-flex items-center gap-2.5" aria-label="ShopDress — Beranda">
+                <a href="{{ $homeUrl }}" class="inline-flex items-center gap-2.5" aria-label="{{ $storeName }} — Beranda">
                     <span class="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/15">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-4.5 w-4.5" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 7a2 2 0 1 0-2-2m2 2v2m0 0-7.5 5.25A2 2 0 0 0 5.6 18h12.8a2 2 0 0 0 1.1-3.75L12 9Z" />
                         </svg>
                     </span>
                     <span class="font-display text-2xl font-semibold tracking-[-0.03em]">
-                        Shop<span class="text-[#c9b3f5]">Dress</span>
+                        {{ $brandLead }}<span class="text-[#c9b3f5]">{{ $brandTail }}</span>
                     </span>
                 </a>
 
                 <p class="mt-5 max-w-xs text-xs leading-6 text-white/65">
-                    Busana wanita modern yang dikurasi dengan bahan premium dan detail rapi — untuk menemani setiap momen, dari hari biasa sampai acara spesial.
+                    {{ $siteSettings['footer_description'] }}
                 </p>
 
                 <div class="mt-6 space-y-2.5 text-xs text-white/70">
-                    <p class="flex items-center gap-2.5">
-                        <svg class="h-4 w-4 shrink-0 text-[#c9b3f5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17.657 16.657 13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0Z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
-                        Jakarta, Indonesia
-                    </p>
-                    <a href="mailto:halo@shopdress.com" class="flex items-center gap-2.5 transition hover:text-white">
-                        <svg class="h-4 w-4 shrink-0 text-[#c9b3f5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2Z"/></svg>
-                        halo@shopdress.com
-                    </a>
-                    <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 transition hover:text-white">
-                        <svg class="h-4 w-4 shrink-0 text-[#c9b3f5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 5a2 2 0 0 1 2-2h3.28a1 1 0 0 1 .948.684l1.498 4.493a1 1 0 0 1-.502 1.21l-2.257 1.13a11.042 11.042 0 0 0 5.516 5.516l1.13-2.257a1 1 0 0 1 1.21-.502l4.493 1.498a1 1 0 0 1 .684.949V19a2 2 0 0 1-2 2h-1C9.716 21 3 14.284 3 6V5Z"/></svg>
-                        +62 812-3456-7890
-                    </a>
+                    @if (filled($siteSettings['store_address'] ?? null))
+                        <p class="flex items-center gap-2.5">
+                            <svg class="h-4 w-4 shrink-0 text-[#c9b3f5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17.657 16.657 13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0Z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
+                            {{ $siteSettings['store_address'] }}
+                        </p>
+                    @endif
+                    @if (filled($siteSettings['email_url'] ?? null))
+                        <a href="{{ $siteSettings['email_url'] }}" class="flex items-center gap-2.5 transition hover:text-white">
+                            <svg class="h-4 w-4 shrink-0 text-[#c9b3f5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2Z"/></svg>
+                            {{ $siteSettings['store_email'] }}
+                        </a>
+                    @endif
+                    @if (filled($siteSettings['whatsapp_url'] ?? null))
+                        <a href="{{ $siteSettings['whatsapp_url'] }}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 transition hover:text-white">
+                            <svg class="h-4 w-4 shrink-0 text-[#c9b3f5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 5a2 2 0 0 1 2-2h3.28a1 1 0 0 1 .948.684l1.498 4.493a1 1 0 0 1-.502 1.21l-2.257 1.13a11.042 11.042 0 0 0 5.516 5.516l1.13-2.257a1 1 0 0 1 1.21-.502l4.493 1.498a1 1 0 0 1 .684.949V19a2 2 0 0 1-2 2h-1C9.716 21 3 14.284 3 6V5Z"/></svg>
+                            {{ $siteSettings['store_phone'] }}
+                        </a>
+                    @endif
                 </div>
+
+                @if ($socialLinks)
+                    <div class="mt-5 flex flex-wrap items-center gap-2">
+                        @foreach ($socialLinks as $label => $url)
+                            <a href="{{ $url }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="inline-flex h-8 items-center rounded-full border border-white/15 px-3 text-[10px] font-semibold text-white/70 transition hover:border-white/40 hover:text-white">
+                                {{ $label }}
+                            </a>
+                        @endforeach
+                    </div>
+                @endif
             </div>
 
             {{-- Column 2 — Explore --}}
@@ -80,31 +115,33 @@
                 <dl class="mt-5 space-y-3 rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-xs">
                     <div class="flex items-center justify-between gap-4">
                         <dt class="text-white/55">Jam operasional</dt>
-                        <dd class="font-bold text-white">09.00 – 21.00 WIB</dd>
+                        <dd class="font-bold text-white">{{ $siteSettings['operational_hours'] }}</dd>
                     </div>
                     <div class="flex items-center justify-between gap-4">
                         <dt class="text-white/55">Hari kerja</dt>
-                        <dd class="font-bold text-white">Senin – Minggu</dd>
+                        <dd class="font-bold text-white">{{ $siteSettings['operational_days'] }}</dd>
                     </div>
                     <div class="flex items-center justify-between gap-4">
                         <dt class="text-white/55">Garansi retur</dt>
-                        <dd class="font-bold text-[#9be7bd]">7 hari tukar ukuran</dd>
+                        <dd class="font-bold text-[#9be7bd]">{{ $siteSettings['return_policy'] }}</dd>
                     </div>
                 </dl>
 
-                <a href="https://wa.me/6281234567890?text=Halo%20ShopDress,%20saya%20ingin%20bertanya"
-                   target="_blank" rel="noopener noreferrer"
-                   class="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-[11px] font-bold text-[var(--brand-deep)] transition hover:bg-[#f4edff]">
-                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m4.52 13.53c-.25-.13-1.47-.72-1.7-.81-.23-.09-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.25-.75-.67-1.26-1.5-1.41-1.75-.14-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1s.9 2.44 1.03 2.61c.13.17 1.77 2.7 4.29 3.79.6.26 1.07.41 1.44.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.11-.21-.18-.46-.31"/></svg>
-                    Chat dengan kami
-                </a>
+                @if (filled($siteSettings['whatsapp_help_url'] ?? null))
+                    <a href="{{ $siteSettings['whatsapp_help_url'] }}"
+                       target="_blank" rel="noopener noreferrer"
+                       class="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-[11px] font-bold text-[var(--brand-deep)] transition hover:bg-[#f4edff]">
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m4.52 13.53c-.25-.13-1.47-.72-1.7-.81-.23-.09-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.25-.75-.67-1.26-1.5-1.41-1.75-.14-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1s.9 2.44 1.03 2.61c.13.17 1.77 2.7 4.29 3.79.6.26 1.07.41 1.44.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.11-.21-.18-.46-.31"/></svg>
+                        Chat dengan kami
+                    </a>
+                @endif
             </div>
         </div>
 
         {{-- Payment + copyright --}}
         <div class="mt-12 flex flex-col gap-5 border-t border-white/10 pt-6 lg:flex-row lg:items-center lg:justify-between">
             <div class="flex flex-wrap items-center gap-1.5" aria-label="Metode pembayaran">
-                @foreach (['BCA', 'MANDIRI', 'BNI', 'BRI', 'QRIS', 'GOPAY'] as $method)
+                @foreach ($paymentMethods as $method)
                     <span class="rounded-md bg-white/95 px-2 py-1 text-[9px] font-black tracking-wide text-[#33304a]">{{ $method }}</span>
                 @endforeach
                 <span class="ml-1 inline-flex items-center gap-1.5 text-[10px] font-semibold text-white/50">
@@ -114,9 +151,13 @@
             </div>
 
             <div class="flex flex-col gap-1.5 text-[10px] text-white/45 sm:flex-row sm:items-center sm:gap-3">
-                <p>&copy; {{ date('Y') }} ShopDress. Hak cipta dilindungi.</p>
+                <p>&copy; {{ date('Y') }} {{ $storeName }}. Hak cipta dilindungi.</p>
                 <span class="hidden h-1 w-1 rounded-full bg-white/30 sm:block"></span>
-                <p>Dibuat dengan teliti untuk wanita Indonesia.</p>
+                <p class="flex items-center gap-2">
+                    <a href="{{ $termsUrl }}" class="transition hover:text-white">Syarat & Ketentuan</a>
+                    <span class="text-white/25" aria-hidden="true">·</span>
+                    <a href="{{ $privacyUrl }}" class="transition hover:text-white">Kebijakan Privasi</a>
+                </p>
             </div>
         </div>
     </div>

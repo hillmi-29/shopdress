@@ -1,14 +1,15 @@
 @extends('frontend.layouts.app')
 
-@section('title', 'Keranjang Belanja — ShopDress')
-@section('meta_description', 'Kelola keranjang belanja Anda di ShopDress. Periksa produk, ubah jumlah, dan lanjutkan ke checkout.')
+@section('title', 'Keranjang Belanja — '.\App\Models\SiteSetting::storeName())
+@section('meta_description', 'Kelola keranjang belanja Anda di '.\App\Models\SiteSetting::storeName().'. Periksa produk, ubah jumlah, dan lanjutkan ke checkout.')
 
 @section('content')
     @php
         $catalogUrl = \App\Support\FrontendUrls::catalog();
         $promoUrl = \App\Support\FrontendUrls::promo();
-        $checkoutUrl = route('checkout.index');
+        $checkoutUrl = route('checkout.index', ['mode' => 'cart']);
         $itemCount = $cart?->total_quantity ?? 0;
+        $featuredCoupon = $featuredCoupon ?? null;
     @endphp
 
     <nav class="mb-5 flex flex-wrap items-center gap-2 text-[10px] font-semibold text-[var(--text-subtle)]" aria-label="Breadcrumb">
@@ -136,7 +137,11 @@
                         </span>
                         <div>
                             <p class="text-[10px] font-bold text-[var(--brand-dark)]">Punya kode promo?</p>
-                            <p class="mt-0.5 text-[10px] text-[var(--text-muted)]">Pakai <span class="font-mono font-bold text-[var(--brand)]">SHOPDRESSNEW</span> dan hemat 20%.</p>
+                            @if ($featuredCoupon)
+                                <p class="mt-0.5 text-[10px] text-[var(--text-muted)]">Pakai <span class="font-mono font-bold text-[var(--brand)]">{{ $featuredCoupon->code }}</span> dan dapatkan {{ lcfirst($featuredCoupon->discountLabel()) }}.</p>
+                            @else
+                                <p class="mt-0.5 text-[10px] text-[var(--text-muted)]">Lihat promo dan kupon yang sedang berjalan.</p>
+                            @endif
                         </div>
                     </div>
                     <svg class="h-4 w-4 shrink-0 text-[var(--brand)] transition-transform duration-200 group-hover:translate-x-0.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

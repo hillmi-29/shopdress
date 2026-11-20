@@ -7,6 +7,7 @@ use App\Enums\PaymentStatus;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Mail\OrderStatusUpdatedMail;
 use App\Models\Order;
+use App\Models\SiteSetting;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
@@ -89,7 +90,13 @@ class OrderResource extends Resource
 
                         FileUpload::make('landmark_photo')
                             ->label('Foto Patokan Lokasi')
+                            ->helperText('Pelanggan dapat mengunggah hingga 2 foto patokan saat checkout.')
                             ->image()
+                            ->multiple()
+                            ->panelLayout('grid')
+                            ->imagePreviewHeight('120')
+                            ->openable()
+                            ->downloadable()
                             ->disk('public')
                             ->disabled()
                             ->columnSpanFull(),
@@ -243,7 +250,10 @@ class OrderResource extends Resource
                     ->color('success')
                     ->url(function (Order $record) {
                         $phone = preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $record->recipient_phone ?? $record->user->phone ?? ''));
-                        return "https://wa.me/{$phone}?text=" . urlencode("Halo {$record->recipient_name}, kami dari ShopDress mengonfirmasi pesanan #{$record->order_number} Anda.");
+
+                        $storeName = SiteSetting::storeName();
+
+                        return "https://wa.me/{$phone}?text=".urlencode("Halo {$record->recipient_name}, kami dari {$storeName} mengonfirmasi pesanan #{$record->order_number} Anda.");
                     }, shouldOpenInNewTab: true)
                     ->visible(fn (Order $record) => ! empty($record->recipient_phone ?? $record->user->phone)),
 

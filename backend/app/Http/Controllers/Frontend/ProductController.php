@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Review;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -72,7 +73,7 @@ class ProductController extends Controller
             'primaryImage',
             'images',
             'variants' => fn ($q) => $q->orderBy('additional_price')->orderBy('id'),
-            'reviews' => fn ($q) => $q->with('user:id,name')->latest(),
+            'reviews' => fn ($q) => $q->where('is_visible', true)->with('user:id,name')->latest(),
         ])->where('slug', $slug)->where('is_active', true)->firstOrFail();
 
         $relatedQuery = fn () => Product::with(['category', 'primaryImage', 'variants'])
@@ -97,11 +98,27 @@ class ProductController extends Controller
 
         $wishlisted = in_array($product->id, $wishlistProductIds, true);
 
+        $userReview = null;
+        $hasPurchased = false;
+
+        if (auth()->check()) {
+            $user = auth()->user();
+
+            $userReview = Review::query()
+                ->where('user_id', $user->id)
+                ->where('product_id', $product->id)
+                ->first();
+
+            $hasPurchased = Review::hasVerifiedPurchase($user, $product->id);
+        }
+
         return view('frontend.products.show', compact(
             'product',
             'relatedProducts',
             'wishlistProductIds',
             'wishlisted',
+            'userReview',
+            'hasPurchased',
         ));
     }
 }

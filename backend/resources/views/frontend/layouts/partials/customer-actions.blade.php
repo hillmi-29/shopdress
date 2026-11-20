@@ -1,11 +1,16 @@
 @php
     $cartApiUrl = url('api/cart');
+    $buyNowApiUrl = url('api/buy-now');
     $wishlistApiUrl = url('api/wishlist/toggle');
+    $checkoutUrl = route('checkout.index');
+    $loginUrl = route('login');
+    $isAuthenticated = auth()->check();
 @endphp
 
 {{-- Toast notifications (top-center) --}}
 <div x-data="customerActions()"
      @add-to-cart.window="addToCart($event.detail)"
+     @buy-now.window="buyNow($event.detail)"
      @wishlist-toggle.window="toggleWishlist($event.detail)"
      @toast.window="notify($event.detail.type || 'success', $event.detail.title || 'Info', $event.detail.message || '')"
      class="pointer-events-none fixed inset-x-0 top-20 z-[60] flex flex-col items-center gap-2.5 px-4 sm:px-0"
@@ -59,8 +64,16 @@
         Alpine.data('customerActions', () => ({
             toasts: [],
             nextId: 0,
+            buyingNow: false,
+            isAuthenticated: @js($isAuthenticated),
+            loginUrl: @js($loginUrl),
 
             addToCart(detail) {
+                if (!this.isAuthenticated) {
+                    this.requireAuth('cart');
+                    return;
+                }
+
                 const variantId = detail ? detail.variantId : null;
                 const quantity = Math.max(1, parseInt(detail ? detail.quantity : 1, 10) || 1);
 
@@ -111,10 +124,69 @@
                 });
             },
 
+            buyNow(detail) {
+                if (!this.isAuthenticated) {
+                    this.requireAuth('buy-now');
+                    return;
+                }
+
+                const variantId = detail ? detail.variantId : null;
+                const quantity = Math.max(1, parseInt(detail ? detail.quantity : 1, 10) || 1);
+
+                if (!variantId) {
+                    this.notify('error', 'Beli Sekarang', 'Pilih varian produk terlebih dahulu.');
+                    return;
+                }
+
+                if (this.buyingNow) {
+                    return;
+                }
+
+                // Simpan produk pada sesi Beli Sekarang, lalu arahkan pembeli
+                // langsung ke checkout. Keranjang yang sudah ada tidak diubah.
+                this.buyingNow = true;
+
+                const formData = new URLSearchParams();
+                formData.append('product_variant_id', variantId);
+                formData.append('quantity', quantity);
+
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
+
+                fetch('{{ $buyNowApiUrl }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrf,
+                    },
+                    credentials: 'same-origin',
+                    body: formData.toString()
+                })
+                .then(async (response) => {
+                    const data = await response.json();
+                    if (!response.ok) {
+                        throw new Error(data.message || 'Gagal memproses pembelian.');
+                    }
+                    return data;
+                })
+                .then((data) => {
+                    window.location.href = data.redirect || '{{ $checkoutUrl }}';
+                })
+                .catch((error) => {
+                    this.buyingNow = false;
+                    this.notify('error', 'Beli Sekarang', error.message || 'Tidak dapat memproses pembelian.');
+                });
+            },
+
             toggleWishlist(detail) {
                 const productId = detail ? detail.productId : null;
 
                 if (!productId) {
+                    return;
+                }
+
+                if (!this.isAuthenticated) {
+                    this.requireAuth('wishlist');
                     return;
                 }
 
@@ -136,13 +208,18 @@
                     const data = await res.json();
                     if (!res.ok) {
                         if (res.status === 401) {
-                            throw new Error('Silakan masuk untuk menyimpan wishlist.');
+                            this.requireAuth('wishlist');
+                            return null;
                         }
                         throw new Error(data.message || 'Gagal memperbarui wishlist.');
                     }
                     return data;
                 })
                 .then((data) => {
+                    if (!data) {
+                        return;
+                    }
+
                     const action = data.action || 'added';
                     const store = Alpine.store('shop');
 
@@ -163,6 +240,10 @@
                 const id = ++this.nextId;
                 this.toasts.push({ id, type, title, message });
                 setTimeout(() => this.dismiss(id), 4200);
+            },
+
+            requireAuth(action) {
+                this.$dispatch('login-required', { action });
             },
 
             dismiss(id) {

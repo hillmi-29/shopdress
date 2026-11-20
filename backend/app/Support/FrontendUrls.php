@@ -48,6 +48,16 @@ class FrontendUrls
         return self::route('help', '/bantuan');
     }
 
+    public static function terms(): string
+    {
+        return self::route('terms', '/syarat-ketentuan');
+    }
+
+    public static function privacy(): string
+    {
+        return self::route('privacy', '/kebijakan-privasi');
+    }
+
     public static function wishlist(): string
     {
         return self::route('wishlist.index', '/wishlist');

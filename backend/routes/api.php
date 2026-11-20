@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BuyNowController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\HomeController as ApiHomeController;
@@ -35,6 +36,11 @@ Route::post('/cart', [CartController::class, 'store']);
 Route::put('/cart/{id}', [CartController::class, 'update']);
 Route::delete('/cart/{id}', [CartController::class, 'destroy']);
 Route::delete('/cart', [CartController::class, 'clear']);
+
+// Buy Now draft (isolated from the cart, guest & authenticated supported)
+Route::post('/buy-now', [BuyNowController::class, 'store']);
+Route::put('/buy-now', [BuyNowController::class, 'update']);
+Route::delete('/buy-now', [BuyNowController::class, 'destroy']);
 
 // Checkout Preview & Voucher validation
 Route::get('/checkout/preview', [CheckoutController::class, 'preview']);
